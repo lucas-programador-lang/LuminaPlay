@@ -3,7 +3,7 @@ const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd"
 const IMG_PATH = "https://image.tmdb.org/t/p/w500"
 
 const POPULAR_URL =
-`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=pt-BR`
+`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=pt-BR&page=1`
 
 const TREND_URL =
 `https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}`
@@ -11,8 +11,7 @@ const TREND_URL =
 const SEARCH_URL =
 `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=`
 
-const VIDEO_URL =
-`https://api.themoviedb.org/3/movie/`
+// containers
 
 const popularContainer = document.getElementById("popularMovies")
 const trendingContainer = document.getElementById("trendingMovies")
@@ -28,12 +27,22 @@ const closeModal = document.querySelector(".close")
 
 async function getMovies(url, container){
 
+try{
+
 const res = await fetch(url)
 const data = await res.json()
 
 showMovies(data.results, container)
 
+}catch(error){
+
+console.error("Erro ao carregar filmes", error)
+
 }
+
+}
+
+// mostrar filmes
 
 function showMovies(movies, container){
 
@@ -43,25 +52,51 @@ movies.forEach(movie => {
 
 const {title, poster_path, vote_average, id} = movie
 
+if(!poster_path) return
+
 const movieEl = document.createElement("div")
 
 movieEl.classList.add("movie")
 
 movieEl.innerHTML = `
 
-<img src="${IMG_PATH + poster_path}">
+<img src="${IMG_PATH + poster_path}" alt="${title}">
 
 <p>${title}</p>
 
-<span>⭐ ${vote_average}</span>
+<span class="rating">${vote_average}</span>
 
-<button onclick="addFavorite('${title}')">❤️</button>
+<button class="fav">❤️</button>
 
 `
+
+// cor da avaliação
+
+const rating = movieEl.querySelector(".rating")
+
+if(vote_average >= 7){
+rating.style.color = "lime"
+}
+else if(vote_average >= 5){
+rating.style.color = "orange"
+}
+else{
+rating.style.color = "red"
+}
+
+// trailer
 
 movieEl.querySelector("img").addEventListener("click", () => {
 
 openTrailer(id)
+
+})
+
+// favoritos
+
+movieEl.querySelector(".fav").addEventListener("click", () => {
+
+addFavorite(title)
 
 })
 
@@ -75,10 +110,10 @@ container.appendChild(movieEl)
 
 async function openTrailer(movieId){
 
+try{
+
 const res = await fetch(
-
 `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${API_KEY}`
-
 )
 
 const data = await res.json()
@@ -94,6 +129,16 @@ trailer.src = youtubeURL
 
 modal.style.display = "flex"
 
+}else{
+
+alert("Trailer não disponível")
+
+}
+
+}catch(error){
+
+console.error("Erro ao abrir trailer", error)
+
 }
 
 }
@@ -107,11 +152,22 @@ trailer.src = ""
 
 }
 
+window.onclick = (event) => {
+
+if(event.target == modal){
+
+modal.style.display = "none"
+trailer.src = ""
+
+}
+
+}
+
 // busca
 
 searchInput.addEventListener("keyup", e => {
 
-const searchTerm = e.target.value
+const searchTerm = e.target.value.trim()
 
 if(searchTerm.length > 2){
 
@@ -127,16 +183,23 @@ function addFavorite(movie){
 
 let favorites = JSON.parse(localStorage.getItem("favorites")) || []
 
+if(!favorites.includes(movie)){
+
 favorites.push(movie)
 
 localStorage.setItem("favorites", JSON.stringify(favorites))
 
 alert("Adicionado aos favoritos")
 
+}else{
+
+alert("Já está nos favoritos")
+
+}
+
 }
 
 // carregar inicial
 
 getMovies(POPULAR_URL, popularContainer)
-
 getMovies(TREND_URL, trendingContainer)
