@@ -8,7 +8,10 @@ font-family:'Poppins',sans-serif;
 body{
 background:#0b0b0b;
 color:white;
+overflow-x:hidden;
 }
+
+/* HEADER */
 
 header{
 display:flex;
@@ -16,6 +19,9 @@ justify-content:space-between;
 align-items:center;
 padding:20px 60px;
 background:black;
+position:sticky;
+top:0;
+z-index:100;
 }
 
 .logo{
@@ -29,7 +35,24 @@ margin-left:20px;
 text-decoration:none;
 color:white;
 font-weight:500;
+transition:0.3s;
 }
+
+nav a:hover{
+color:#ff004c;
+}
+
+/* BUSCA */
+
+.search-box input{
+padding:8px 12px;
+border-radius:5px;
+border:none;
+outline:none;
+font-size:14px;
+}
+
+/* BANNER */
 
 .banner{
 height:80vh;
@@ -37,14 +60,28 @@ background:url("https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.
 display:flex;
 align-items:center;
 padding-left:60px;
+position:relative;
+}
+
+.banner-overlay{
+position:absolute;
+width:100%;
+height:100%;
+background:linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.3));
 }
 
 .banner-text{
+position:relative;
 max-width:500px;
 }
 
 .banner h1{
 font-size:50px;
+margin-bottom:10px;
+}
+
+.banner p{
+font-size:18px;
 margin-bottom:10px;
 }
 
@@ -57,23 +94,48 @@ color:white;
 cursor:pointer;
 border-radius:6px;
 margin-top:20px;
+transition:0.3s;
 }
+
+.banner button:hover{
+background:#ff2d63;
+}
+
+/* SEÇÕES */
 
 .movies-section{
 padding:40px 60px;
 }
 
+.movies-section h2{
+margin-bottom:20px;
+}
+
+/* LISTA DE FILMES */
+
 .movies{
 display:flex;
 gap:15px;
 overflow-x:auto;
+scroll-behavior:smooth;
+}
+
+.movies::-webkit-scrollbar{
+display:none;
+}
+
+/* CARD FILME */
+
+.movie{
+min-width:180px;
+transition:0.3s;
 }
 
 .movie img{
-width:180px;
+width:100%;
 border-radius:6px;
-transition:0.3s;
 cursor:pointer;
+transition:0.3s;
 }
 
 .movie img:hover{
@@ -81,13 +143,71 @@ transform:scale(1.1);
 }
 
 .movie p{
-margin-top:5px;
+margin-top:6px;
 font-size:14px;
 }
+
+/* MODAL PLAYER */
+
+.modal{
+display:none;
+position:fixed;
+z-index:200;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+position:relative;
+width:80%;
+max-width:900px;
+}
+
+.close{
+position:absolute;
+top:-40px;
+right:0;
+font-size:35px;
+cursor:pointer;
+}
+
+/* FOOTER */
 
 footer{
 text-align:center;
 padding:20px;
 background:black;
 margin-top:40px;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:900px){
+
+header{
+flex-direction:column;
+gap:10px;
+}
+
+.banner{
+padding-left:20px;
+}
+
+.movies-section{
+padding:30px 20px;
+}
+
+.banner h1{
+font-size:35px;
+}
+
+.movie{
+min-width:140px;
+}
+
 }
