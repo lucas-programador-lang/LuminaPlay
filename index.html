@@ -30,98 +30,104 @@
 
 </nav>
 
+<div class="search-box">
+
+<input type="text" id="search" placeholder="Buscar filmes...">
+
+</div>
+
 </header>
 
+
 <section class="banner">
+
+<div class="banner-overlay"></div>
 
 <div class="banner-text">
 
 <h1>Streaming ilimitado</h1>
 <p>Filmes e séries em um só lugar</p>
 
-<button>Assistir agora</button>
+<button id="playBanner">Assistir agora</button>
 
 </div>
 
 </section>
+
+
+<main>
 
 <section class="movies-section">
 
 <h2>Filmes populares</h2>
 
-<div class="movies">
+<div class="movies" id="popularMovies">
 
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg">
-<p>Batman</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg">
-<p>Avengers</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg">
-<p>Joker</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg">
-<p>Duna</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/yF1eOkaYvwiORauRCPWznV9xVvi.jpg">
-<p>Interestelar</p>
-</div>
+<!-- Filmes serão carregados pela API -->
 
 </div>
 
 </section>
+
 
 <section class="movies-section">
 
-<h2>Séries populares</h2>
+<h2>Filmes em alta</h2>
 
-<div class="movies">
+<div class="movies" id="trendingMovies">
 
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/9O1Iy9od7hTnXWk2ZPHjP0T2CwM.jpg">
-<p>Breaking Bad</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/lPsD10PP4rgUGiGR4CCXA6iY0QQ.jpg">
-<p>Stranger Things</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg">
-<p>The Witcher</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/kOVEVeg59E0wsnXmF9nrh6OmWII.jpg">
-<p>Dark</p>
-</div>
-
-<div class="movie">
-<img src="https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg">
-<p>Peaky Blinders</p>
-</div>
+<!-- API -->
 
 </div>
 
 </section>
 
+
+<section class="movies-section">
+
+<h2>Resultados da busca</h2>
+
+<div class="movies" id="searchResults">
+
+<!-- busca -->
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- MODAL PLAYER -->
+
+<div id="movieModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close">&times;</span>
+
+<iframe
+id="movieTrailer"
+width="100%"
+height="450"
+src=""
+frameborder="0"
+allowfullscreen>
+</iframe>
+
+</div>
+
+</div>
+
+
 <footer>
 
-<p>© 2026 LuminaPlay</p>
+<p>© 2026 LuminaPlay - Streaming moderno</p>
 
 </footer>
 
 <script src="script.js"></script>
 
 </body>
+
 </html>
