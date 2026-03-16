@@ -1,0 +1,93 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#0b0b0b;
+color:white;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 60px;
+background:black;
+}
+
+.logo{
+font-size:30px;
+font-weight:700;
+color:#ff004c;
+}
+
+nav a{
+margin-left:20px;
+text-decoration:none;
+color:white;
+font-weight:500;
+}
+
+.banner{
+height:80vh;
+background:url("https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg") center/cover no-repeat;
+display:flex;
+align-items:center;
+padding-left:60px;
+}
+
+.banner-text{
+max-width:500px;
+}
+
+.banner h1{
+font-size:50px;
+margin-bottom:10px;
+}
+
+.banner button{
+background:#ff004c;
+border:none;
+padding:12px 25px;
+font-size:18px;
+color:white;
+cursor:pointer;
+border-radius:6px;
+margin-top:20px;
+}
+
+.movies-section{
+padding:40px 60px;
+}
+
+.movies{
+display:flex;
+gap:15px;
+overflow-x:auto;
+}
+
+.movie img{
+width:180px;
+border-radius:6px;
+transition:0.3s;
+cursor:pointer;
+}
+
+.movie img:hover{
+transform:scale(1.1);
+}
+
+.movie p{
+margin-top:5px;
+font-size:14px;
+}
+
+footer{
+text-align:center;
+padding:20px;
+background:black;
+margin-top:40px;
+}
