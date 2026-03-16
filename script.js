@@ -1,4 +1,4 @@
-const API_KEY = "SUA_API_AQUI"
+const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd"
 
 const IMG_PATH = "https://image.tmdb.org/t/p/w500"
 
