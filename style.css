@@ -73,6 +73,18 @@ background:linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.3));
 .banner-text{
 position:relative;
 max-width:500px;
+animation:fadeBanner 1.5s ease;
+}
+
+@keyframes fadeBanner{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
 }
 
 .banner h1{
@@ -99,6 +111,7 @@ transition:0.3s;
 
 .banner button:hover{
 background:#ff2d63;
+transform:scale(1.05);
 }
 
 /* SEÇÕES */
@@ -118,6 +131,7 @@ display:flex;
 gap:15px;
 overflow-x:auto;
 scroll-behavior:smooth;
+padding-bottom:10px;
 }
 
 .movies::-webkit-scrollbar{
@@ -128,19 +142,53 @@ display:none;
 
 .movie{
 min-width:180px;
-transition:0.3s;
+position:relative;
+transition:0.4s;
 }
 
 .movie img{
 width:100%;
 border-radius:6px;
 cursor:pointer;
-transition:0.3s;
+transition:0.4s;
 }
 
-.movie img:hover{
-transform:scale(1.1);
+/* EFEITO NETFLIX */
+
+.movie:hover{
+transform:scale(1.25);
+z-index:10;
 }
+
+.movie:hover img{
+box-shadow:0 10px 25px rgba(0,0,0,0.8);
+}
+
+/* OVERLAY INFO */
+
+.movie::after{
+content:"Assistir";
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+display:flex;
+align-items:flex-end;
+justify-content:center;
+padding-bottom:15px;
+font-size:14px;
+opacity:0;
+transition:0.3s;
+border-radius:6px;
+}
+
+.movie:hover::after{
+opacity:1;
+}
+
+/* TITULO */
 
 .movie p{
 margin-top:6px;
@@ -157,7 +205,7 @@ left:0;
 top:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.9);
+background:rgba(0,0,0,0.95);
 justify-content:center;
 align-items:center;
 }
@@ -166,6 +214,18 @@ align-items:center;
 position:relative;
 width:80%;
 max-width:900px;
+animation:modalOpen 0.4s ease;
+}
+
+@keyframes modalOpen{
+from{
+transform:scale(0.8);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
 }
 
 .close{
@@ -208,6 +268,10 @@ font-size:35px;
 
 .movie{
 min-width:140px;
+}
+
+.movie:hover{
+transform:scale(1.1);
 }
 
 }
