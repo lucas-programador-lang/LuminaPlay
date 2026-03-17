@@ -7,10 +7,14 @@
   <title>LuminaPlay | Streaming de Filmes e Séries</title>
   <meta name="description" content="Assista filmes e séries no LuminaPlay">
 
+  <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -28,81 +32,129 @@
       <a class="nav-link active" href="index.html">Início</a>
       <a class="nav-link" href="filme.html">Filmes</a>
       <a class="nav-link" href="series.html">Séries</a>
-      <a class="nav-link" href="minha-lista.html">Séries</a>
-
-      <!-- 🔥 NOVO -->
       <a class="nav-link" href="minha-lista.html">
         <i class="fa-solid fa-bookmark"></i> Minha Lista
       </a>
     </nav>
 
     <div class="header-actions">
-      <input id="searchInput" placeholder="Buscar..." />
-      <button id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Buscar..." aria-label="Buscar filmes">
+      </div>
+
+      <button id="themeBtn" class="theme-btn" aria-label="Modo escuro">
+        <i class="fa-solid fa-moon"></i>
+      </button>
     </div>
 
   </div>
 </header>
 
-<!-- HERO -->
-<section id="hero" class="hero">
-  <div class="hero-content container">
-    <h1 id="heroTitle"></h1>
-    <p id="heroOverview"></p>
+<!-- MAIN -->
+<main>
 
-    <div class="hero-actions">
-      <button id="heroWatch" class="btn btn-watch">
-        <i class="fa-solid fa-play"></i> Assistir
-      </button>
+  <!-- HERO -->
+  <section id="hero" class="hero">
+    <div class="hero-content container">
 
-      <!-- 🔥 BOTÃO NOVO -->
-      <button id="heroFav" class="btn btn-info">
-        <i class="fa-solid fa-plus"></i> Minha Lista
-      </button>
+      <h1 id="heroTitle"></h1>
+      <p id="heroOverview"></p>
+
+      <div class="hero-actions">
+        <button id="heroWatch" class="btn btn-watch">
+          <i class="fa-solid fa-play"></i> Assistir
+        </button>
+
+        <button id="heroFav" class="btn btn-info">
+          <i class="fa-solid fa-plus"></i> Minha Lista
+        </button>
+      </div>
+
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ROWS -->
-<section class="rows container">
+  <!-- ROWS -->
+  <section class="rows container">
 
-  <h2>🔥 Populares</h2>
-  <div class="row">
-    <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-    <div id="row-populares" class="row-cards"></div>
-    <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-  </div>
+    <!-- CONTINUAR -->
+    <section>
+      <h2 class="row-title">▶ Continuar assistindo</h2>
+      <div class="row">
+        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="row-continuar" class="row-cards"></div>
+        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </section>
 
-  <h2>⭐ Em Alta</h2>
-  <div class="row">
-    <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-    <div id="row-emalta" class="row-cards"></div>
-    <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-  </div>
+    <!-- POPULARES -->
+    <section>
+      <h2 class="row-title">🔥 Populares</h2>
+      <div class="row">
+        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="row-populares" class="row-cards"></div>
+        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </section>
 
-  <h2>🎬 Lançamentos</h2>
-  <div class="row">
-    <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-    <div id="row-lancamentos" class="row-cards"></div>
-    <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-  </div>
+    <!-- EM ALTA -->
+    <section>
+      <h2 class="row-title">⭐ Em Alta</h2>
+      <div class="row">
+        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="row-emalta" class="row-cards"></div>
+        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </section>
 
-</section>
+    <!-- LANÇAMENTOS -->
+    <section>
+      <h2 class="row-title">🎬 Lançamentos</h2>
+      <div class="row">
+        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="row-lancamentos" class="row-cards"></div>
+        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+    <!-- RECOMENDADOS -->
+    <section>
+      <h2 class="row-title">💡 Recomendados</h2>
+      <div class="row">
+        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+        <div id="row-recomendados" class="row-cards"></div>
+        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </section>
+
+  </section>
+
+</main>
 
 <!-- PLAYER -->
-<div id="playerOverlay" class="player-overlay">
+<div id="playerOverlay" class="player-overlay" aria-hidden="true">
   <div class="player-inner">
-    <button id="playerClose"><i class="fa-solid fa-xmark"></i></button>
-    <iframe id="playerFrame"></iframe>
+    <button id="playerClose" class="player-close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <iframe
+      id="playerFrame"
+      class="player-iframe"
+      src=""
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer class="site-footer">
   <div class="container footer-inner">
     <div>LuminaPlay</div>
   </div>
 </footer>
 
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
