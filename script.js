@@ -1,21 +1,17 @@
 /* =========================
-   LuminaPlay — Script Pro
+   LuminaPlay — Script PRO (API REAL)
 ========================= */
 
-/* ----------------------
-   Mock Data
----------------------- */
-const MOCK_MOVIES = [
-  // (mantive seus dados exatamente iguais)
-  // 👉 pode deixar como está
-];
+/* =========================
+   CONFIG API (TMDB)
+========================= */
+const API_KEY = "SUA_API_KEY_AQUI"; // 🔴 coloque sua chave aqui
+const BASE_URL = "https://api.themoviedb.org/3";
+const IMG = "https://image.tmdb.org/t/p/w500";
 
-/* Persistência */
-localStorage.setItem('lumina_allMovies', JSON.stringify(MOCK_MOVIES));
-
-/* ----------------------
+/* =========================
    DOM Cache
----------------------- */
+========================= */
 const DOM = {
   hero: document.getElementById('hero'),
   heroTitle: document.getElementById('heroTitle'),
@@ -39,37 +35,79 @@ const DOM = {
   header: document.getElementById('siteHeader')
 };
 
-/* ----------------------
+/* =========================
    INIT
----------------------- */
+========================= */
 document.addEventListener('DOMContentLoaded', init);
 
-function init() {
-  const featured = MOCK_MOVIES[0];
+async function init() {
 
-  renderHero(featured);
-  renderAllRows();
+  const populares = await getMovies("/movie/popular");
+  const emAlta = await getMovies("/trending/movie/week");
+  const lancamentos = await getMovies("/movie/now_playing");
+  const recomendados = await getMovies("/movie/top_rated");
+
+  // salvar tudo
+  localStorage.setItem('lumina_allMovies', JSON.stringify([
+    ...populares, ...emAlta, ...lancamentos, ...recomendados
+  ]));
+
+  renderHero(populares[0]);
+
+  renderRow("populares", populares);
+  renderRow("emalta", emAlta);
+  renderRow("lancamentos", lancamentos);
+  renderRow("recomendados", recomendados);
 
   setupUI();
 }
 
-/* ----------------------
+/* =========================
+   API
+========================= */
+async function getMovies(endpoint) {
+  const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+  const data = await res.json();
+
+  return data.results.map(movie => ({
+    id: movie.id,
+    title: movie.title || movie.name,
+    overview: movie.overview,
+    poster: movie.poster_path ? IMG + movie.poster_path : "https://via.placeholder.com/300x450",
+    backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : "",
+    rating: movie.vote_average,
+    year: movie.release_date ? movie.release_date.split("-")[0] : "—",
+    duration: "—",
+    trailer: null,
+    genres: []
+  }));
+}
+
+async function getTrailer(movieId) {
+  const res = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}`);
+  const data = await res.json();
+
+  const trailer = data.results.find(v => v.type === "Trailer");
+
+  return trailer
+    ? `https://www.youtube.com/embed/${trailer.key}`
+    : "https://www.youtube.com/embed/dQw4w9WgXcQ";
+}
+
+/* =========================
    Render
----------------------- */
+========================= */
 function renderHero(movie) {
   DOM.hero.style.backgroundImage = `url('${movie.backdrop}')`;
   DOM.heroTitle.textContent = movie.title;
   DOM.heroOverview.textContent = movie.overview;
 
-  DOM.heroWatch.onclick = () => openPlayer(movie.trailer);
-  DOM.heroMore.onclick = () => openDetails(movie);
-}
+  DOM.heroWatch.onclick = async () => {
+    const trailer = await getTrailer(movie.id);
+    openPlayer(trailer);
+  };
 
-function renderAllRows() {
-  renderRow('populares', MOCK_MOVIES.slice(0, 8));
-  renderRow('emalta', rotateArray(MOCK_MOVIES, 3).slice(0, 8));
-  renderRow('lancamentos', MOCK_MOVIES.filter(m => m.year >= 2023));
-  renderRow('recomendados', rotateArray(MOCK_MOVIES, 6).slice(0, 8));
+  DOM.heroMore.onclick = () => openDetails(movie);
 }
 
 function renderRow(key, movies) {
@@ -90,7 +128,6 @@ function renderRow(key, movies) {
 function createCard(movie) {
   const el = document.createElement('div');
   el.className = 'card';
-  el.dataset.id = movie.id;
 
   el.innerHTML = `
     <img src="${movie.poster}" alt="${escapeHtml(movie.title)}" loading="lazy">
@@ -100,9 +137,10 @@ function createCard(movie) {
     <div class="card-title">${escapeHtml(movie.title)}</div>
   `;
 
-  el.addEventListener('click', (e) => {
+  el.addEventListener('click', async (e) => {
     if (e.target.closest('.small-play')) {
-      openPlayer(movie.trailer);
+      const trailer = await getTrailer(movie.id);
+      openPlayer(trailer);
       return;
     }
     openDetails(movie);
@@ -111,32 +149,30 @@ function createCard(movie) {
   return el;
 }
 
-/* ----------------------
+/* =========================
    Player
----------------------- */
+========================= */
 function openPlayer(url) {
   DOM.playerFrame.src = `${url}?autoplay=1`;
   DOM.playerOverlay.classList.add('active');
-  DOM.playerOverlay.setAttribute('aria-hidden', 'false');
 }
 
 function closePlayer() {
   DOM.playerOverlay.classList.remove('active');
-  DOM.playerOverlay.setAttribute('aria-hidden', 'true');
   DOM.playerFrame.src = '';
 }
 
-/* ----------------------
+/* =========================
    Navegação
----------------------- */
+========================= */
 function openDetails(movie) {
   localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
   window.location.href = 'filme.html';
 }
 
-/* ----------------------
+/* =========================
    UI Setup
----------------------- */
+========================= */
 function setupUI() {
   setupScrollHeader();
   setupPlayerControls();
@@ -145,20 +181,14 @@ function setupUI() {
   setupRows();
 }
 
-/* Header scroll */
 function setupScrollHeader() {
   window.addEventListener('scroll', () => {
     const y = window.scrollY;
 
     DOM.header.classList.toggle('scrolled', y > 30);
-    DOM.header.style.background =
-      y > 50
-        ? 'rgba(0,0,0,0.9)'
-        : 'linear-gradient(180deg, rgba(0,0,0,0.5), transparent)';
   });
 }
 
-/* Player controls */
 function setupPlayerControls() {
   DOM.playerClose?.addEventListener('click', closePlayer);
 
@@ -171,30 +201,44 @@ function setupPlayerControls() {
   });
 }
 
-/* Search */
+/* =========================
+   SEARCH REAL 🔥
+========================= */
 function setupSearch() {
   let timeout;
 
   DOM.searchInput?.addEventListener('input', (e) => {
     clearTimeout(timeout);
 
-    timeout = setTimeout(() => {
-      const q = e.target.value.toLowerCase().trim();
+    timeout = setTimeout(async () => {
+      const q = e.target.value.trim();
 
-      if (!q) return renderAllRows();
+      if (!q) return init();
 
-      const results = MOCK_MOVIES.filter(m =>
-        m.title.toLowerCase().includes(q) ||
-        m.overview.toLowerCase().includes(q)
-      );
+      const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${q}`);
+      const data = await res.json();
 
-      renderRow('populares', results.slice(0, 8));
-      renderRow('emalta', results.slice(8, 16));
-    }, 200); // debounce
+      const results = data.results.map(movie => ({
+        id: movie.id,
+        title: movie.title,
+        overview: movie.overview,
+        poster: movie.poster_path ? IMG + movie.poster_path : "",
+        backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : "",
+        rating: movie.vote_average,
+        year: movie.release_date?.split("-")[0],
+        duration: "—",
+        genres: []
+      }));
+
+      renderRow("populares", results);
+      renderRow("emalta", []);
+    }, 300);
   });
 }
 
-/* Theme */
+/* =========================
+   Theme
+========================= */
 function setupTheme() {
   const saved = localStorage.getItem('lumina_theme');
 
@@ -202,12 +246,13 @@ function setupTheme() {
 
   DOM.themeBtn?.addEventListener('click', () => {
     const isLight = document.body.classList.toggle('light-theme');
-
     localStorage.setItem('lumina_theme', isLight ? 'light' : 'dark');
   });
 }
 
-/* Row scroll */
+/* =========================
+   Row scroll
+========================= */
 function setupRows() {
   document.querySelectorAll('.row').forEach(row => {
     const left = row.querySelector('.left');
@@ -226,13 +271,9 @@ function scroll(container, dir) {
   });
 }
 
-/* ----------------------
+/* =========================
    Utils
----------------------- */
-function rotateArray(arr, n = 1) {
-  return [...arr.slice(n), ...arr.slice(0, n)];
-}
-
+========================= */
 function escapeHtml(text) {
   return text.replace(/[&<>"']/g, m =>
     ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]
