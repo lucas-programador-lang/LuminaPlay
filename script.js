@@ -11,15 +11,17 @@ const TREND_URL =
 const SEARCH_URL =
 `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=pt-BR&query=`
 
+
 // ELEMENTOS
 
 const popularContainer = document.getElementById("popularMovies")
 const trendingContainer = document.getElementById("trendingMovies")
 const searchContainer = document.getElementById("searchResults")
-
 const searchInput = document.getElementById("search")
 
 let previewTimeout = null
+
+
 
 // ==========================
 // CARREGAR FILMES
@@ -45,11 +47,13 @@ showMovies(data.results, container)
 
 console.error("Erro ao carregar filmes:", error)
 
-container.innerHTML = `<p>Erro ao carregar filmes.</p>`
+container.innerHTML = "<p>Erro ao carregar filmes.</p>"
 
 }
 
 }
+
+
 
 // ==========================
 // MOSTRAR FILMES
@@ -77,31 +81,22 @@ movieEl.innerHTML = `
 
 <img src="${IMG_PATH + poster_path}" alt="${title}">
 
-<div class="movie-info">
-
 <p>${title}</p>
 
 <span class="rating">⭐ ${vote_average.toFixed(1)}</span>
 
-<div class="movie-buttons">
-
-<button class="play">▶</button>
-
 <button class="fav">❤️</button>
-
-</div>
-
-</div>
 
 <div class="trailer-preview"></div>
 
 `
 
-// abrir página de detalhes
+// abrir detalhes
 
 movieEl.querySelector("img").addEventListener("click", () => {
 openDetails(movie)
 })
+
 
 // preview trailer
 
@@ -119,19 +114,26 @@ clearTimeout(previewTimeout)
 
 const preview = movieEl.querySelector(".trailer-preview")
 
+if(preview){
 preview.innerHTML = ""
+}
 
 })
 
+
 // favoritos
 
-movieEl.querySelector(".fav").addEventListener("click", (e) => {
+const favBtn = movieEl.querySelector(".fav")
+
+if(favBtn){
+favBtn.addEventListener("click", (e) => {
 
 e.stopPropagation()
 
 addFavorite(movie)
 
 })
+}
 
 container.appendChild(movieEl)
 
@@ -139,8 +141,10 @@ container.appendChild(movieEl)
 
 }
 
+
+
 // ==========================
-// TRAILER DENTRO DO CARD
+// TRAILER PREVIEW
 // ==========================
 
 async function loadTrailerPreview(movieId, movieEl){
@@ -159,6 +163,8 @@ if(video){
 
 const preview = movieEl.querySelector(".trailer-preview")
 
+if(preview){
+
 preview.innerHTML = `
 
 <iframe
@@ -173,6 +179,8 @@ allowfullscreen>
 
 }
 
+}
+
 }catch(error){
 
 console.error("Erro preview trailer", error)
@@ -181,8 +189,10 @@ console.error("Erro preview trailer", error)
 
 }
 
+
+
 // ==========================
-// PÁGINA DETALHES FILME
+// ABRIR DETALHES
 // ==========================
 
 function openDetails(movie){
@@ -192,6 +202,8 @@ localStorage.setItem("selectedMovie", JSON.stringify(movie))
 window.location.href = "filme.html"
 
 }
+
+
 
 // ==========================
 // FAVORITOS
@@ -217,6 +229,8 @@ alert("Esse filme já está nos favoritos")
 
 }
 
+
+
 // ==========================
 // CARREGAR FAVORITOS
 // ==========================
@@ -238,6 +252,8 @@ return
 showMovies(favorites, searchContainer)
 
 }
+
+
 
 // ==========================
 // BUSCA
@@ -261,7 +277,9 @@ getMovies(SEARCH_URL + encodeURIComponent(searchTerm), searchContainer)
 
 }else{
 
-if(searchContainer) searchContainer.innerHTML = ""
+if(searchContainer){
+searchContainer.innerHTML = ""
+}
 
 }
 
@@ -271,20 +289,22 @@ if(searchContainer) searchContainer.innerHTML = ""
 
 }
 
+
+
 // ==========================
-// CARROSSEL INFINITO
+// CARROSSEL
 // ==========================
 
 document.querySelectorAll(".carousel").forEach(carousel => {
 
 const container = carousel.querySelector(".movies")
-
 const left = carousel.querySelector(".arrow.left")
 const right = carousel.querySelector(".arrow.right")
 
 if(!container) return
 
 if(right){
+
 right.addEventListener("click", () => {
 
 container.scrollBy({
@@ -293,9 +313,11 @@ behavior:"smooth"
 })
 
 })
+
 }
 
 if(left){
+
 left.addEventListener("click", () => {
 
 container.scrollBy({
@@ -304,9 +326,12 @@ behavior:"smooth"
 })
 
 })
+
 }
 
 })
+
+
 
 // ==========================
 // BANNER AUTOMÁTICO
@@ -338,8 +363,10 @@ banner.style.backgroundImage = `url(${banners[bannerIndex]})`
 
 setInterval(changeBanner,5000)
 
+
+
 // ==========================
-// MODO CLARO / ESCURO
+// TEMA
 // ==========================
 
 function toggleTheme(){
@@ -357,14 +384,15 @@ if(localStorage.getItem("theme") === "light"){
 document.body.classList.add("light")
 }
 
+
+
 // ==========================
-// CARREGAMENTO INICIAL
+// INICIAR
 // ==========================
 
 document.addEventListener("DOMContentLoaded", () => {
 
 getMovies(POPULAR_URL, popularContainer)
-
 getMovies(TREND_URL, trendingContainer)
 
 })
