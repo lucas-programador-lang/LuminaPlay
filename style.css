@@ -5,10 +5,24 @@ box-sizing:border-box;
 font-family:'Poppins',sans-serif;
 }
 
+/* ANIMAÇÃO DE ABERTURA */
+
 body{
 background:#0b0b0b;
 color:white;
 overflow-x:hidden;
+animation:fadeCinema 1s ease;
+}
+
+@keyframes fadeCinema{
+from{
+opacity:0;
+transform:scale(1.02);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
 }
 
 /* HEADER */
@@ -24,11 +38,24 @@ top:0;
 z-index:100;
 }
 
+/* LOGO CINEMATOGRÁFICA */
+
 .logo{
-font-size:30px;
+font-size:28px;
 font-weight:700;
+letter-spacing:1px;
+}
+
+.logoL{
+color:#ff004c;
+text-shadow:0 0 10px #ff004c,0 0 20px #ff004c;
+}
+
+.logoPlay{
 color:#ff004c;
 }
+
+/* MENU */
 
 nav a{
 margin-left:20px;
@@ -47,6 +74,7 @@ color:#ff004c;
 padding:8px 12px;
 border-radius:5px;
 border:none;
+outline:none;
 }
 
 /* BANNER */
@@ -99,7 +127,7 @@ scroll-behavior:smooth;
 display:none;
 }
 
-/* BOTÕES */
+/* BOTÕES DO CARROSSEL */
 
 .arrow{
 position:absolute;
@@ -112,6 +140,11 @@ width:40px;
 height:60px;
 cursor:pointer;
 z-index:10;
+transition:0.3s;
+}
+
+.arrow:hover{
+background:#ff004c;
 }
 
 .arrow.left{
@@ -128,6 +161,7 @@ right:0;
 min-width:180px;
 position:relative;
 transition:0.4s;
+cursor:pointer;
 }
 
 .movie img{
@@ -157,7 +191,7 @@ font-size:12px;
 border-radius:4px;
 }
 
-/* MODAL */
+/* MODAL TRAILER */
 
 .modal{
 display:none;
@@ -179,6 +213,7 @@ max-width:900px;
 .close{
 font-size:35px;
 cursor:pointer;
+color:white;
 }
 
 /* FOOTER */
@@ -188,4 +223,33 @@ text-align:center;
 padding:20px;
 background:black;
 margin-top:40px;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:900px){
+
+header{
+flex-direction:column;
+gap:10px;
+padding:20px;
+}
+
+.banner{
+padding-left:20px;
+height:60vh;
+}
+
+.movies-section{
+padding:30px 20px;
+}
+
+.movie{
+min-width:140px;
+}
+
+.movie:hover{
+transform:scale(1.1);
+}
+
 }
