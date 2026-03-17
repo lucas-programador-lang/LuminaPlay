@@ -41,7 +41,6 @@
       <div class="search-box">
         <input id="searchInput" type="text" placeholder="Buscar..." aria-label="Buscar filmes">
       </div>
-
       <button id="themeBtn" class="theme-btn" aria-label="Modo escuro">
         <i class="fa-solid fa-moon"></i>
       </button>
@@ -50,85 +49,77 @@
   </div>
 </header>
 
-<!-- MAIN -->
-<main>
+<!-- HERO -->
+<section id="hero" class="hero">
+  <div class="hero-content container">
+    <h1 id="heroTitle"></h1>
+    <p id="heroOverview"></p>
 
-  <!-- HERO -->
-  <section id="hero" class="hero">
-    <div class="hero-content container">
+    <div class="hero-actions">
+      <button id="heroWatch" class="btn btn-watch">
+        <i class="fa-solid fa-play"></i> Assistir
+      </button>
+      <button id="heroFav" class="btn btn-info">
+        <i class="fa-solid fa-plus"></i> Minha Lista
+      </button>
+    </div>
+  </div>
+</section>
 
-      <h1 id="heroTitle"></h1>
-      <p id="heroOverview"></p>
+<!-- ROWS -->
+<section class="rows container">
 
-      <div class="hero-actions">
-        <button id="heroWatch" class="btn btn-watch">
-          <i class="fa-solid fa-play"></i> Assistir
-        </button>
-
-        <button id="heroFav" class="btn btn-info">
-          <i class="fa-solid fa-plus"></i> Minha Lista
-        </button>
-      </div>
-
+  <!-- CONTINUAR ASSISTINDO -->
+  <section>
+    <h2 class="row-title">▶ Continuar assistindo</h2>
+    <div class="row">
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <div id="row-continuar" class="row-cards"></div>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
-  <!-- ROWS -->
-  <section class="rows container">
-
-    <!-- CONTINUAR -->
-    <section>
-      <h2 class="row-title">▶ Continuar assistindo</h2>
-      <div class="row">
-        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-        <div id="row-continuar" class="row-cards"></div>
-        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </section>
-
-    <!-- POPULARES -->
-    <section>
-      <h2 class="row-title">🔥 Populares</h2>
-      <div class="row">
-        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-        <div id="row-populares" class="row-cards"></div>
-        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </section>
-
-    <!-- EM ALTA -->
-    <section>
-      <h2 class="row-title">⭐ Em Alta</h2>
-      <div class="row">
-        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-        <div id="row-emalta" class="row-cards"></div>
-        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </section>
-
-    <!-- LANÇAMENTOS -->
-    <section>
-      <h2 class="row-title">🎬 Lançamentos</h2>
-      <div class="row">
-        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-        <div id="row-lancamentos" class="row-cards"></div>
-        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </section>
-
-    <!-- RECOMENDADOS -->
-    <section>
-      <h2 class="row-title">💡 Recomendados</h2>
-      <div class="row">
-        <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-        <div id="row-recomendados" class="row-cards"></div>
-        <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-    </section>
-
+  <!-- POPULARES -->
+  <section>
+    <h2 class="row-title">🔥 Populares</h2>
+    <div class="row">
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <div id="row-populares" class="row-cards"></div>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
   </section>
 
-</main>
+  <!-- EM ALTA -->
+  <section>
+    <h2 class="row-title">⭐ Em Alta</h2>
+    <div class="row">
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <div id="row-emalta" class="row-cards"></div>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- LANÇAMENTOS -->
+  <section>
+    <h2 class="row-title">🎬 Lançamentos</h2>
+    <div class="row">
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <div id="row-lancamentos" class="row-cards"></div>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- RECOMENDADOS -->
+  <section>
+    <h2 class="row-title">💡 Recomendados</h2>
+    <div class="row">
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <div id="row-recomendados" class="row-cards"></div>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+</section>
 
 <!-- PLAYER -->
 <div id="playerOverlay" class="player-overlay" aria-hidden="true">
@@ -136,14 +127,7 @@
     <button id="playerClose" class="player-close">
       <i class="fa-solid fa-xmark"></i>
     </button>
-
-    <iframe
-      id="playerFrame"
-      class="player-iframe"
-      src=""
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
+    <iframe id="playerFrame" class="player-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </div>
 </div>
 
@@ -154,8 +138,6 @@
   </div>
 </footer>
 
-<!-- SCRIPT -->
 <script src="script.js"></script>
-
 </body>
 </html>
