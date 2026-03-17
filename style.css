@@ -1,5 +1,5 @@
 /* =========================
-   LuminaPlay — CSS FINAL CLARO PROFISSIONAL
+   LuminaPlay — CSS FINAL ESCURO PROFISSIONAL
 ========================= */
 
 /* RESET */
@@ -15,8 +15,8 @@ html, body{
 
 body{
   font-family:'Poppins',sans-serif;
-  background:#f5f5f7;
-  color:#111;
+  background:#121212;
+  color:#e0e0e0;
 }
 
 /* LINKS */
@@ -37,8 +37,8 @@ a{
   top:0;
   width:100%;
   z-index:1000;
-  background:#ffffff;
-  border-bottom:1px solid rgba(0,0,0,0.08);
+  background:rgba(18,18,18,0.95);
+  border-bottom:1px solid rgba(255,255,255,0.08);
   backdrop-filter:blur(10px);
 }
 
@@ -66,27 +66,27 @@ a{
 
 .nav-link,
 .nav-link:visited{
-  color:#555;
+  color:#bbb;
   font-size:14px;
   transition:.2s;
 }
 
 .nav-link:hover{
-  color:#000;
+  color:#fff;
 }
 
 .nav-link.active{
-  color:#000;
+  color:#fff;
   font-weight:600;
 }
 
 /* ================= SEARCH ================= */
 .search-box input{
-  background:#f0f0f0;
-  border:1px solid rgba(0,0,0,0.1);
+  background:#1f1f1f;
+  border:1px solid rgba(255,255,255,0.15);
   padding:8px 12px;
   border-radius:20px;
-  color:#111;
+  color:#e0e0e0;
   outline:none;
   width:160px;
 }
@@ -107,8 +107,8 @@ a{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(180deg,transparent,rgba(0,0,0,0.6)),
-    linear-gradient(90deg,rgba(0,0,0,0.5),transparent);
+    linear-gradient(180deg,transparent,rgba(0,0,0,0.8)),
+    linear-gradient(90deg,rgba(0,0,0,0.7),transparent);
 }
 
 .hero-content{
@@ -124,7 +124,7 @@ a{
 .hero p{
   max-width:500px;
   margin:10px 0 20px;
-  color:#e0e0e0;
+  color:#ccc;
 }
 
 /* ================= BUTTONS ================= */
@@ -206,8 +206,8 @@ a{
   cursor:pointer;
   flex:0 0 auto;
   transition:.2s;
-  background:#fff;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  background:#1e1e1e;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
 
 .card img{
@@ -227,7 +227,7 @@ a{
   display:none;
   justify-content:center;
   align-items:center;
-  background:rgba(0,0,0,.9);
+  background:rgba(0,0,0,.95);
 }
 
 .player-overlay.active{
@@ -264,7 +264,7 @@ a{
   min-width:150px;
   height:220px;
   border-radius:10px;
-  background:linear-gradient(90deg,#ddd,#eee,#ddd);
+  background:linear-gradient(90deg,#2a2a2a,#3a3a3a,#2a2a2a);
   background-size:200%;
   animation:load 1.2s infinite;
 }
