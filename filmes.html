@@ -6,14 +6,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LuminaPlay - Filmes</title>
+<title>LuminaPlay | Filmes</title>
+
+<meta name="description" content="Assista aos filmes mais populares no LuminaPlay">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="favicon.svg">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
+
+<!-- HEADER -->
 
 <header>
 
@@ -22,13 +29,40 @@
 </div>
 
 <nav>
+
 <a href="index.html">Início</a>
 <a href="filmes.html">Filmes</a>
 <a href="series.html">Séries</a>
 <a href="animes.html">Animes</a>
+
 </nav>
 
+<div class="header-actions">
+
+<button onclick="toggleTheme()" class="theme-btn">
+🌙
+</button>
+
+<button onclick="loadFavorites()" class="fav-btn">
+❤️
+</button>
+
+</div>
+
+<div class="search-box">
+
+<input
+type="text"
+id="search"
+placeholder="Buscar filmes..."
+aria-label="Buscar filmes">
+
+</div>
+
 </header>
+
+
+<!-- CONTEÚDO -->
 
 <main>
 
@@ -36,11 +70,28 @@
 
 <h1>🎬 Filmes Populares</h1>
 
-<div class="movies" id="popularMovies"></div>
+<div class="movies-grid" id="popularMovies"></div>
+
+</section>
+
+<section class="movies-section">
+
+<h2>🔎 Resultados da Busca</h2>
+
+<div class="movies-grid" id="searchResults"></div>
 
 </section>
 
 </main>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<p>© 2026 LuminaPlay</p>
+
+</footer>
 
 <script src="script.js"></script>
 
