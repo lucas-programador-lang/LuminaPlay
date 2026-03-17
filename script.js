@@ -20,6 +20,7 @@ const searchContainer = document.getElementById("searchResults")
 const searchInput = document.getElementById("search")
 
 let previewTimeout = null
+let activePreview = null
 
 
 
@@ -91,22 +92,28 @@ movieEl.innerHTML = `
 
 `
 
-// abrir detalhes
+
+// abrir página do filme
 
 movieEl.querySelector("img").addEventListener("click", () => {
 openDetails(movie)
 })
 
 
-// preview trailer
+// ==========================
+// PREVIEW TRAILER NETFLIX
+// ==========================
 
 movieEl.addEventListener("mouseenter", () => {
 
 previewTimeout = setTimeout(() => {
+
 loadTrailerPreview(id, movieEl)
-},1000)
+
+},700)
 
 })
+
 
 movieEl.addEventListener("mouseleave", () => {
 
@@ -118,14 +125,19 @@ if(preview){
 preview.innerHTML = ""
 }
 
+activePreview = null
+
 })
 
 
-// favoritos
+// ==========================
+// FAVORITOS
+// ==========================
 
 const favBtn = movieEl.querySelector(".fav")
 
 if(favBtn){
+
 favBtn.addEventListener("click", (e) => {
 
 e.stopPropagation()
@@ -133,6 +145,7 @@ e.stopPropagation()
 addFavorite(movie)
 
 })
+
 }
 
 container.appendChild(movieEl)
@@ -148,6 +161,10 @@ container.appendChild(movieEl)
 // ==========================
 
 async function loadTrailerPreview(movieId, movieEl){
+
+if(activePreview === movieId) return
+
+activePreview = movieId
 
 try{
 
@@ -168,11 +185,9 @@ if(preview){
 preview.innerHTML = `
 
 <iframe
-width="100%"
-height="100%"
-src="https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1"
-frameborder="0"
-allowfullscreen>
+src="https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1&controls=0"
+allow="autoplay"
+frameborder="0">
 </iframe>
 
 `
@@ -334,7 +349,7 @@ behavior:"smooth"
 
 
 // ==========================
-// BANNER AUTOMÁTICO
+// BANNER CINEMA AUTOMÁTICO
 // ==========================
 
 const banners = [
