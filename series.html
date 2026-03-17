@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>LuminaPlay | Séries</title>
+  <meta name="description" content="Explore séries no LuminaPlay">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header scrolled">
+    <div class="header-inner container">
+
+      <div class="logo">
+        <span class="logoL">L</span>umina<span class="logoPlay">Play</span>
+      </div>
+
+      <nav class="main-nav">
+        <a href="index.html">Início</a>
+        <a href="index.html#filmes">Filmes</a>
+        <a href="series.html" class="active">Séries</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero" class="hero">
+    <div class="hero-content container">
+      <h1 id="heroTitle">Séries em Destaque</h1>
+      <p id="heroOverview">Explore as melhores séries do momento.</p>
+    </div>
+  </section>
+
+  <!-- CONTEÚDO -->
+  <section class="rows container">
+
+    <h2 class="row-title">🔥 Populares</h2>
+    <div class="row">
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="row-cards" id="row-populares"></div>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <h2 class="row-title">⭐ Em Alta</h2>
+    <div class="row">
+      <button class="row-arrow left"></button>
+      <div class="row-cards" id="row-emalta"></div>
+      <button class="row-arrow right"></button>
+    </div>
+
+    <h2 class="row-title">🏆 Mais bem avaliadas</h2>
+    <div class="row">
+      <button class="row-arrow left"></button>
+      <div class="row-cards" id="row-top"></div>
+      <button class="row-arrow right"></button>
+    </div>
+
+  </section>
+
+  <!-- PLAYER -->
+  <div id="playerOverlay" class="player-overlay">
+    <div class="player-inner">
+      <button id="playerClose" class="player-close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <iframe id="playerFrame" class="player-iframe"></iframe>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>LuminaPlay</div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+  const API_KEY = "SUA_API_KEY_AQUI";
+  const BASE = "https://api.themoviedb.org/3";
+  const IMG = "https://image.tmdb.org/t/p/w500";
+
+  const rows = {
+    populares: document.getElementById('row-populares'),
+    emalta: document.getElementById('row-emalta'),
+    top: document.getElementById('row-top')
+  };
+
+  const hero = document.getElementById('hero');
+
+  async function getSeries(endpoint){
+    const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+    const data = await res.json();
+
+    return data.results.map(s => ({
+      id: s.id,
+      title: s.name,
+      poster: IMG + s.poster_path,
+      backdrop: IMG + s.backdrop_path,
+      overview: s.overview
+    }));
+  }
+
+  async function init(){
+
+    const populares = await getSeries("/tv/popular");
+    const emAlta = await getSeries("/trending/tv/week");
+    const top = await getSeries("/tv/top_rated");
+
+    renderHero(populares[0]);
+
+    renderRow("populares", populares);
+    renderRow("emalta", emAlta);
+    renderRow("top", top);
+  }
+
+  function renderHero(s){
+    hero.style.backgroundImage = `url('${s.backdrop}')`;
+    document.getElementById('heroTitle').textContent = s.title;
+    document.getElementById('heroOverview').textContent = s.overview;
+  }
+
+  function renderRow(key, list){
+    const container = rows[key];
+    container.innerHTML = "";
+
+    list.forEach(s => {
+      const card = document.createElement('div');
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${s.poster}">
+        <div class="card-title">${s.title}</div>
+      `;
+
+      card.onclick = () => openPlayer();
+
+      container.appendChild(card);
+    });
+  }
+
+  function openPlayer(){
+    document.getElementById('playerOverlay').classList.add('active');
+    document.getElementById('playerFrame').src =
+      "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+  }
+
+  document.getElementById('playerClose').onclick = () => {
+    document.getElementById('playerOverlay').classList.remove('active');
+    document.getElementById('playerFrame').src = "";
+  };
+
+  init();
+  </script>
+
+</body>
+</html>
