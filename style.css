@@ -57,7 +57,7 @@ body{
 }
 
 .logoL{color:var(--accent);}
-.logoPlay{opacity:.9}
+.logoPlay{opacity:.9;}
 
 .main-nav{
   display:flex;
@@ -175,7 +175,7 @@ body{
   display:none;
 }
 
-/* SETAS */
+/* SETAS PROFISSIONAIS */
 .row-arrow{
   position:absolute;
   top:0;
@@ -190,7 +190,7 @@ body{
   z-index:20;
   opacity:0;
   transition:.3s;
-  color:#fff; /* cor das setas */
+  color:#fff;
   font-size:22px;
 }
 
@@ -339,14 +339,12 @@ body{
   height:240px;
   border-radius:12px;
   flex:0 0 auto;
-
   background:linear-gradient(
     90deg,
     #111 25%,
     #1a1a1a 50%,
     #111 75%
   );
-
   background-size:200% 100%;
   animation:skeletonLoading 1.2s infinite ease-in-out;
   position:relative;
