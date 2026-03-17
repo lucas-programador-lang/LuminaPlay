@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -30,10 +31,7 @@
 
 <nav aria-label="Menu principal">
 
-<a href="index.html">Início</a>
-<a href="filmes.html">Filmes</a>
-<a href="series.html">Séries</a>
-<a href="animes.html">Animes</a>
+<a href="index.html">Início</a> <a href="filmes.html">Filmes</a> <a href="series.html">Séries</a> <a href="animes.html">Animes</a> <a href="minha-lista.html">Minha Lista</a>
 
 </nav>
 
@@ -43,9 +41,9 @@
 🌙
 </button>
 
-<button onclick="loadFavorites()" class="fav-btn" aria-label="Favoritos">
+<a href="minha-lista.html" class="fav-btn" aria-label="Minha Lista">
 ❤️
-</button>
+</a>
 
 </div>
 
@@ -60,7 +58,6 @@ aria-label="Buscar conteúdo">
 </div>
 
 </header>
-
 
 <!-- BANNER -->
 
@@ -82,11 +79,9 @@ aria-label="Buscar conteúdo">
 
 </section>
 
-
 <!-- CONTEÚDO -->
 
 <main>
-
 
 <!-- POPULARES -->
 
@@ -110,7 +105,6 @@ aria-label="Buscar conteúdo">
 
 </section>
 
-
 <!-- EM ALTA -->
 
 <section class="movies-section">
@@ -133,7 +127,6 @@ aria-label="Buscar conteúdo">
 
 </section>
 
-
 <!-- RESULTADOS BUSCA -->
 
 <section class="movies-section">
@@ -144,9 +137,7 @@ aria-label="Buscar conteúdo">
 
 </section>
 
-
 </main>
-
 
 <!-- MODAL TRAILER -->
 
@@ -154,7 +145,7 @@ aria-label="Buscar conteúdo">
 
 <div class="modal-content">
 
-<span class="close" aria-label="Fechar">&times;</span>
+<span class="close" aria-label="Fechar">×</span>
 
 <iframe
 id="movieTrailer"
@@ -170,7 +161,6 @@ allowfullscreen>
 
 </div>
 
-
 <!-- FOOTER -->
 
 <footer>
@@ -178,7 +168,6 @@ allowfullscreen>
 <p>© 2026 LuminaPlay • Todos os direitos reservados</p>
 
 </footer>
-
 
 <script src="script.js"></script>
 
