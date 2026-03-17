@@ -6,9 +6,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LuminaPlay</title>
+<title>LuminaPlay | Streaming de Filmes e Séries</title>
 
-<meta name="description" content="LuminaPlay - streaming de filmes e séries com trailers e ranking de filmes.">
+<meta name="description" content="LuminaPlay - streaming de filmes, séries e animes com trailers, ranking e busca inteligente.">
 
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
@@ -20,6 +20,8 @@
 
 <body>
 
+<!-- HEADER -->
+
 <header>
 
 <div class="logo">
@@ -27,19 +29,21 @@
 </div>
 
 <nav aria-label="Menu principal">
+
 <a href="index.html">Início</a>
 <a href="filmes.html">Filmes</a>
 <a href="series.html">Séries</a>
 <a href="animes.html">Animes</a>
+
 </nav>
 
 <div class="header-actions">
 
-<button onclick="toggleTheme()" class="theme-btn">
+<button onclick="toggleTheme()" class="theme-btn" aria-label="Alterar tema">
 🌙
 </button>
 
-<button onclick="loadFavorites()" class="fav-btn">
+<button onclick="loadFavorites()" class="fav-btn" aria-label="Favoritos">
 ❤️
 </button>
 
@@ -50,13 +54,15 @@
 <input
 type="text"
 id="search"
-placeholder="Buscar filmes..."
-aria-label="Buscar filmes">
+placeholder="Buscar filmes, séries ou animes..."
+aria-label="Buscar conteúdo">
 
 </div>
 
 </header>
 
+
+<!-- BANNER -->
 
 <section class="banner">
 
@@ -65,16 +71,23 @@ aria-label="Buscar filmes">
 <div class="banner-text">
 
 <h1>Streaming ilimitado</h1>
-<p>Filmes e séries em um só lugar</p>
+<p>Filmes, séries e animes em um só lugar.</p>
 
-<button>Assistir agora</button>
+<button class="play-btn">
+▶ Assistir agora
+</button>
 
 </div>
 
 </section>
 
 
+<!-- CONTEÚDO -->
+
 <main>
+
+
+<!-- POPULARES -->
 
 <section class="movies-section">
 
@@ -82,16 +95,22 @@ aria-label="Buscar filmes">
 
 <div class="carousel">
 
-<button class="arrow left" aria-label="Anterior">‹</button>
+<button class="arrow left" aria-label="Anterior">
+‹
+</button>
 
 <div class="movies" id="popularMovies"></div>
 
-<button class="arrow right" aria-label="Próximo">›</button>
+<button class="arrow right" aria-label="Próximo">
+›
+</button>
 
 </div>
 
 </section>
 
+
+<!-- EM ALTA -->
 
 <section class="movies-section">
 
@@ -99,16 +118,22 @@ aria-label="Buscar filmes">
 
 <div class="carousel">
 
-<button class="arrow left" aria-label="Anterior">‹</button>
+<button class="arrow left" aria-label="Anterior">
+‹
+</button>
 
 <div class="movies" id="trendingMovies"></div>
 
-<button class="arrow right" aria-label="Próximo">›</button>
+<button class="arrow right" aria-label="Próximo">
+›
+</button>
 
 </div>
 
 </section>
 
+
+<!-- RESULTADO BUSCA -->
 
 <section class="movies-section">
 
@@ -117,6 +142,7 @@ aria-label="Buscar filmes">
 <div class="movies" id="searchResults"></div>
 
 </section>
+
 
 </main>
 
@@ -144,9 +170,11 @@ allowfullscreen>
 </div>
 
 
+<!-- FOOTER -->
+
 <footer>
 
-<p>© 2026 LuminaPlay</p>
+<p>© 2026 LuminaPlay • Todos os direitos reservados</p>
 
 </footer>
 
