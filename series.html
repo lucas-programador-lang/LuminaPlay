@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>LuminaPlay | Séries</title>
-  <meta name="description" content="Explore séries no LuminaPlay">
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -14,7 +13,8 @@
 
 <body>
 
-<header class="site-header scrolled">
+<!-- HEADER CORRIGIDO -->
+<header class="site-header">
   <div class="header-inner container">
 
     <div class="logo">
@@ -23,11 +23,12 @@
 
     <nav class="main-nav">
       <a href="index.html">Início</a>
-      <a href="index.html#filmes">Filmes</a>
+      <a href="filme.html">Filmes</a>
       <a href="series.html" class="active">Séries</a>
+      <a href="minha-lista.html">Minha Lista</a>
     </nav>
 
-    <button onclick="history.back()" class="btn btn-back">
+    <button onclick="history.back()" class="btn btn-info">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
 
@@ -45,6 +46,7 @@
 <!-- ROWS -->
 <section class="rows container">
 
+  <!-- POPULARES -->
   <section>
     <h2 class="row-title">🔥 Populares</h2>
     <div class="row">
@@ -54,6 +56,7 @@
     </div>
   </section>
 
+  <!-- EM ALTA -->
   <section>
     <h2 class="row-title">⭐ Em Alta</h2>
     <div class="row">
@@ -63,6 +66,7 @@
     </div>
   </section>
 
+  <!-- TOP -->
   <section>
     <h2 class="row-title">🏆 Mais bem avaliadas</h2>
     <div class="row">
@@ -103,11 +107,12 @@ const rows = {
 
 const hero = document.getElementById('hero');
 
-/* ===== Skeleton ===== */
+/* ===== SKELETON ===== */
 function showSkeleton(id){
   const row = document.getElementById(id);
-  row.innerHTML = "";
+  if(!row) return;
 
+  row.innerHTML = "";
   for(let i=0;i<8;i++){
     const s = document.createElement("div");
     s.className = "skeleton";
@@ -117,16 +122,20 @@ function showSkeleton(id){
 
 /* ===== API ===== */
 async function getSeries(endpoint){
-  const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
-  const data = await res.json();
+  try{
+    const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+    const data = await res.json();
 
-  return data.results.map(s => ({
-    id: s.id,
-    title: s.name,
-    poster: s.poster_path ? IMG + s.poster_path : "",
-    backdrop: s.backdrop_path ? IMG + s.backdrop_path : "",
-    overview: s.overview
-  }));
+    return data.results.map(s => ({
+      id: s.id,
+      title: s.name,
+      poster: s.poster_path ? IMG + s.poster_path : "",
+      backdrop: s.backdrop_path ? IMG + s.backdrop_path : "",
+      overview: s.overview
+    }));
+  }catch{
+    return [];
+  }
 }
 
 /* ===== INIT ===== */
@@ -140,34 +149,58 @@ async function init(){
   const emAlta = await getSeries("/trending/tv/week");
   const top = await getSeries("/tv/top_rated");
 
-  renderHero(populares[0]);
+  if(populares.length){
+    renderHero(populares[0]);
+  }
+
   renderRow("populares", populares);
   renderRow("emalta", emAlta);
   renderRow("top", top);
+
+  setupArrows();
+  setupPlayer();
 }
 
-/* ===== RENDER ===== */
+/* ===== HERO ===== */
 function renderHero(s){
   hero.style.backgroundImage = `url('${s.backdrop}')`;
   document.getElementById('heroTitle').textContent = s.title;
   document.getElementById('heroOverview').textContent = s.overview;
 }
 
+/* ===== ROW ===== */
 function renderRow(key, list){
   const container = rows[key];
+  if(!container) return;
+
   container.innerHTML = "";
 
   list.forEach(s => {
     const card = document.createElement('div');
     card.className = "card";
 
-    card.innerHTML = `
-      <img src="${s.poster}">
-      <div class="card-title">${s.title}</div>
-    `;
+    card.innerHTML = `<img src="${s.poster}">`;
 
     card.onclick = () => openPlayer();
+
     container.appendChild(card);
+  });
+}
+
+/* ===== SETAS FUNCIONANDO ===== */
+function setupArrows(){
+  document.querySelectorAll('.row').forEach(row => {
+    const left = row.querySelector('.left');
+    const right = row.querySelector('.right');
+    const container = row.querySelector('.row-cards');
+
+    left?.addEventListener('click', () => {
+      container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' });
+    });
+
+    right?.addEventListener('click', () => {
+      container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' });
+    });
   });
 }
 
@@ -178,10 +211,25 @@ function openPlayer(){
     "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
 }
 
-document.getElementById('playerClose').onclick = () => {
-  document.getElementById('playerOverlay').classList.remove('active');
-  document.getElementById('playerFrame').src = "";
-};
+function setupPlayer(){
+  const overlay = document.getElementById('playerOverlay');
+  const frame = document.getElementById('playerFrame');
+
+  document.getElementById('playerClose').onclick = close;
+
+  overlay.onclick = (e)=>{
+    if(e.target === overlay) close();
+  };
+
+  document.addEventListener('keydown', e=>{
+    if(e.key === "Escape") close();
+  });
+
+  function close(){
+    overlay.classList.remove('active');
+    frame.src = "";
+  }
+}
 
 init();
 </script>
