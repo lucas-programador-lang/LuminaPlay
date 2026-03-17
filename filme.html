@@ -17,7 +17,7 @@
 
 <style>
 
-/* ====== HERO DO FILME ====== */
+/* HERO */
 
 .movie-hero{
 position:relative;
@@ -81,8 +81,12 @@ background:#222;
 color:#fff;
 }
 
+/* TRAILER */
+
 .trailer-section{
 padding:40px 60px;
+display:flex;
+justify-content:center;
 }
 
 .trailer-frame{
@@ -91,6 +95,8 @@ max-width:900px;
 height:500px;
 border:none;
 }
+
+/* RESPONSIVO */
 
 @media(max-width:900px){
 
@@ -130,7 +136,7 @@ height:300px;
 </header>
 
 
-<!-- HERO DO FILME -->
+<!-- HERO -->
 
 <section id="movieHero" class="movie-hero">
 
@@ -144,9 +150,13 @@ height:300px;
 
 <div class="movie-actions">
 
-<button class="btn btn-play" id="playTrailer">▶ Assistir Trailer</button>
+<button class="btn btn-play" id="playTrailer">
+▶ Assistir Trailer
+</button>
 
-<button class="btn btn-back" onclick="history.back()">⬅ Voltar</button>
+<button class="btn btn-back" onclick="history.back()">
+⬅ Voltar
+</button>
 
 </div>
 
@@ -159,7 +169,11 @@ height:300px;
 
 <section class="trailer-section">
 
-<iframe id="trailerFrame" class="trailer-frame" allowfullscreen></iframe>
+<iframe
+id="trailerFrame"
+class="trailer-frame"
+allowfullscreen>
+</iframe>
 
 </section>
 
@@ -179,11 +193,10 @@ const movie = JSON.parse(localStorage.getItem("selectedMovie"))
 
 if(!movie){
 
-document.body.innerHTML = "<h2 style='padding:40px'>Filme não encontrado</h2>"
+document.body.innerHTML =
+"<h2 style='padding:40px'>Filme não encontrado.</h2>"
 
 }else{
-
-// elementos
 
 const hero = document.getElementById("movieHero")
 const title = document.getElementById("movieTitle")
@@ -192,18 +205,23 @@ const overview = document.getElementById("movieOverview")
 const trailerFrame = document.getElementById("trailerFrame")
 const playButton = document.getElementById("playTrailer")
 
-// preencher dados
-
 title.textContent = movie.title
 
-meta.innerHTML = `⭐ ${movie.vote_average.toFixed(1)} • TMDB`
+meta.innerHTML =
+`⭐ ${movie.vote_average.toFixed(1)} • TMDB`
 
-overview.textContent = movie.overview || "Descrição não disponível."
+overview.textContent =
+movie.overview || "Descrição não disponível."
+
+if(movie.backdrop_path){
 
 hero.style.backgroundImage =
 `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`
 
-// carregar trailer
+}
+
+
+// CARREGAR TRAILER
 
 async function loadTrailer(){
 
@@ -215,12 +233,17 @@ const res = await fetch(
 
 const data = await res.json()
 
-const video = data.results.find(v => v.type === "Trailer")
+const video =
+data.results.find(v => v.type === "Trailer")
 
 if(video){
 
 trailerFrame.src =
 `https://www.youtube.com/embed/${video.key}?autoplay=1`
+
+}else{
+
+alert("Trailer não disponível.")
 
 }
 
