@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -16,6 +17,11 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+<!-- ÍCONES PROFISSIONAIS -->
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
 
 /* HERO CARROSSEL */
@@ -29,13 +35,10 @@ overflow:hidden;
 .hero-slide{
 position:absolute;
 inset:0;
-
 background-size:cover;
 background-position:center;
-
 display:flex;
 align-items:center;
-
 opacity:0;
 transition:opacity .8s ease;
 }
@@ -48,7 +51,6 @@ z-index:2;
 .hero-overlay{
 position:absolute;
 inset:0;
-
 background:linear-gradient(
 to right,
 rgba(0,0,0,.95),
@@ -58,13 +60,10 @@ transparent
 }
 
 .hero-content{
-
 position:relative;
 z-index:3;
-
 padding-left:60px;
 max-width:600px;
-
 }
 
 .hero-content h1{
@@ -78,45 +77,37 @@ margin-bottom:20px;
 }
 
 .hero-btn{
-
 background:#ff004c;
 border:none;
-
 padding:12px 22px;
 border-radius:6px;
-
 font-size:16px;
 cursor:pointer;
-
 }
 
 .hero-btn:hover{
 background:#ff2d66;
 }
 
-.hero-nav{
+.hero-btn i{
+margin-right:8px;
+}
 
+.hero-nav{
 position:absolute;
 bottom:40px;
 left:60px;
-
 display:flex;
 gap:8px;
-
 z-index:5;
 }
 
 .hero-dot{
-
 width:12px;
 height:12px;
-
 border-radius:50%;
-
 background:#888;
-
 cursor:pointer;
-
 }
 
 .hero-dot.active{
@@ -129,8 +120,6 @@ background:#ff004c;
 
 <body>
 
-<!-- HEADER -->
-
 <header>
 
 <div class="logo">
@@ -139,11 +128,7 @@ background:#ff004c;
 
 <nav>
 
-<a href="index.html">Início</a>
-<a href="filmes.html">Filmes</a>
-<a href="series.html">Séries</a>
-<a href="animes.html">Animes</a>
-<a href="minha-lista.html">Minha Lista</a>
+<a href="index.html">Início</a> <a href="filmes.html">Filmes</a> <a href="series.html">Séries</a> <a href="animes.html">Animes</a> <a href="minha-lista.html">Minha Lista</a>
 
 </nav>
 
@@ -157,23 +142,21 @@ placeholder="Buscar filmes, séries ou animes...">
 </div>
 
 <button class="theme-btn" onclick="toggleTheme()">
-🌙
+<i class="fa-solid fa-moon"></i>
 </button>
 
 <a href="minha-lista.html" class="fav-btn">
-❤️
+<i class="fa-solid fa-heart"></i>
 </a>
 
 </div>
 
 </header>
 
+<section class="hero-carousel">
 
-<!-- HERO CARROSSEL -->
-
-<section class="hero-carousel" id="heroCarousel">
-
-<div class="hero-slide active" style="background-image:url('https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg')">
+<div class="hero-slide active"
+style="background-image:url('https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg')">
 
 <div class="hero-overlay"></div>
 
@@ -183,14 +166,17 @@ placeholder="Buscar filmes, séries ou animes...">
 
 <p>Um drama épico sobre o cientista que criou a bomba atômica.</p>
 
-<button class="hero-btn">▶ Assistir</button>
+<button class="hero-btn">
+<i class="fa-solid fa-play"></i>
+Assistir
+</button>
 
 </div>
 
 </div>
 
-
-<div class="hero-slide" style="background-image:url('https://image.tmdb.org/t/p/original/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg')">
+<div class="hero-slide"
+style="background-image:url('https://image.tmdb.org/t/p/original/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg')">
 
 <div class="hero-overlay"></div>
 
@@ -200,14 +186,17 @@ placeholder="Buscar filmes, séries ou animes...">
 
 <p>Uma jornada épica em um planeta desértico cheio de poder e mistério.</p>
 
-<button class="hero-btn">▶ Assistir</button>
+<button class="hero-btn">
+<i class="fa-solid fa-play"></i>
+Assistir
+</button>
 
 </div>
 
 </div>
 
-
-<div class="hero-slide" style="background-image:url('https://image.tmdb.org/t/p/original/6MKr3KgOLmzOP6MSuZERO41Lpkt.jpg')">
+<div class="hero-slide"
+style="background-image:url('https://image.tmdb.org/t/p/original/6MKr3KgOLmzOP6MSuZERO41Lpkt.jpg')">
 
 <div class="hero-overlay"></div>
 
@@ -217,26 +206,22 @@ placeholder="Buscar filmes, séries ou animes...">
 
 <p>Exploradores viajam através de um buraco de minhoca no espaço.</p>
 
-<button class="hero-btn">▶ Assistir</button>
+<button class="hero-btn">
+<i class="fa-solid fa-play"></i>
+Assistir
+</button>
 
 </div>
 
 </div>
-
 
 <div class="hero-nav">
-
 <div class="hero-dot active"></div>
 <div class="hero-dot"></div>
 <div class="hero-dot"></div>
-
 </div>
 
 </section>
-
-
-
-<!-- CONTEÚDO -->
 
 <main>
 
@@ -246,17 +231,19 @@ placeholder="Buscar filmes, séries ou animes...">
 
 <div class="carousel">
 
-<button class="arrow left">‹</button>
+<button class="arrow left">
+<i class="fa-solid fa-chevron-left"></i>
+</button>
 
 <div class="movies" id="popularMovies"></div>
 
-<button class="arrow right">›</button>
+<button class="arrow right">
+<i class="fa-solid fa-chevron-right"></i>
+</button>
 
 </div>
 
 </section>
-
-
 
 <section class="movies-section">
 
@@ -264,17 +251,19 @@ placeholder="Buscar filmes, séries ou animes...">
 
 <div class="carousel">
 
-<button class="arrow left">‹</button>
+<button class="arrow left">
+<i class="fa-solid fa-chevron-left"></i>
+</button>
 
 <div class="movies" id="trendingMovies"></div>
 
-<button class="arrow right">›</button>
+<button class="arrow right">
+<i class="fa-solid fa-chevron-right"></i>
+</button>
 
 </div>
 
 </section>
-
-
 
 <section class="movies-section">
 
@@ -286,20 +275,13 @@ placeholder="Buscar filmes, séries ou animes...">
 
 </main>
 
-
-
 <footer>
-
 <p>© 2026 LuminaPlay • Todos os direitos reservados</p>
-
 </footer>
-
 
 <script src="script.js"></script>
 
 <script>
-
-/* HERO SLIDER */
 
 const slides = document.querySelectorAll(".hero-slide")
 const dots = document.querySelectorAll(".hero-dot")
