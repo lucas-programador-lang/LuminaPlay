@@ -1,124 +1,29 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>LuminaPlay | Streaming</title>
 
-<meta name="description" content="LuminaPlay - filmes, séries e animes em um só lugar.">
-
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-
+<link rel="icon" href="favicon.svg">
 <link rel="stylesheet" href="style.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<!-- ÍCONES PROFISSIONAIS -->
-
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<style>
-
-/* HERO CARROSSEL */
-
-.hero-carousel{
-position:relative;
-height:85vh;
-overflow:hidden;
-}
-
-.hero-slide{
-position:absolute;
-inset:0;
-background-size:cover;
-background-position:center;
-display:flex;
-align-items:center;
-opacity:0;
-transition:opacity .8s ease;
-}
-
-.hero-slide.active{
-opacity:1;
-z-index:2;
-}
-
-.hero-overlay{
-position:absolute;
-inset:0;
-background:linear-gradient(
-to right,
-rgba(0,0,0,.95),
-rgba(0,0,0,.4),
-transparent
-);
-}
-
-.hero-content{
-position:relative;
-z-index:3;
-padding-left:60px;
-max-width:600px;
-}
-
-.hero-content h1{
-font-size:52px;
-margin-bottom:10px;
-}
-
-.hero-content p{
-opacity:.8;
-margin-bottom:20px;
-}
-
-.hero-btn{
-background:#ff004c;
-border:none;
-padding:12px 22px;
-border-radius:6px;
-font-size:16px;
-cursor:pointer;
-}
-
-.hero-btn:hover{
-background:#ff2d66;
-}
-
-.hero-btn i{
-margin-right:8px;
-}
-
-.hero-nav{
-position:absolute;
-bottom:40px;
-left:60px;
-display:flex;
-gap:8px;
-z-index:5;
-}
-
-.hero-dot{
-width:12px;
-height:12px;
-border-radius:50%;
-background:#888;
-cursor:pointer;
-}
-
-.hero-dot.active{
-background:#ff004c;
-}
-
-</style>
-
 </head>
 
 <body>
+
+<!-- LOADING NETFLIX -->
+<div id="loader">
+  <h1 class="loader-logo">
+    <span class="logoL">L</span>umina<span class="logoPlay">Play</span>
+  </h1>
+</div>
 
 <header>
 
@@ -127,18 +32,17 @@ background:#ff004c;
 </div>
 
 <nav>
-
-<a href="index.html">Início</a> <a href="filmes.html">Filmes</a> <a href="series.html">Séries</a> <a href="animes.html">Animes</a> <a href="minha-lista.html">Minha Lista</a>
-
+<a href="index.html">Início</a>
+<a href="filmes.html">Filmes</a>
+<a href="series.html">Séries</a>
+<a href="animes.html">Animes</a>
+<a href="minha-lista.html">Minha Lista</a>
 </nav>
 
 <div class="header-actions">
 
 <div class="search-box">
-<input
-type="text"
-id="search"
-placeholder="Buscar filmes, séries ou animes...">
+<input type="text" id="search" placeholder="Buscar...">
 </div>
 
 <button class="theme-btn" onclick="toggleTheme()">
@@ -153,72 +57,26 @@ placeholder="Buscar filmes, séries ou animes...">
 
 </header>
 
+<!-- HERO -->
+
 <section class="hero-carousel">
 
-<div class="hero-slide active"
-style="background-image:url('https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg')">
-
+<div class="hero-slide active" style="background-image:url('https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg')">
 <div class="hero-overlay"></div>
-
 <div class="hero-content">
-
 <h1>Oppenheimer</h1>
-
-<p>Um drama épico sobre o cientista que criou a bomba atômica.</p>
-
-<button class="hero-btn">
-<i class="fa-solid fa-play"></i>
-Assistir
-</button>
-
+<p>Drama épico sobre a bomba atômica.</p>
+<button class="hero-btn"><i class="fa-solid fa-play"></i> Assistir</button>
+</div>
 </div>
 
-</div>
-
-<div class="hero-slide"
-style="background-image:url('https://image.tmdb.org/t/p/original/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg')">
-
+<div class="hero-slide" style="background-image:url('https://image.tmdb.org/t/p/original/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg')">
 <div class="hero-overlay"></div>
-
 <div class="hero-content">
-
 <h1>Duna</h1>
-
-<p>Uma jornada épica em um planeta desértico cheio de poder e mistério.</p>
-
-<button class="hero-btn">
-<i class="fa-solid fa-play"></i>
-Assistir
-</button>
-
+<p>Planeta desértico cheio de poder.</p>
+<button class="hero-btn"><i class="fa-solid fa-play"></i> Assistir</button>
 </div>
-
-</div>
-
-<div class="hero-slide"
-style="background-image:url('https://image.tmdb.org/t/p/original/6MKr3KgOLmzOP6MSuZERO41Lpkt.jpg')">
-
-<div class="hero-overlay"></div>
-
-<div class="hero-content">
-
-<h1>Interestelar</h1>
-
-<p>Exploradores viajam através de um buraco de minhoca no espaço.</p>
-
-<button class="hero-btn">
-<i class="fa-solid fa-play"></i>
-Assistir
-</button>
-
-</div>
-
-</div>
-
-<div class="hero-nav">
-<div class="hero-dot active"></div>
-<div class="hero-dot"></div>
-<div class="hero-dot"></div>
 </div>
 
 </section>
@@ -226,85 +84,46 @@ Assistir
 <main>
 
 <section class="movies-section">
-
-<h2>🔥 Top 10 Filmes Populares</h2>
+<h2>🔥 Populares</h2>
 
 <div class="carousel">
-
-<button class="arrow left">
-<i class="fa-solid fa-chevron-left"></i>
-</button>
-
+<button class="arrow left"><i class="fa-solid fa-chevron-left"></i></button>
 <div class="movies" id="popularMovies"></div>
-
-<button class="arrow right">
-<i class="fa-solid fa-chevron-right"></i>
-</button>
-
+<button class="arrow right"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
 
 </section>
 
 <section class="movies-section">
-
 <h2>⭐ Em Alta</h2>
 
 <div class="carousel">
-
-<button class="arrow left">
-<i class="fa-solid fa-chevron-left"></i>
-</button>
-
+<button class="arrow left"><i class="fa-solid fa-chevron-left"></i></button>
 <div class="movies" id="trendingMovies"></div>
-
-<button class="arrow right">
-<i class="fa-solid fa-chevron-right"></i>
-</button>
-
+<button class="arrow right"><i class="fa-solid fa-chevron-right"></i></button>
 </div>
-
-</section>
-
-<section class="movies-section" id="searchSection" style="display:none;">
-
-<h2>🔎 Resultados da busca</h2>
-
-<div class="movies search-grid" id="searchResults"></div>
 
 </section>
 
 </main>
 
 <footer>
-<p>© 2026 LuminaPlay • Todos os direitos reservados</p>
+<p>© 2026 LuminaPlay</p>
 </footer>
 
 <script src="script.js"></script>
 
 <script>
 
+// HERO AUTO
 const slides = document.querySelectorAll(".hero-slide")
-const dots = document.querySelectorAll(".hero-dot")
+let index = 0
 
-let heroIndex = 0
-
-function changeHero(){
-
-slides.forEach(s => s.classList.remove("active"))
-dots.forEach(d => d.classList.remove("active"))
-
-heroIndex++
-
-if(heroIndex >= slides.length){
-heroIndex = 0
-}
-
-slides[heroIndex].classList.add("active")
-dots[heroIndex].classList.add("active")
-
-}
-
-setInterval(changeHero,5000)
+setInterval(()=>{
+slides.forEach(s=>s.classList.remove("active"))
+index = (index + 1) % slides.length
+slides[index].classList.add("active")
+},5000)
 
 </script>
 
