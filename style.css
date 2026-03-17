@@ -102,8 +102,8 @@ body{
   position:absolute;
   inset:0;
   background:
-  linear-gradient(180deg,transparent,rgba(0,0,0,0.9)),
-  linear-gradient(90deg,rgba(0,0,0,0.8),transparent);
+    linear-gradient(180deg,transparent,rgba(0,0,0,0.9)),
+    linear-gradient(90deg,rgba(0,0,0,0.8),transparent);
 }
 
 .hero-content{
@@ -190,6 +190,8 @@ body{
   z-index:20;
   opacity:0;
   transition:.3s;
+  color:#fff; /* cor das setas */
+  font-size:22px;
 }
 
 .row:hover .row-arrow{
