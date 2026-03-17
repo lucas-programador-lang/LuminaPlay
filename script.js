@@ -11,6 +11,8 @@ const TREND_URL =
 const SEARCH_URL =
 `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=`
 
+// elementos
+
 const popularContainer = document.getElementById("popularMovies")
 const trendingContainer = document.getElementById("trendingMovies")
 const searchContainer = document.getElementById("searchResults")
@@ -43,6 +45,8 @@ console.error("Erro ao carregar filmes", error)
 // mostrar filmes
 
 function showMovies(movies, container){
+
+if(!container) return
 
 container.innerHTML = ""
 
@@ -131,10 +135,14 @@ console.error("Erro trailer", error)
 
 // fechar modal
 
+if(closeModal){
+
 closeModal.onclick = () => {
 
 modal.style.display = "none"
 trailer.src = ""
+
+}
 
 }
 
@@ -151,6 +159,8 @@ trailer.src = ""
 
 // busca
 
+if(searchInput){
+
 searchInput.addEventListener("keyup", e => {
 
 const searchTerm = e.target.value.trim()
@@ -162,6 +172,8 @@ getMovies(SEARCH_URL + searchTerm, searchContainer)
 }
 
 })
+
+}
 
 // favoritos
 
@@ -185,7 +197,7 @@ alert("Já está nos favoritos")
 
 }
 
-// página favoritos
+// carregar favoritos
 
 function loadFavorites(){
 
@@ -195,7 +207,7 @@ showMovies(favorites, searchContainer)
 
 }
 
-// slider automático banner
+// banner automático
 
 const banners = [
 "https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
@@ -213,14 +225,43 @@ if(bannerIndex >= banners.length){
 bannerIndex = 0
 }
 
-document.querySelector(".banner").style.backgroundImage =
-`url(${banners[bannerIndex]})`
+const banner = document.querySelector(".banner")
+
+if(banner){
+banner.style.backgroundImage = `url(${banners[bannerIndex]})`
+}
 
 }
 
 setInterval(changeBanner,5000)
 
+// carrossel
+
+document.querySelectorAll(".carousel").forEach(carousel => {
+
+const movies = carousel.querySelector(".movies")
+const left = carousel.querySelector(".arrow.left")
+const right = carousel.querySelector(".arrow.right")
+
+if(left){
+left.addEventListener("click", () => {
+movies.scrollLeft -= 400
+})
+}
+
+if(right){
+right.addEventListener("click", () => {
+movies.scrollLeft += 400
+})
+}
+
+})
+
 // carregar inicial
+
+document.addEventListener("DOMContentLoaded", () => {
 
 getMovies(POPULAR_URL, popularContainer)
 getMovies(TREND_URL, trendingContainer)
+
+})
