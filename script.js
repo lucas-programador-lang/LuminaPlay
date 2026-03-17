@@ -23,6 +23,8 @@ const modal = document.getElementById("movieModal")
 const trailer = document.getElementById("movieTrailer")
 const closeModal = document.querySelector(".close")
 
+let previewTimeout = null
+
 // carregar filmes
 
 async function getMovies(url, container){
@@ -77,17 +79,34 @@ movieEl.innerHTML = `
 // abrir trailer
 
 movieEl.querySelector("img").addEventListener("click", () => {
-
 openTrailer(id)
+})
+
+// preview ao passar mouse
+
+movieEl.addEventListener("mouseenter", () => {
+
+previewTimeout = setTimeout(() => {
+openTrailer(id)
+}, 2000)
+
+})
+
+movieEl.addEventListener("mouseleave", () => {
+
+clearTimeout(previewTimeout)
+
+if(modal){
+modal.style.display = "none"
+trailer.src = ""
+}
 
 })
 
 // favoritos
 
 movieEl.querySelector(".fav").addEventListener("click", () => {
-
 addFavorite(movie)
-
 })
 
 container.appendChild(movieEl)
@@ -113,15 +132,13 @@ const video = data.results.find(v => v.type === "Trailer")
 if(video){
 
 const youtubeURL =
-`https://www.youtube.com/embed/${video.key}`
+`https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1`
 
 trailer.src = youtubeURL
 
+if(modal){
 modal.style.display = "flex"
-
-}else{
-
-alert("Trailer não disponível")
+}
 
 }
 
@@ -256,6 +273,23 @@ movies.scrollLeft += 400
 }
 
 })
+
+// modo escuro / claro
+
+function toggleTheme(){
+
+document.body.classList.toggle("light")
+
+localStorage.setItem(
+"theme",
+document.body.classList.contains("light") ? "light" : "dark"
+)
+
+}
+
+if(localStorage.getItem("theme") === "light"){
+document.body.classList.add("light")
+}
 
 // carregar inicial
 
