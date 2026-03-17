@@ -1,0 +1,264 @@
+/* style.css — LuminaPlay
+   Tema escuro com destaque vermelho
+   Responsivo, carrosséis, animações suaves
+*/
+
+/* =========================
+   Variáveis e Reset
+   ========================= */
+:root{
+  --bg: #0f0f0f;
+  --card-bg: #111111;
+  --muted: #bdbdbd;
+  --accent: #ff004c;
+  --glass: rgba(255,255,255,0.03);
+  --container-gap: 20px;
+  --radius: 10px;
+  --transition: 300ms cubic-bezier(.2,.9,.2,1);
+  --max-width: 1200px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#fff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.4;
+}
+
+/* Utility container */
+.container{
+  width:min(92%, var(--max-width));
+  margin:0 auto;
+}
+
+/* =========================
+   Header
+   ========================= */
+.site-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1200;
+  background:linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 100%);
+  backdrop-filter: blur(6px);
+  transition: background var(--transition);
+}
+
+.site-header.small{
+  background: rgba(0,0,0,0.85);
+}
+
+.header-inner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  height:68px;
+  padding:0 18px;
+  justify-content:space-between;
+  width:100%;
+}
+
+.logo{
+  font-weight:700;
+  font-size:20px;
+  letter-spacing:0.2px;
+}
+.logoL{ color:var(--accent); margin-right:4px }
+.logoPlay{ color:#fff; opacity:0.95; margin-left:4px; font-weight:600 }
+
+/* Nav */
+.main-nav{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+.main-nav .nav-link{ color:#ddd; text-decoration:none; opacity:0.9; padding:6px 8px; border-radius:6px; font-weight:500 }
+.main-nav .nav-link:hover, .main-nav .nav-link.active{ color:#fff; background:var(--glass) }
+
+/* Header actions */
+.header-actions{ display:flex; gap:12px; align-items:center }
+.search-box input{
+  background:#121212; border:1px solid rgba(255,255,255,0.03); padding:8px 12px; color:#eee; border-radius:20px; width:200px;
+}
+.theme-btn{ background:transparent; border:none; color:#ddd; font-size:16px; padding:8px; border-radius:8px; cursor:pointer }
+
+/* =========================
+   Hero
+   ========================= */
+.hero{
+  position:relative;
+  min-height:60vh;
+  display:flex;
+  align-items:flex-end;
+  margin-top:68px; /* header height */
+  background-size:cover;
+  background-position:center;
+  transition: background 600ms ease;
+  overflow:hidden;
+}
+
+.hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.85) 60%);
+  pointer-events:none;
+}
+
+.hero-overlay{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,0.15), transparent); }
+
+.hero-content{
+  position:relative;
+  padding:60px 0;
+  z-index:2;
+}
+.hero-title{ font-size:clamp(28px, 4vw, 48px); margin:0 0 10px 0; font-weight:700 }
+.hero-overview{ max-width:60ch; color:var(--muted); margin-bottom:18px }
+
+/* Hero buttons */
+.hero-actions .btn{ margin-right:10px }
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  border:none; cursor:pointer; padding:12px 18px; border-radius:8px; font-weight:600;
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+}
+.btn-watch{ background:var(--accent); color:#fff; box-shadow:0 8px 22px rgba(255,0,76,0.12) }
+.btn-info{ background:rgba(255,255,255,0.06); color:#fff }
+
+/* =========================
+   Rows / Carrossel
+   ========================= */
+.rows{ padding:40px 0 80px 0; }
+
+.row-title{ margin:0 0 12px 8px; font-size:18px; font-weight:600 }
+
+.row{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.row-cards{
+  display:flex;
+  overflow-x:auto;
+  gap:14px;
+  padding:10px 6px;
+  scroll-behavior:smooth;
+  scrollbar-width:none; /* Firefox */
+  -ms-overflow-style:none;  /* IE 10+ */
+  width:100%;
+}
+.row-cards::-webkit-scrollbar{ display:none }
+
+/* Card */
+.card{
+  min-width:160px;
+  width:160px;
+  height:240px;
+  background:var(--card-bg);
+  border-radius:10px;
+  overflow:visible;
+  position:relative;
+  cursor:pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+  flex: 0 0 auto;
+}
+.card img{ width:100%; height:100%; object-fit:cover; border-radius:10px; display:block }
+
+/* Hover expansion */
+.card:hover{
+  transform:translateY(-8px) scale(1.06);
+  box-shadow: 0 30px 50px rgba(0,0,0,0.6);
+  z-index:40;
+}
+
+/* Play overlay on hover */
+.card .card-play{
+  position:absolute; inset:auto 8px 8px 8px; display:flex; justify-content:space-between; align-items:center; opacity:0; transform:translateY(6px); transition:all 200ms ease;
+}
+.card:hover .card-play{ opacity:1; transform:translateY(0) }
+
+.card-title{ position:absolute; left:10px; bottom:10px; right:10px; font-size:13px; font-weight:600; color:#fff; text-shadow:0 4px 12px rgba(0,0,0,0.6) }
+
+/* Small card for similar */
+.small-card{ width:130px; height:200px; border-radius:8px; overflow:hidden; background:#111; margin-right:12px; cursor:pointer }
+.small-card img{ width:100%; height:100%; object-fit:cover }
+.small-card-info{ padding:8px; display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px }
+
+/* Row arrows */
+.row-arrow{
+  background:linear-gradient(90deg, rgba(0,0,0,0.4), transparent);
+  border:none; color:#fff; width:44px; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  position:relative; z-index:30; border-radius:8px;
+}
+.row-arrow.left{ margin-right:6px }
+.row-arrow.right{ margin-left:6px }
+
+/* =========================
+   Player overlay
+   ========================= */
+.player-overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:2000; padding:30px }
+.player-overlay.active{ display:flex }
+.player-inner{ width:min(1100px, 95%); height:min(640px, 85%); position:relative; background:#000; border-radius:10px; overflow:hidden; }
+.player-iframe{ width:100%; height:100% }
+.player-close{ position:absolute; top:12px; right:12px; z-index:10; background:rgba(255,255,255,0.06); border:none; padding:8px 10px; color:#fff; border-radius:6px; cursor:pointer }
+
+/* =========================
+   Film page (banner)
+   ========================= */
+.film-hero{
+  min-height:60vh;
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:flex-end;
+  margin-top:68px;
+  position:relative;
+}
+.film-hero-overlay{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.9)); }
+.film-hero-inner{ padding:80px 0; display:flex; align-items:flex-end; }
+.film-meta{ max-width:680px }
+.film-overview{ color:var(--muted); margin-top:12px }
+
+/* Similar section */
+.similar-section{ padding:40px 0 }
+.similar-row{ display:flex; gap:14px; overflow-x:auto; padding:10px 6px }
+
+/* Footer */
+.site-footer{ border-top:1px solid rgba(255,255,255,0.03); padding:24px 0; margin-top:40px; background:transparent }
+.footer-inner{ display:flex; justify-content:space-between; align-items:center; gap:12px }
+.footer-links a{ color:var(--muted); text-decoration:none; margin-left:12px }
+
+/* =========================
+   Responsive
+   ========================= */
+@media (max-width:900px){
+  .header-inner{ height:60px }
+  .search-box input{ width:120px }
+  .hero-content{ padding:40px 0 }
+  .hero-overview{ max-width:100% }
+  .card{ min-width:130px; width:130px; height:200px }
+  .site-header.small{ background:rgba(0,0,0,0.9) }
+}
+
+@media (max-width:600px){
+  .main-nav{ display:none }
+  .hero{ min-height:48vh; background-position:center }
+  .hero-title{ font-size:20px }
+  .header-inner{ padding:0 12px; height:56px }
+  .search-box input{ display:none }
+  .row-cards{ gap:10px; padding:8px 0 }
+  .card{ min-width:120px; width:120px; height:180px }
+  .film-hero-inner{ padding:50px 0; }
+}
+
+/* Small visual helpers */
+.subtle{ color:var(--muted); font-weight:500 }
+.btn-back{ background:#222; color:#fff; border:none; padding:8px 10px; border-radius:8px; cursor:pointer }
