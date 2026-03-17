@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LuminaPlay | Filme</title>
+
+<meta name="description" content="Detalhes do filme no LuminaPlay">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ====== HERO DO FILME ====== */
+
+.movie-hero{
+position:relative;
+min-height:70vh;
+display:flex;
+align-items:flex-end;
+padding:60px;
+background-size:cover;
+background-position:center;
+}
+
+.movie-hero::before{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.4));
+}
+
+.movie-hero-content{
+position:relative;
+max-width:900px;
+z-index:2;
+}
+
+.movie-title{
+font-size:44px;
+margin-bottom:10px;
+}
+
+.movie-meta{
+opacity:0.85;
+margin-bottom:16px;
+}
+
+.movie-overview{
+line-height:1.6;
+max-width:700px;
+margin-bottom:20px;
+}
+
+.movie-actions{
+display:flex;
+gap:12px;
+}
+
+.btn{
+border:none;
+padding:10px 16px;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+}
+
+.btn-play{
+background:#ff004c;
+color:#fff;
+}
+
+.btn-back{
+background:#222;
+color:#fff;
+}
+
+.trailer-section{
+padding:40px 60px;
+}
+
+.trailer-frame{
+width:100%;
+max-width:900px;
+height:500px;
+border:none;
+}
+
+@media(max-width:900px){
+
+.movie-hero{
+padding:30px 20px;
+}
+
+.movie-title{
+font-size:30px;
+}
+
+.trailer-frame{
+height:300px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+<span class="logoL">L</span>umina<span class="logoPlay">Play</span>
+</div>
+
+<nav>
+<a href="index.html">Início</a>
+<a href="filmes.html">Filmes</a>
+<a href="series.html">Séries</a>
+<a href="animes.html">Animes</a>
+</nav>
+
+</header>
+
+
+<!-- HERO DO FILME -->
+
+<section id="movieHero" class="movie-hero">
+
+<div class="movie-hero-content">
+
+<h1 id="movieTitle" class="movie-title"></h1>
+
+<div id="movieMeta" class="movie-meta"></div>
+
+<p id="movieOverview" class="movie-overview"></p>
+
+<div class="movie-actions">
+
+<button class="btn btn-play" id="playTrailer">▶ Assistir Trailer</button>
+
+<button class="btn btn-back" onclick="history.back()">⬅ Voltar</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- TRAILER -->
+
+<section class="trailer-section">
+
+<iframe id="trailerFrame" class="trailer-frame" allowfullscreen></iframe>
+
+</section>
+
+
+<footer>
+
+<p>© 2026 LuminaPlay • Todos os direitos reservados</p>
+
+</footer>
+
+
+<script>
+
+const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd"
+
+const movie = JSON.parse(localStorage.getItem("selectedMovie"))
+
+if(!movie){
+
+document.body.innerHTML = "<h2 style='padding:40px'>Filme não encontrado</h2>"
+
+}else{
+
+// elementos
+
+const hero = document.getElementById("movieHero")
+const title = document.getElementById("movieTitle")
+const meta = document.getElementById("movieMeta")
+const overview = document.getElementById("movieOverview")
+const trailerFrame = document.getElementById("trailerFrame")
+const playButton = document.getElementById("playTrailer")
+
+// preencher dados
+
+title.textContent = movie.title
+
+meta.innerHTML = `⭐ ${movie.vote_average.toFixed(1)} • TMDB`
+
+overview.textContent = movie.overview || "Descrição não disponível."
+
+hero.style.backgroundImage =
+`url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`
+
+// carregar trailer
+
+async function loadTrailer(){
+
+try{
+
+const res = await fetch(
+`https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${API_KEY}`
+)
+
+const data = await res.json()
+
+const video = data.results.find(v => v.type === "Trailer")
+
+if(video){
+
+trailerFrame.src =
+`https://www.youtube.com/embed/${video.key}?autoplay=1`
+
+}
+
+}catch(err){
+
+console.error("Erro trailer", err)
+
+}
+
+}
+
+playButton.addEventListener("click", loadTrailer)
+
+}
+
+</script>
+
+</body>
+</html>
