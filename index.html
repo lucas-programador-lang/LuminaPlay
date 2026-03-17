@@ -37,14 +37,12 @@
       </a>
     </nav>
 
+    <!-- REMOVIDO: botão de modo escuro -->
+
     <div class="header-actions">
       <div class="search-box">
         <input id="searchInput" type="text" placeholder="Buscar..." aria-label="Buscar filmes">
       </div>
-
-      <button id="themeBtn" class="theme-btn" aria-label="Alternar modo escuro">
-        <i class="fa-solid fa-moon"></i>
-      </button>
     </div>
 
   </div>
@@ -75,9 +73,9 @@
   <section>
     <h2 class="row-title">▶ Continuar assistindo</h2>
     <div class="row">
-      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
       <div id="row-continuar" class="row-cards"></div>
-      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
@@ -85,9 +83,9 @@
   <section>
     <h2 class="row-title">🔥 Populares</h2>
     <div class="row">
-      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
       <div id="row-populares" class="row-cards"></div>
-      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
@@ -95,9 +93,9 @@
   <section>
     <h2 class="row-title">⭐ Em Alta</h2>
     <div class="row">
-      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
       <div id="row-emalta" class="row-cards"></div>
-      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
@@ -105,9 +103,9 @@
   <section>
     <h2 class="row-title">🎬 Lançamentos</h2>
     <div class="row">
-      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
       <div id="row-lancamentos" class="row-cards"></div>
-      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
@@ -115,19 +113,19 @@
   <section>
     <h2 class="row-title">💡 Recomendados</h2>
     <div class="row">
-      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
       <div id="row-recomendados" class="row-cards"></div>
-      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
 </main>
 
 <!-- PLAYER -->
-<div id="playerOverlay" class="player-overlay" aria-hidden="true">
+<div id="playerOverlay" class="player-overlay">
   <div class="player-inner">
 
-    <button id="playerClose" class="player-close" aria-label="Fechar player">
+    <button id="playerClose" class="player-close">
       <i class="fa-solid fa-xmark"></i>
     </button>
 
@@ -150,7 +148,7 @@
 <!-- SCRIPT -->
 <script src="script.js"></script>
 
-<!-- FIX HEADER SCROLL -->
+<!-- HEADER SCROLL -->
 <script>
 window.addEventListener("scroll", () => {
   const header = document.getElementById("siteHeader");
