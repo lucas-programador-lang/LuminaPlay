@@ -13,15 +13,15 @@
 
 <body>
 
-<!-- HEADER PADRÃO (SEM SETA) -->
-<header class="site-header">
+<!-- HEADER (PADRÃO IGUAL TODAS PÁGINAS) -->
+<header class="site-header" id="siteHeader">
   <div class="header-inner container">
 
     <div class="logo">
-      <span class="logoL">L</span>umina<span class="logoPlay">Play</span>
+      <span class="logoL">Lumina</span><span class="logoPlay">Play</span>
     </div>
 
-    <nav class="main-nav" aria-label="Menu principal">
+    <nav class="main-nav">
       <a class="nav-link" href="index.html">Início</a>
       <a class="nav-link" href="filme.html">Filmes</a>
       <a class="nav-link active" href="series.html">Séries</a>
@@ -29,6 +29,10 @@
         <i class="fa-solid fa-bookmark"></i> Minha Lista
       </a>
     </nav>
+
+    <div class="search-box">
+      <input type="text" placeholder="Buscar...">
+    </div>
 
   </div>
 </header>
@@ -89,6 +93,7 @@
   </div>
 </footer>
 
+<!-- SCRIPT -->
 <script>
 const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
 const BASE = "https://api.themoviedb.org/3";
@@ -102,7 +107,6 @@ const rows = {
 
 const hero = document.getElementById('hero');
 
-/* ===== SKELETON ===== */
 function showSkeleton(id){
   const row = document.getElementById(id);
   if(!row) return;
@@ -115,7 +119,6 @@ function showSkeleton(id){
   }
 }
 
-/* ===== API ===== */
 async function getSeries(endpoint){
   try{
     const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
@@ -133,7 +136,6 @@ async function getSeries(endpoint){
   }
 }
 
-/* ===== INIT ===== */
 async function init(){
 
   showSkeleton("row-populares");
@@ -156,7 +158,6 @@ async function init(){
   setupPlayer();
 }
 
-/* ===== HERO ===== */
 function renderHero(s){
   if(!hero) return;
 
@@ -166,7 +167,6 @@ function renderHero(s){
   document.getElementById('heroOverview').textContent = s.overview;
 }
 
-/* ===== ROW ===== */
 function renderRow(key, list){
   const container = rows[key];
   if(!container) return;
@@ -185,7 +185,6 @@ function renderRow(key, list){
   });
 }
 
-/* ===== SETAS FUNCIONANDO ===== */
 function setupArrows(){
   document.querySelectorAll('.row').forEach(row => {
     const left = row.querySelector('.left');
@@ -197,7 +196,6 @@ function setupArrows(){
   });
 }
 
-/* ===== PLAYER ===== */
 function openPlayer(){
   const overlay = document.getElementById('playerOverlay');
   const frame = document.getElementById('playerFrame');
@@ -233,6 +231,18 @@ function setupPlayer(){
 }
 
 init();
+</script>
+
+<!-- SCROLL HEADER -->
+<script>
+window.addEventListener("scroll", () => {
+  const header = document.getElementById("siteHeader");
+  if(window.scrollY > 20){
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
+});
 </script>
 
 </body>
