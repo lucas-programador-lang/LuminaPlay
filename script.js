@@ -12,7 +12,45 @@ const SEARCH_URL =
 `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=pt-BR&query=`
 
 
-// ELEMENTOS
+// ELEMENTOS corrigi>: const searchSection = document.getElementById("searchSection")
+
+if(searchInput){
+
+let searchTimeout
+
+searchInput.addEventListener("keyup", e => {
+
+const searchTerm = e.target.value.trim()
+
+clearTimeout(searchTimeout)
+
+searchTimeout = setTimeout(() => {
+
+if(searchTerm.length > 2){
+
+if(searchSection){
+searchSection.style.display = "block"
+}
+
+getMovies(SEARCH_URL + encodeURIComponent(searchTerm), searchContainer)
+
+}else{
+
+if(searchContainer){
+searchContainer.innerHTML = ""
+}
+
+if(searchSection){
+searchSection.style.display = "none"
+}
+
+}
+
+},400)
+
+})
+
+} 
 
 const popularContainer = document.getElementById("popularMovies")
 const trendingContainer = document.getElementById("trendingMovies")
