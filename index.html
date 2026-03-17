@@ -26,18 +26,14 @@
 <a href="#">Filmes</a>
 <a href="#">Séries</a>
 <a href="#">Animes</a>
-<a href="#">Lançamentos</a>
 
 </nav>
 
 <div class="search-box">
-
 <input type="text" id="search" placeholder="Buscar filmes...">
-
 </div>
 
 </header>
-
 
 <section class="banner">
 
@@ -48,35 +44,25 @@
 <h1>Streaming ilimitado</h1>
 <p>Filmes e séries em um só lugar</p>
 
-<button id="playBanner">Assistir agora</button>
+<button>Assistir agora</button>
 
 </div>
 
 </section>
-
 
 <main>
 
 <section class="movies-section">
 
-<h2>Filmes populares</h2>
+<h2>🔥 Filmes Populares</h2>
 
-<div class="movies" id="popularMovies">
+<div class="carousel">
 
-<!-- Filmes serão carregados pela API -->
+<button class="arrow left">‹</button>
 
-</div>
+<div class="movies" id="popularMovies"></div>
 
-</section>
-
-
-<section class="movies-section">
-
-<h2>Filmes em alta</h2>
-
-<div class="movies" id="trendingMovies">
-
-<!-- API -->
+<button class="arrow right">›</button>
 
 </div>
 
@@ -85,20 +71,31 @@
 
 <section class="movies-section">
 
-<h2>Resultados da busca</h2>
+<h2>⭐ Em Alta</h2>
 
-<div class="movies" id="searchResults">
+<div class="carousel">
 
-<!-- busca -->
+<button class="arrow left">‹</button>
+
+<div class="movies" id="trendingMovies"></div>
+
+<button class="arrow right">›</button>
 
 </div>
+
+</section>
+
+
+<section class="movies-section">
+
+<h2>🔎 Resultados</h2>
+
+<div class="movies" id="searchResults"></div>
 
 </section>
 
 </main>
 
-
-<!-- MODAL PLAYER -->
 
 <div id="movieModal" class="modal">
 
@@ -122,12 +119,11 @@ allowfullscreen>
 
 <footer>
 
-<p>© 2026 LuminaPlay - Streaming moderno</p>
+<p>© 2026 LuminaPlay</p>
 
 </footer>
 
 <script src="script.js"></script>
 
 </body>
-
 </html>
