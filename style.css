@@ -1,97 +1,141 @@
-/* ==========================
-CARD FILME - NETFLIX PRO
+/* ========================== 
+RESET 
+========================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#0b0b0b;
+color:white;
+}
+
+/* ========================== 
+HEADER 
+========================== */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 60px;
+background:#000;
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.logo{
+font-size:24px;
+font-weight:700;
+}
+
+.logoL,.logoPlay{
+color:#ff004c;
+}
+
+nav{
+display:flex;
+gap:20px;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+opacity:.8;
+}
+
+nav a:hover{
+opacity:1;
+color:#ff004c;
+}
+
+/* ========================== 
+BUSCA 
+========================== */
+
+.search-box input{
+padding:8px 12px;
+border-radius:20px;
+border:none;
+background:#1c1c1c;
+color:white;
+}
+
+/* ========================== 
+SEÇÕES 
+========================== */
+
+.movies-section{
+padding:40px 60px;
+}
+
+.movies{
+display:flex;
+gap:16px;
+overflow-x:auto;
+}
+
+/* ========================== 
+CARD NETFLIX 
 ========================== */
 
 .movie{
-
 min-width:170px;
-max-width:170px;
-
 position:relative;
 cursor:pointer;
-
-transition:transform .35s ease;
-transform-origin:center;
-
-border-radius:10px;
-overflow:visible;
-
+transition:.35s;
 }
-
-/* IMAGEM */
 
 .movie img{
 width:100%;
 height:250px;
-object-fit:cover;
 border-radius:10px;
-display:block;
-transition:.35s;
+object-fit:cover;
 }
 
-/* ==========================
-EXPANSÃO NETFLIX REAL
-========================== */
+/* EXPANSÃO */
 
 .movie:hover{
 transform:scale(1.3);
 z-index:50;
 }
 
-/* SOMBRA CINEMATOGRÁFICA */
-
 .movie:hover img{
-box-shadow:0 40px 80px rgba(0,0,0,.95);
+box-shadow:0 40px 80px rgba(0,0,0,.9);
 }
 
-/* ==========================
-FUNDO EXPANDIDO
-========================== */
+/* OVERLAY */
 
 .movie::before{
-
 content:"";
 position:absolute;
 inset:0;
-
-border-radius:10px;
-
-background:linear-gradient(
-to top,
-rgba(0,0,0,.95),
-rgba(0,0,0,.6),
-transparent
-);
-
+background:linear-gradient(to top,rgba(0,0,0,.95),transparent);
 opacity:0;
-transition:.35s;
-
+transition:.3s;
+border-radius:10px;
 }
 
 .movie:hover::before{
 opacity:1;
 }
 
-/* ==========================
-ÁREA DE INFORMAÇÕES
-========================== */
+/* INFO */
 
 .movie-info{
-
 position:absolute;
 bottom:0;
 left:0;
-
 width:100%;
-
 padding:10px;
-
 opacity:0;
 transform:translateY(20px);
-
-transition:.35s;
-z-index:3;
-
+transition:.3s;
 }
 
 .movie:hover .movie-info{
@@ -99,88 +143,47 @@ opacity:1;
 transform:translateY(0);
 }
 
-/* TÍTULO */
-
 .movie-info h4{
 font-size:13px;
-margin-bottom:6px;
 }
-
-/* RATING */
 
 .movie-info .rating{
 font-size:12px;
 opacity:.8;
-margin-bottom:6px;
 }
 
-/* ==========================
-BOTÕES NETFLIX
-========================== */
+/* BOTÕES */
 
 .movie-buttons{
 display:flex;
 gap:6px;
+margin-top:6px;
 }
 
 .movie-buttons button{
-
 width:28px;
 height:28px;
-
-border:none;
 border-radius:50%;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
+border:none;
 cursor:pointer;
-
-font-size:12px;
-
-transition:.25s;
-
 }
-
-/* PLAY */
 
 .btn-play{
 background:white;
 color:black;
 }
 
-.btn-play:hover{
-transform:scale(1.15);
-}
-
-/* FAVORITO */
-
 .btn-fav{
 background:#ff004c;
 color:white;
 }
-
-.btn-fav:hover{
-background:#ff2d66;
-transform:scale(1.15);
-}
-
-/* INFO */
 
 .btn-info{
 background:#333;
 color:white;
 }
 
-.btn-info:hover{
-background:#555;
-transform:scale(1.15);
-}
-
-/* ==========================
-TRAILER PREVIEW
-========================== */
+/* TRAILER */
 
 .trailer-preview{
 position:absolute;
@@ -188,13 +191,10 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-
-border-radius:10px;
-
-overflow:hidden;
-
 opacity:0;
-transition:.35s;
+transition:.3s;
+border-radius:10px;
+overflow:hidden;
 }
 
 .movie:hover .trailer-preview{
@@ -204,14 +204,13 @@ opacity:1;
 .trailer-preview iframe{
 width:100%;
 height:100%;
-border:none;
 }
 
-/* ==========================
-ESCONDER TEXTO ANTIGO
-========================== */
+/* FOOTER */
 
-.movie p,
-.movie .rating{
-display:none;
+footer{
+text-align:center;
+padding:20px;
+background:#000;
+margin-top:40px;
 }
