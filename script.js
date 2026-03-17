@@ -1,5 +1,5 @@
 /* =========================
-   LuminaPlay — Script PRO FINAL
+   LuminaPlay — SCRIPT FINAL PRO++
 ========================= */
 
 const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
@@ -7,7 +7,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/w500";
 
 /* =========================
-   FAVORITOS (Minha Lista)
+   FAVORITOS
 ========================= */
 function getFavorites() {
   return JSON.parse(localStorage.getItem("lumina_favorites") || "[]");
@@ -34,6 +34,26 @@ function toggleFavorite(movie) {
 }
 
 /* =========================
+   CONTINUAR ASSISTINDO
+========================= */
+function saveContinueWatching(movie) {
+  let list = JSON.parse(localStorage.getItem("lumina_continue") || "[]");
+
+  list = list.filter(m => m.id !== movie.id);
+  list.unshift(movie);
+  list = list.slice(0, 10);
+
+  localStorage.setItem("lumina_continue", JSON.stringify(list));
+}
+
+function renderContinue() {
+  const data = JSON.parse(localStorage.getItem("lumina_continue") || "[]");
+  if (!data.length) return;
+
+  renderRow("continuar", data);
+}
+
+/* =========================
    DOM
 ========================= */
 const DOM = {
@@ -44,6 +64,7 @@ const DOM = {
   heroFav: document.getElementById('heroFav'),
 
   rows: {
+    continuar: document.getElementById('row-continuar'),
     populares: document.getElementById('row-populares'),
     emalta: document.getElementById('row-emalta'),
     lancamentos: document.getElementById('row-lancamentos'),
@@ -54,9 +75,7 @@ const DOM = {
   playerFrame: document.getElementById('playerFrame'),
   playerClose: document.getElementById('playerClose'),
 
-  searchInput: document.getElementById('searchInput'),
-  themeBtn: document.getElementById('themeBtn'),
-  header: document.getElementById('siteHeader')
+  searchInput: document.getElementById('searchInput')
 };
 
 /* =========================
@@ -65,6 +84,12 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
+
+  // 🔥 Skeleton loading
+  showSkeleton("row-populares");
+  showSkeleton("row-emalta");
+  showSkeleton("row-lancamentos");
+  showSkeleton("row-recomendados");
 
   const populares = await getMovies("/movie/popular");
   const emAlta = await getMovies("/trending/movie/week");
@@ -76,6 +101,8 @@ async function init() {
   ]));
 
   renderHero(populares[0]);
+
+  renderContinue();
 
   renderRow("populares", populares);
   renderRow("emalta", emAlta);
@@ -99,8 +126,7 @@ async function getMovies(endpoint) {
     poster: movie.poster_path ? IMG + movie.poster_path : "",
     backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : "",
     rating: movie.vote_average,
-    year: movie.release_date?.split("-")[0],
-    trailer: null
+    year: movie.release_date?.split("-")[0]
   }));
 }
 
@@ -123,7 +149,8 @@ function renderHero(movie) {
   DOM.heroOverview.textContent = movie.overview;
 
   DOM.heroWatch.onclick = async () => {
-    openPlayer(await getTrailer(movie.id));
+    const trailer = await getTrailer(movie.id);
+    openPlayer(trailer, movie);
   };
 
   updateHeroFav(movie);
@@ -133,11 +160,9 @@ function updateHeroFav(movie) {
   if (!DOM.heroFav) return;
 
   const update = () => {
-    if (isFavorite(movie.id)) {
-      DOM.heroFav.innerHTML = `<i class="fa-solid fa-check"></i> Na Lista`;
-    } else {
-      DOM.heroFav.innerHTML = `<i class="fa-solid fa-plus"></i> Minha Lista`;
-    }
+    DOM.heroFav.innerHTML = isFavorite(movie.id)
+      ? `<i class="fa-solid fa-check"></i> Na Lista`
+      : `<i class="fa-solid fa-plus"></i> Minha Lista`;
   };
 
   update();
@@ -151,39 +176,25 @@ function updateHeroFav(movie) {
 /* =========================
    CARDS
 ========================= */
-function renderRow(key, movies) {
-  const container = DOM.rows[key];
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  movies.forEach(movie => {
-    container.appendChild(createCard(movie));
-  });
-}
-
 function createCard(movie) {
   const el = document.createElement("div");
   el.className = "card";
 
-  const favIcon = isFavorite(movie.id)
-    ? `<i class="fa-solid fa-check"></i>`
-    : `<i class="fa-solid fa-plus"></i>`;
-
   el.innerHTML = `
     <img src="${movie.poster}">
-    
     <div class="card-play">
       <button class="small-play">▶</button>
-      <button class="fav-btn">${favIcon}</button>
+      <button class="fav-btn">${isFavorite(movie.id) ? "✓" : "+"}</button>
     </div>
-
     <div class="card-title">${movie.title}</div>
   `;
 
+  // 🔥 animação clique
+  el.addEventListener("click", () => animateClick(el));
+
   el.querySelector(".small-play").onclick = async (e) => {
     e.stopPropagation();
-    openPlayer(await getTrailer(movie.id));
+    openPlayer(await getTrailer(movie.id), movie);
   };
 
   el.querySelector(".fav-btn").onclick = (e) => {
@@ -197,12 +208,22 @@ function createCard(movie) {
   return el;
 }
 
+function renderRow(key, movies) {
+  const container = DOM.rows[key];
+  if (!container) return;
+
+  container.innerHTML = "";
+  movies.forEach(movie => container.appendChild(createCard(movie)));
+}
+
 /* =========================
    PLAYER
 ========================= */
-function openPlayer(url) {
+function openPlayer(url, movie) {
   DOM.playerFrame.src = url + "?autoplay=1";
   DOM.playerOverlay.classList.add("active");
+
+  if (movie) saveContinueWatching(movie);
 }
 
 function closePlayer() {
@@ -243,7 +264,32 @@ DOM.searchInput?.addEventListener("input", async (e) => {
   renderRow("populares", data.results.map(m => ({
     id: m.id,
     title: m.title,
-    poster: IMG + m.poster_path,
-    backdrop: IMG + m.backdrop_path
+    poster: IMG + m.poster_path
   })));
 });
+
+/* =========================
+   SKELETON
+========================= */
+function showSkeleton(rowId){
+  const row = document.getElementById(rowId);
+  if (!row) return;
+
+  row.innerHTML = "";
+
+  for(let i=0;i<8;i++){
+    const div = document.createElement("div");
+    div.className = "skeleton";
+    row.appendChild(div);
+  }
+}
+
+/* =========================
+   ANIMAÇÃO
+========================= */
+function animateClick(el){
+  el.style.transform = "scale(0.9)";
+  setTimeout(() => {
+    el.style.transform = "";
+  },150);
+}
