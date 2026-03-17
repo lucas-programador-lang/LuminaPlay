@@ -1,57 +1,10 @@
 /* =========================
-   LuminaPlay — SCRIPT FINAL PRO++
+   LuminaPlay — Script FINAL PRO
 ========================= */
 
 const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/w500";
-
-/* =========================
-   FAVORITOS
-========================= */
-function getFavorites() {
-  return JSON.parse(localStorage.getItem("lumina_favorites") || "[]");
-}
-
-function saveFavorites(list) {
-  localStorage.setItem("lumina_favorites", JSON.stringify(list));
-}
-
-function isFavorite(id) {
-  return getFavorites().some(m => m.id === id);
-}
-
-function toggleFavorite(movie) {
-  let favs = getFavorites();
-
-  if (isFavorite(movie.id)) {
-    favs = favs.filter(m => m.id !== movie.id);
-  } else {
-    favs.push(movie);
-  }
-
-  saveFavorites(favs);
-}
-
-/* =========================
-   CONTINUAR ASSISTINDO
-========================= */
-function saveContinueWatching(movie) {
-  let list = JSON.parse(localStorage.getItem("lumina_continue") || "[]");
-
-  list = list.filter(m => m.id !== movie.id);
-  list.unshift(movie);
-  list = list.slice(0, 10);
-
-  localStorage.setItem("lumina_continue", JSON.stringify(list));
-}
-
-function renderContinue() {
-  const data = JSON.parse(localStorage.getItem("lumina_continue") || "[]");
-  if (!data.length) return;
-
-  renderRow("continuar", data);
-}
 
 /* =========================
    DOM
@@ -61,10 +14,8 @@ const DOM = {
   heroTitle: document.getElementById('heroTitle'),
   heroOverview: document.getElementById('heroOverview'),
   heroWatch: document.getElementById('heroWatch'),
-  heroFav: document.getElementById('heroFav'),
 
   rows: {
-    continuar: document.getElementById('row-continuar'),
     populares: document.getElementById('row-populares'),
     emalta: document.getElementById('row-emalta'),
     lancamentos: document.getElementById('row-lancamentos'),
@@ -83,39 +34,30 @@ const DOM = {
 ========================= */
 document.addEventListener('DOMContentLoaded', init);
 
-async function init() {
+async function init(){
 
-  // 🔥 Skeleton loading
   showSkeleton("row-populares");
   showSkeleton("row-emalta");
   showSkeleton("row-lancamentos");
-  showSkeleton("row-recomendados");
 
   const populares = await getMovies("/movie/popular");
   const emAlta = await getMovies("/trending/movie/week");
   const lancamentos = await getMovies("/movie/now_playing");
-  const recomendados = await getMovies("/movie/top_rated");
-
-  localStorage.setItem('lumina_allMovies', JSON.stringify([
-    ...populares, ...emAlta, ...lancamentos, ...recomendados
-  ]));
 
   renderHero(populares[0]);
-
-  renderContinue();
 
   renderRow("populares", populares);
   renderRow("emalta", emAlta);
   renderRow("lancamentos", lancamentos);
-  renderRow("recomendados", recomendados);
 
-  setupUI();
+  setupPlayer();
+  setupArrows(); // 🔥 IMPORTANTE
 }
 
 /* =========================
    API
 ========================= */
-async function getMovies(endpoint) {
+async function getMovies(endpoint){
   const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
   const data = await res.json();
 
@@ -124,15 +66,14 @@ async function getMovies(endpoint) {
     title: movie.title,
     overview: movie.overview,
     poster: movie.poster_path ? IMG + movie.poster_path : "",
-    backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : "",
-    rating: movie.vote_average,
-    year: movie.release_date?.split("-")[0]
+    backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : ""
   }));
 }
 
-async function getTrailer(id) {
+async function getTrailer(id){
   const res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}`);
   const data = await res.json();
+
   const t = data.results.find(v => v.type === "Trailer");
 
   return t
@@ -143,137 +84,88 @@ async function getTrailer(id) {
 /* =========================
    HERO
 ========================= */
-function renderHero(movie) {
+function renderHero(movie){
   DOM.hero.style.backgroundImage = `url('${movie.backdrop}')`;
   DOM.heroTitle.textContent = movie.title;
   DOM.heroOverview.textContent = movie.overview;
 
   DOM.heroWatch.onclick = async () => {
-    const trailer = await getTrailer(movie.id);
-    openPlayer(trailer, movie);
-  };
-
-  updateHeroFav(movie);
-}
-
-function updateHeroFav(movie) {
-  if (!DOM.heroFav) return;
-
-  const update = () => {
-    DOM.heroFav.innerHTML = isFavorite(movie.id)
-      ? `<i class="fa-solid fa-check"></i> Na Lista`
-      : `<i class="fa-solid fa-plus"></i> Minha Lista`;
-  };
-
-  update();
-
-  DOM.heroFav.onclick = () => {
-    toggleFavorite(movie);
-    update();
+    openPlayer(await getTrailer(movie.id));
   };
 }
 
 /* =========================
-   CARDS
+   ROW
 ========================= */
-function createCard(movie) {
+function renderRow(key, movies){
+  const container = DOM.rows[key];
+  if(!container) return;
+
+  container.innerHTML = "";
+
+  movies.forEach(movie => {
+    container.appendChild(createCard(movie));
+  });
+}
+
+/* =========================
+   CARD
+========================= */
+function createCard(movie){
   const el = document.createElement("div");
   el.className = "card";
 
   el.innerHTML = `
     <img src="${movie.poster}">
-    <div class="card-play">
-      <button class="small-play">▶</button>
-      <button class="fav-btn">${isFavorite(movie.id) ? "✓" : "+"}</button>
-    </div>
     <div class="card-title">${movie.title}</div>
   `;
 
-  // 🔥 animação clique
-  el.addEventListener("click", () => animateClick(el));
-
-  el.querySelector(".small-play").onclick = async (e) => {
-    e.stopPropagation();
-    openPlayer(await getTrailer(movie.id), movie);
+  el.onclick = async () => {
+    animateClick(el);
+    openPlayer(await getTrailer(movie.id));
   };
-
-  el.querySelector(".fav-btn").onclick = (e) => {
-    e.stopPropagation();
-    toggleFavorite(movie);
-    renderRow("populares", JSON.parse(localStorage.getItem('lumina_allMovies')));
-  };
-
-  el.onclick = () => openDetails(movie);
 
   return el;
-}
-
-function renderRow(key, movies) {
-  const container = DOM.rows[key];
-  if (!container) return;
-
-  container.innerHTML = "";
-  movies.forEach(movie => container.appendChild(createCard(movie)));
 }
 
 /* =========================
    PLAYER
 ========================= */
-function openPlayer(url, movie) {
+function openPlayer(url){
   DOM.playerFrame.src = url + "?autoplay=1";
   DOM.playerOverlay.classList.add("active");
-
-  if (movie) saveContinueWatching(movie);
 }
 
-function closePlayer() {
-  DOM.playerOverlay.classList.remove("active");
-  DOM.playerFrame.src = "";
-}
-
-/* =========================
-   NAV
-========================= */
-function openDetails(movie) {
-  localStorage.setItem("lumina_selectedMovie", JSON.stringify(movie));
-  location.href = "filme.html";
-}
-
-/* =========================
-   UI
-========================= */
-function setupUI() {
-  DOM.playerClose.onclick = closePlayer;
+function setupPlayer(){
+  DOM.playerClose.onclick = () => {
+    DOM.playerOverlay.classList.remove("active");
+    DOM.playerFrame.src = "";
+  };
 
   DOM.playerOverlay.onclick = (e) => {
-    if (e.target === DOM.playerOverlay) closePlayer();
+    if(e.target === DOM.playerOverlay){
+      DOM.playerOverlay.classList.remove("active");
+      DOM.playerFrame.src = "";
+    }
   };
 }
 
 /* =========================
-   SEARCH
+   ANIMAÇÃO CLICK
 ========================= */
-DOM.searchInput?.addEventListener("input", async (e) => {
-  const q = e.target.value;
-
-  if (!q) return init();
-
-  const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${q}`);
-  const data = await res.json();
-
-  renderRow("populares", data.results.map(m => ({
-    id: m.id,
-    title: m.title,
-    poster: IMG + m.poster_path
-  })));
-});
+function animateClick(el){
+  el.style.transform = "scale(0.9)";
+  setTimeout(() => {
+    el.style.transform = "";
+  }, 150);
+}
 
 /* =========================
    SKELETON
 ========================= */
-function showSkeleton(rowId){
-  const row = document.getElementById(rowId);
-  if (!row) return;
+function showSkeleton(id){
+  const row = document.getElementById(id);
+  if(!row) return;
 
   row.innerHTML = "";
 
@@ -285,11 +177,32 @@ function showSkeleton(rowId){
 }
 
 /* =========================
-   ANIMAÇÃO
+   🔥 SETAS FUNCIONANDO
 ========================= */
-function animateClick(el){
-  el.style.transform = "scale(0.9)";
-  setTimeout(() => {
-    el.style.transform = "";
-  },150);
+function setupArrows(){
+
+  document.querySelectorAll('.row').forEach(row => {
+
+    const left = row.querySelector('.left');
+    const right = row.querySelector('.right');
+    const container = row.querySelector('.row-cards');
+
+    if(!container) return;
+
+    left?.addEventListener('click', () => {
+      container.scrollBy({
+        left: -container.clientWidth * 0.8,
+        behavior: 'smooth'
+      });
+    });
+
+    right?.addEventListener('click', () => {
+      container.scrollBy({
+        left: container.clientWidth * 0.8,
+        behavior: 'smooth'
+      });
+    });
+
+  });
+
 }
