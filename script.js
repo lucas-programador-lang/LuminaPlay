@@ -11,8 +11,6 @@ const TREND_URL =
 const SEARCH_URL =
 `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=`
 
-// containers
-
 const popularContainer = document.getElementById("popularMovies")
 const trendingContainer = document.getElementById("trendingMovies")
 const searchContainer = document.getElementById("searchResults")
@@ -48,7 +46,7 @@ function showMovies(movies, container){
 
 container.innerHTML = ""
 
-movies.forEach(movie => {
+movies.slice(0,10).forEach((movie,index) => {
 
 const {title, poster_path, vote_average, id} = movie
 
@@ -60,31 +58,19 @@ movieEl.classList.add("movie")
 
 movieEl.innerHTML = `
 
+<div class="rank">${index+1}</div>
+
 <img src="${IMG_PATH + poster_path}" alt="${title}">
 
 <p>${title}</p>
 
-<span class="rating">${vote_average}</span>
+<span class="rating">⭐ ${vote_average}</span>
 
 <button class="fav">❤️</button>
 
 `
 
-// cor da avaliação
-
-const rating = movieEl.querySelector(".rating")
-
-if(vote_average >= 7){
-rating.style.color = "lime"
-}
-else if(vote_average >= 5){
-rating.style.color = "orange"
-}
-else{
-rating.style.color = "red"
-}
-
-// trailer
+// abrir trailer
 
 movieEl.querySelector("img").addEventListener("click", () => {
 
@@ -96,7 +82,7 @@ openTrailer(id)
 
 movieEl.querySelector(".fav").addEventListener("click", () => {
 
-addFavorite(title)
+addFavorite(movie)
 
 })
 
@@ -137,7 +123,7 @@ alert("Trailer não disponível")
 
 }catch(error){
 
-console.error("Erro ao abrir trailer", error)
+console.error("Erro trailer", error)
 
 }
 
@@ -183,7 +169,7 @@ function addFavorite(movie){
 
 let favorites = JSON.parse(localStorage.getItem("favorites")) || []
 
-if(!favorites.includes(movie)){
+if(!favorites.find(f => f.id === movie.id)){
 
 favorites.push(movie)
 
@@ -198,6 +184,41 @@ alert("Já está nos favoritos")
 }
 
 }
+
+// página favoritos
+
+function loadFavorites(){
+
+const favorites = JSON.parse(localStorage.getItem("favorites")) || []
+
+showMovies(favorites, searchContainer)
+
+}
+
+// slider automático banner
+
+const banners = [
+"https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
+"https://image.tmdb.org/t/p/original/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg",
+"https://image.tmdb.org/t/p/original/6MKr3KgOLmzOP6MSuZERO41Lpkt.jpg"
+]
+
+let bannerIndex = 0
+
+function changeBanner(){
+
+bannerIndex++
+
+if(bannerIndex >= banners.length){
+bannerIndex = 0
+}
+
+document.querySelector(".banner").style.backgroundImage =
+`url(${banners[bannerIndex]})`
+
+}
+
+setInterval(changeBanner,5000)
 
 // carregar inicial
 
