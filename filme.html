@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LuminaPlay — Filme</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header small">
+    <div class="header-inner">
+      <div class="logo"><span class="logoL">L</span>umina<span class="logoPlay">Play</span></div>
+      <nav class="main-nav">
+        <a href="index.html">Início</a>
+        <a href="index.html#filmes">Filmes</a>
+      </nav>
+      <div class="header-actions">
+        <button onclick="history.back()" class="btn btn-back"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="filmMain">
+    <!-- Banner do filme (populado por JS) -->
+    <section id="filmHero" class="film-hero">
+      <div class="film-hero-overlay"></div>
+      <div class="film-hero-inner container">
+        <div class="film-meta">
+          <h1 id="filmTitle">Título</h1>
+          <p id="filmInfo" class="subtle">Ano • Duração • Nota</p>
+          <p id="filmOverview" class="film-overview">Descrição detalhada do filme.</p>
+
+          <div class="film-actions">
+            <button id="filmWatch" class="btn btn-watch"><i class="fa-solid fa-play"></i> Assistir</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Similares -->
+    <section class="container similar-section">
+      <h3>Filmes semelhantes</h3>
+      <div class="similar-row" id="similarRow"></div>
+    </section>
+  </main>
+
+  <!-- Player (reaproveitado) -->
+  <div id="playerOverlay" class="player-overlay" aria-hidden="true">
+    <div class="player-inner">
+      <button id="playerClose" class="player-close" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+      <iframe id="playerFrame" class="player-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">LuminaPlay</div>
+      <div class="footer-links">
+        <a href="#" aria-label="Sobre">Sobre</a>
+        <a href="#" aria-label="Contato">Contato</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // filme.html — lógica local: lê selectedMovie do localStorage e popula a página.
+  (function () {
+    const movieJson = localStorage.getItem('lumina_selectedMovie');
+    const allData = JSON.parse(localStorage.getItem('lumina_allMovies') || '[]');
+
+    const filmTitle = document.getElementById('filmTitle');
+    const filmOverview = document.getElementById('filmOverview');
+    const filmInfo = document.getElementById('filmInfo');
+    const filmHero = document.getElementById('filmHero');
+    const similarRow = document.getElementById('similarRow');
+    const filmWatch = document.getElementById('filmWatch');
+
+    const playerOverlay = document.getElementById('playerOverlay');
+    const playerFrame = document.getElementById('playerFrame');
+    const playerClose = document.getElementById('playerClose');
+
+    if (!movieJson) {
+      document.body.innerHTML = '<main class="container" style="padding:80px 20px"><h2>Filme não encontrado</h2><p>Volte para a página inicial e selecione um filme.</p></main>';
+      return;
+    }
+
+    const movie = JSON.parse(movieJson);
+
+    // Populate
+    filmTitle.textContent = movie.title;
+    filmOverview.textContent = movie.overview;
+    filmInfo.textContent = `${movie.year} • ${movie.duration} • ★ ${movie.rating.toFixed(1)}`;
+
+    if (movie.backdrop) {
+      filmHero.style.backgroundImage = `url('${movie.backdrop}')`;
+    }
+
+    // Similar: pick movies that share at least one genre, fallback random
+    const similar = allData.filter(m => m.id !== movie.id && m.genres.some(g => movie.genres.includes(g)));
+    const similarToShow = (similar.length ? similar : shuffle(allData.filter(m => m.id !== movie.id))).slice(0, 6);
+
+    similarToShow.forEach(sm => {
+      const card = document.createElement('div');
+      card.className = 'small-card';
+      card.innerHTML = `<img src="${sm.poster}" alt="${escapeHtml(sm.title)}"><div class="small-card-info"><strong>${escapeHtml(sm.title)}</strong><span>★ ${sm.rating.toFixed(1)}</span></div>`;
+      card.addEventListener('click', () => {
+        localStorage.setItem('lumina_selectedMovie', JSON.stringify(sm));
+        location.reload();
+      });
+      similarRow.appendChild(card);
+    });
+
+    // Player open
+    filmWatch.addEventListener('click', () => openPlayer(movie.trailer));
+    playerClose.addEventListener('click', closePlayer);
+
+    function openPlayer(trailerUrl) {
+      playerFrame.src = trailerUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';
+      playerOverlay.classList.add('active');
+      playerOverlay.setAttribute('aria-hidden', 'false');
+    }
+    function closePlayer() {
+      playerFrame.src = '';
+      playerOverlay.classList.remove('active');
+      playerOverlay.setAttribute('aria-hidden', 'true');
+    }
+
+    // helpers
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    function escapeHtml(text) {
+      return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  })();
+  </script>
+</body>
+</html>
