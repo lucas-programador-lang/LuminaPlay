@@ -13,22 +13,26 @@
 
 <body>
 
-<!-- HEADER PADRÃO -->
-<header class="site-header">
+<!-- HEADER PADRÃO IGUAL TODAS -->
+<header class="site-header" id="siteHeader">
   <div class="header-inner container">
 
     <div class="logo">
-      <span class="logoL">L</span>umina<span class="logoPlay">Play</span>
+      <span class="logoL">Lumina</span><span class="logoPlay">Play</span>
     </div>
 
-    <nav class="main-nav" aria-label="Menu principal">
-      <a class="nav-link active" href="index.html">Início</a>
+    <nav class="main-nav">
+      <a class="nav-link" href="index.html">Início</a>
       <a class="nav-link" href="filme.html">Filmes</a>
       <a class="nav-link" href="series.html">Séries</a>
-      <a class="nav-link" href="minha-lista.html">
+      <a class="nav-link active" href="minha-lista.html">
         <i class="fa-solid fa-bookmark"></i> Minha Lista
       </a>
     </nav>
+
+    <div class="search-box">
+      <input type="text" placeholder="Buscar...">
+    </div>
 
   </div>
 </header>
@@ -46,8 +50,34 @@
 
 </main>
 
+<!-- PLAYER (PADRÃO IGUAL OUTROS) -->
+<div id="playerOverlay" class="player-overlay">
+  <div class="player-inner">
+
+    <button id="playerClose" class="player-close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <iframe id="playerFrame"
+      class="player-iframe"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>© 2026 LuminaPlay</div>
+  </div>
+</footer>
+
 <script>
 const lista = document.getElementById("lista");
+const overlay = document.getElementById("playerOverlay");
+const frame = document.getElementById("playerFrame");
+const closeBtn = document.getElementById("playerClose");
 
 /* ===== PEGAR LISTA ===== */
 function getFav(){
@@ -79,7 +109,6 @@ function render(){
 
     card.onclick = () => openPlayer();
 
-    /* BOTÃO REMOVER */
     const btn = document.createElement("button");
     btn.innerHTML = "❌";
     btn.style.position = "absolute";
@@ -109,22 +138,57 @@ function remove(id){
   render();
 }
 
-/* ===== PLAYER SIMPLES ===== */
+/* ===== PLAYER ===== */
 function openPlayer(){
-  alert("Player pode ser integrado aqui igual ao index 😉");
+  if(!overlay || !frame) return;
+
+  overlay.classList.add("active");
+  frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
 }
 
-/* ===== SETAS DA LISTA ===== */
+function close(){
+  if(!overlay || !frame) return;
+
+  overlay.classList.remove("active");
+  frame.src = "";
+}
+
+if(closeBtn) closeBtn.onclick = close;
+
+if(overlay){
+  overlay.onclick = (e)=>{
+    if(e.target === overlay) close();
+  };
+}
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape") close();
+});
+
+/* ===== SETAS ===== */
 document.querySelectorAll('.row').forEach(row => {
   const left = row.querySelector('.left');
   const right = row.querySelector('.right');
   const container = row.querySelector('.row-cards');
 
-  left.onclick = () => container.scrollBy({ left: -300, behavior: 'smooth' });
-  right.onclick = () => container.scrollBy({ left: 300, behavior: 'smooth' });
+  if(left) left.onclick = () => container.scrollBy({ left: -300, behavior: 'smooth' });
+  if(right) right.onclick = () => container.scrollBy({ left: 300, behavior: 'smooth' });
 });
 
+/* ===== INIT ===== */
 render();
+</script>
+
+<!-- SCROLL HEADER -->
+<script>
+window.addEventListener("scroll", () => {
+  const header = document.getElementById("siteHeader");
+  if(window.scrollY > 20){
+    header.classList.add("scrolled");
+  } else {
+    header.classList.remove("scrolled");
+  }
+});
 </script>
 
 </body>
