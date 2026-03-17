@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -15,6 +16,11 @@
 <link rel="stylesheet" href="style.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- ÍCONES PROFISSIONAIS -->
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
@@ -43,8 +49,6 @@ margin-bottom:10px;
 
 <body>
 
-<!-- HEADER -->
-
 <header>
 
 <div class="logo">
@@ -53,11 +57,7 @@ margin-bottom:10px;
 
 <nav>
 
-<a href="index.html">Início</a>
-<a href="filmes.html">Filmes</a>
-<a href="series.html">Séries</a>
-<a href="animes.html">Animes</a>
-<a href="minha-lista.html">Minha Lista</a>
+<a href="index.html">Início</a> <a href="filmes.html">Filmes</a> <a href="series.html">Séries</a> <a href="animes.html">Animes</a> <a href="minha-lista.html">Minha Lista</a>
 
 </nav>
 
@@ -72,30 +72,28 @@ aria-label="Buscar séries">
 </div>
 
 <button onclick="toggleTheme()" class="theme-btn">
-🌙
+<i class="fa-solid fa-moon"></i>
 </button>
 
 <a href="minha-lista.html" class="fav-btn">
-❤️
+<i class="fa-solid fa-heart"></i>
 </a>
 
 </div>
 
 </header>
 
-
-<!-- CONTEÚDO -->
-
 <main>
 
 <section class="movies-section">
 
-<h1 class="page-title">📺 Séries Populares</h1>
+<h1 class="page-title">
+📺 Séries Populares
+</h1>
 
 <div class="series-grid" id="seriesContainer"></div>
 
 </section>
-
 
 <section class="movies-section">
 
@@ -106,9 +104,6 @@ aria-label="Buscar séries">
 </section>
 
 </main>
-
-
-<!-- FOOTER -->
 
 <footer>
 
