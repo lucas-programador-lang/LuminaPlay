@@ -1,5 +1,5 @@
 /* =========================
-   LuminaPlay — CSS FINAL PROFISSIONAL
+   LuminaPlay — CSS FINAL RESPONSIVO PRO
 ========================= */
 
 :root{
@@ -21,9 +21,9 @@ body{
   font-family:'Poppins',sans-serif;
   background:var(--bg);
   color:#fff;
-  -webkit-font-smoothing:antialiased;
 }
 
+/* CONTAINER */
 .container{
   width:min(92%,1200px);
   margin:auto;
@@ -37,11 +37,6 @@ body{
   z-index:1000;
   backdrop-filter:blur(12px);
   background:linear-gradient(180deg,rgba(0,0,0,0.7),transparent);
-  transition:.3s;
-}
-
-.site-header.scrolled{
-  background:rgba(0,0,0,0.95);
 }
 
 .header-inner{
@@ -51,6 +46,7 @@ body{
   height:70px;
 }
 
+/* LOGO */
 .logo{
   font-weight:700;
   font-size:20px;
@@ -59,21 +55,19 @@ body{
 .logoL{color:var(--accent);}
 .logoPlay{opacity:.9;}
 
+/* NAV */
 .main-nav{
   display:flex;
-  gap:20px;
+  gap:18px;
 }
 
 .nav-link{
   color:#ccc;
   text-decoration:none;
-  padding:6px 10px;
-  border-radius:6px;
-  transition:.2s;
+  font-size:14px;
 }
 
 .nav-link:hover{
-  background:var(--glass);
   color:#fff;
 }
 
@@ -108,66 +102,49 @@ body{
 
 .hero-content{
   position:relative;
-  padding:80px 0;
+  padding:60px 0;
 }
 
-.hero-title{
-  font-size:clamp(30px,5vw,52px);
-  font-weight:700;
+.hero h1{
+  font-size:clamp(24px,5vw,48px);
 }
 
-.hero-overview{
-  max-width:600px;
+.hero p{
+  max-width:500px;
   color:var(--muted);
   margin:10px 0 20px;
 }
 
 /* ================= BUTTONS ================= */
 .btn{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 18px;
+  padding:10px 16px;
   border:none;
   border-radius:8px;
   cursor:pointer;
-  font-weight:600;
-  transition:.25s;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-}
-
-.btn:active{
-  transform:scale(.95);
 }
 
 .btn-watch{
   background:var(--accent);
-  box-shadow:0 10px 30px rgba(255,0,76,.4);
-}
-
-.btn-watch:hover{
-  box-shadow:0 20px 50px rgba(255,0,76,.6);
 }
 
 .btn-info{
-  background:rgba(255,255,255,.08);
+  background:rgba(255,255,255,.1);
 }
 
 /* ================= ROW ================= */
 .row{
   position:relative;
-  display:flex;
-  align-items:center;
+}
+
+.row-title{
+  margin:20px 0 10px;
 }
 
 .row-cards{
   display:flex;
   overflow-x:auto;
-  gap:14px;
-  padding:10px;
+  gap:12px;
+  padding:10px 0;
   scroll-behavior:smooth;
 }
 
@@ -175,44 +152,35 @@ body{
   display:none;
 }
 
-/* SETAS PROFISSIONAIS */
+/* SETAS */
 .row-arrow{
   position:absolute;
   top:0;
   bottom:0;
-  width:60px;
+  width:50px;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:linear-gradient(90deg,rgba(0,0,0,.7),transparent);
   border:none;
   cursor:pointer;
-  z-index:20;
-  opacity:0;
-  transition:.3s;
+  z-index:10;
   color:#fff;
-  font-size:22px;
+  font-size:20px;
+  background:rgba(0,0,0,0.5);
 }
 
-.row:hover .row-arrow{
-  opacity:1;
-}
-
-.row-arrow.right{
-  right:0;
-  background:linear-gradient(-90deg,rgba(0,0,0,.7),transparent);
-}
+.row-arrow.left{left:0;}
+.row-arrow.right{right:0;}
 
 /* ================= CARD ================= */
 .card{
-  min-width:160px;
-  height:240px;
-  border-radius:12px;
+  min-width:150px;
+  height:220px;
+  border-radius:10px;
   overflow:hidden;
-  position:relative;
   cursor:pointer;
-  transition:.25s;
   flex:0 0 auto;
+  transition:.2s;
 }
 
 .card img{
@@ -221,58 +189,8 @@ body{
   object-fit:cover;
 }
 
-/* HOVER NETFLIX */
 .card:hover{
-  transform:scale(1.1) translateY(-6px);
-  z-index:50;
-  box-shadow:
-    0 20px 40px rgba(0,0,0,.8),
-    0 0 20px rgba(255,0,76,.3);
-}
-
-/* GLOW */
-.card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle,rgba(255,0,76,.2),transparent);
-  opacity:0;
-  transition:.3s;
-}
-
-.card:hover::after{
-  opacity:1;
-}
-
-/* PLAY + FAVORITO */
-.card-play{
-  position:absolute;
-  bottom:10px;
-  left:10px;
-  display:flex;
-  gap:8px;
-  opacity:0;
-  transform:translateY(6px);
-  transition:.2s;
-}
-
-.card:hover .card-play{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.card-play button{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:none;
-  background:rgba(0,0,0,.7);
-  color:#fff;
-  cursor:pointer;
-}
-
-.card-play button:hover{
-  background:var(--accent);
+  transform:scale(1.05);
 }
 
 /* ================= PLAYER ================= */
@@ -283,8 +201,6 @@ body{
   justify-content:center;
   align-items:center;
   background:rgba(0,0,0,.9);
-  backdrop-filter:blur(8px);
-  z-index:2000;
 }
 
 .player-overlay.active{
@@ -292,12 +208,8 @@ body{
 }
 
 .player-inner{
-  width:min(1100px,95%);
-  height:min(650px,85%);
-  border-radius:12px;
-  overflow:hidden;
-  background:#000;
-  box-shadow:0 30px 80px rgba(0,0,0,.9);
+  width:90%;
+  height:70%;
 }
 
 .player-iframe{
@@ -307,84 +219,42 @@ body{
 
 .player-close{
   position:absolute;
-  top:15px;
-  right:15px;
-  background:rgba(255,255,255,.1);
+  top:20px;
+  right:20px;
+  background:#111;
   border:none;
   padding:10px;
   border-radius:50%;
-  cursor:pointer;
-}
-
-.player-close:hover{
-  background:var(--accent);
-}
-
-/* ================= FAVORITO ================= */
-.fav-btn.active{
-  background:var(--accent) !important;
-}
-
-/* ================= MINHA LISTA ================= */
-.lista-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:20px;
-  padding:100px 20px;
+  color:#fff;
 }
 
 /* ================= SKELETON ================= */
 .skeleton{
-  min-width:160px;
-  height:240px;
-  border-radius:12px;
-  flex:0 0 auto;
-  background:linear-gradient(
-    90deg,
-    #111 25%,
-    #1a1a1a 50%,
-    #111 75%
-  );
-  background-size:200% 100%;
-  animation:skeletonLoading 1.2s infinite ease-in-out;
-  position:relative;
-  overflow:hidden;
+  min-width:150px;
+  height:220px;
+  border-radius:10px;
+  background:linear-gradient(90deg,#111,#1a1a1a,#111);
+  animation:load 1.2s infinite;
 }
 
-.skeleton::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.05),
-    transparent
-  );
-  animation:shine 1.2s infinite;
+@keyframes load{
+  0%{background-position:200%}
+  100%{background-position:-200%}
 }
 
-@keyframes skeletonLoading{
-  0%{background-position:200% 0;}
-  100%{background-position:-200% 0;}
-}
+/* ================= MOBILE ================= */
+@media(max-width:768px){
 
-@keyframes shine{
-  0%{transform:translateX(-100%);}
-  100%{transform:translateX(100%);}
-}
-
-/* ================= RESPONSIVO ================= */
-@media(max-width:900px){
-  .card{
-    min-width:130px;
-    height:200px;
-  }
-}
-
-@media(max-width:600px){
   .main-nav{
-    display:none;
+    display:none; /* 🔥 estilo Netflix */
+  }
+
+  .hero{
+    min-height:50vh;
+  }
+
+  .hero-content{
+    padding:40px 0;
   }
 
   .card{
@@ -392,7 +262,25 @@ body{
     height:180px;
   }
 
-  .search-box input{
-    display:none;
+  .row-arrow{
+    background:rgba(0,0,0,0.7);
   }
+}
+
+/* ================= EXTRA MOBILE ================= */
+@media(max-width:480px){
+
+  .card{
+    min-width:110px;
+    height:160px;
+  }
+
+  .hero h1{
+    font-size:20px;
+  }
+
+  .hero p{
+    font-size:13px;
+  }
+
 }
