@@ -13,7 +13,7 @@
 
 <body>
 
-<!-- HEADER CORRIGIDO -->
+<!-- HEADER -->
 <header class="site-header">
   <div class="header-inner container">
 
@@ -28,7 +28,7 @@
       <a href="minha-lista.html">Minha Lista</a>
     </nav>
 
-    <button onclick="history.back()" class="btn btn-info">
+    <button onclick="history.back()" class="btn btn-info" aria-label="Voltar">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
 
@@ -46,33 +46,30 @@
 <!-- ROWS -->
 <section class="rows container">
 
-  <!-- POPULARES -->
   <section>
     <h2 class="row-title">🔥 Populares</h2>
     <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
       <div class="row-cards" id="row-populares"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
-  <!-- EM ALTA -->
   <section>
     <h2 class="row-title">⭐ Em Alta</h2>
     <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
       <div class="row-cards" id="row-emalta"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
-  <!-- TOP -->
   <section>
     <h2 class="row-title">🏆 Mais bem avaliadas</h2>
     <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="row-arrow left" aria-label="Scroll esquerda"><i class="fa-solid fa-chevron-left"></i></button>
       <div class="row-cards" id="row-top"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="row-arrow right" aria-label="Scroll direita"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
   </section>
 
@@ -81,16 +78,19 @@
 <!-- PLAYER -->
 <div id="playerOverlay" class="player-overlay">
   <div class="player-inner">
-    <button id="playerClose" class="player-close">
+
+    <button id="playerClose" class="player-close" aria-label="Fechar player">
       <i class="fa-solid fa-xmark"></i>
     </button>
-    <iframe id="playerFrame" class="player-iframe"></iframe>
+
+    <iframe id="playerFrame" class="player-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
   </div>
 </div>
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <div>LuminaPlay</div>
+    <div>© 2026 LuminaPlay</div>
   </div>
 </footer>
 
@@ -126,14 +126,15 @@ async function getSeries(endpoint){
     const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
     const data = await res.json();
 
-    return data.results.map(s => ({
+    return (data.results || []).map(s => ({
       id: s.id,
       title: s.name,
       poster: s.poster_path ? IMG + s.poster_path : "",
       backdrop: s.backdrop_path ? IMG + s.backdrop_path : "",
-      overview: s.overview
+      overview: s.overview || "Sem descrição"
     }));
-  }catch{
+  }catch(e){
+    console.error("Erro séries:", e);
     return [];
   }
 }
@@ -163,8 +164,13 @@ async function init(){
 
 /* ===== HERO ===== */
 function renderHero(s){
-  hero.style.backgroundImage = `url('${s.backdrop}')`;
-  document.getElementById('heroTitle').textContent = s.title;
+  if(!hero) return;
+
+  hero.style.backgroundImage = s.backdrop
+    ? `url('${s.backdrop}')`
+    : "";
+
+  document.getElementById('heroTitle').textContent = s.title || "Sem título";
   document.getElementById('heroOverview').textContent = s.overview;
 }
 
@@ -179,7 +185,9 @@ function renderRow(key, list){
     const card = document.createElement('div');
     card.className = "card";
 
-    card.innerHTML = `<img src="${s.poster}">`;
+    card.innerHTML = `
+      <img src="${s.poster || ''}" alt="${s.title}">
+    `;
 
     card.onclick = () => openPlayer();
 
@@ -187,7 +195,7 @@ function renderRow(key, list){
   });
 }
 
-/* ===== SETAS FUNCIONANDO ===== */
+/* ===== SETAS ===== */
 function setupArrows(){
   document.querySelectorAll('.row').forEach(row => {
     const left = row.querySelector('.left');
@@ -206,26 +214,36 @@ function setupArrows(){
 
 /* ===== PLAYER ===== */
 function openPlayer(){
-  document.getElementById('playerOverlay').classList.add('active');
-  document.getElementById('playerFrame').src =
-    "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+  const overlay = document.getElementById('playerOverlay');
+  const frame = document.getElementById('playerFrame');
+
+  if(!overlay || !frame) return;
+
+  overlay.classList.add('active');
+  frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
 }
 
 function setupPlayer(){
   const overlay = document.getElementById('playerOverlay');
   const frame = document.getElementById('playerFrame');
+  const closeBtn = document.getElementById('playerClose');
 
-  document.getElementById('playerClose').onclick = close;
+  if(closeBtn){
+    closeBtn.onclick = close;
+  }
 
-  overlay.onclick = (e)=>{
-    if(e.target === overlay) close();
-  };
+  if(overlay){
+    overlay.onclick = (e)=>{
+      if(e.target === overlay) close();
+    };
+  }
 
   document.addEventListener('keydown', e=>{
     if(e.key === "Escape") close();
   });
 
   function close(){
+    if(!overlay || !frame) return;
     overlay.classList.remove('active');
     frame.src = "";
   }
