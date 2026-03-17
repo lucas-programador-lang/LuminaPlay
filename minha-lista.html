@@ -2,35 +2,63 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Minha Lista</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LuminaPlay | Minha Lista</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- HEADER PADRÃO -->
 <header class="site-header">
   <div class="header-inner container">
-    <h2>Minha Lista</h2>
-    <a href="index.html">← Voltar</a>
+
+    <div class="logo">
+      <span class="logoL">L</span>umina<span class="logoPlay">Play</span>
+    </div>
+
+    <nav class="main-nav">
+      <a href="index.html">Início</a>
+      <a href="filme.html">Filmes</a>
+      <a href="series.html">Séries</a>
+      <a href="minha-lista.html" class="active">Minha Lista</a>
+    </nav>
+
   </div>
 </header>
 
-<main class="lista-grid" id="lista"></main>
+<!-- CONTEÚDO -->
+<main class="container" style="margin-top:90px">
+
+  <h2 style="margin-bottom:20px">📌 Minha Lista</h2>
+
+  <div class="row-cards" id="lista"></div>
+
+</main>
 
 <script>
 const lista = document.getElementById("lista");
 
+/* ===== PEGAR LISTA ===== */
 function getFav(){
-  return JSON.parse(localStorage.getItem("lumina_favorites") || "[]");
+  return JSON.parse(localStorage.getItem("minhaLista") || "[]");
 }
 
+/* ===== RENDER ===== */
 function render(){
+
+  if(!lista) return;
+
   lista.innerHTML = "";
 
   const favs = getFav();
 
   if(!favs.length){
-    lista.innerHTML = "<h2>Lista vazia 😢</h2>";
+    lista.innerHTML = "<p style='opacity:.7'>Sua lista está vazia 😢</p>";
     return;
   }
 
@@ -40,20 +68,45 @@ function render(){
     card.className = "card";
 
     card.innerHTML = `
-      <img src="${movie.poster}">
-      <div class="card-play">
-        <button onclick="remove(${movie.id})">❌</button>
-      </div>
+      <img src="${movie.poster_path ? 'https://image.tmdb.org/t/p/w500' + movie.poster_path : ''}" alt="${movie.title}">
     `;
+
+    /* CLICK ABRIR PLAYER */
+    card.onclick = () => openPlayer();
+
+    /* BOTÃO REMOVER */
+    const btn = document.createElement("button");
+    btn.innerHTML = "❌";
+    btn.style.position = "absolute";
+    btn.style.top = "5px";
+    btn.style.right = "5px";
+    btn.style.background = "#000";
+    btn.style.border = "none";
+    btn.style.color = "#fff";
+    btn.style.cursor = "pointer";
+
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      remove(movie.id);
+    };
+
+    card.style.position = "relative";
+    card.appendChild(btn);
 
     lista.appendChild(card);
   });
 }
 
+/* ===== REMOVER ===== */
 function remove(id){
   let favs = getFav().filter(m => m.id !== id);
-  localStorage.setItem("lumina_favorites", JSON.stringify(favs));
+  localStorage.setItem("minhaLista", JSON.stringify(favs));
   render();
+}
+
+/* ===== PLAYER SIMPLES ===== */
+function openPlayer(){
+  alert("Player pode ser integrado aqui igual ao index 😉");
 }
 
 render();
