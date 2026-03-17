@@ -86,10 +86,7 @@ async function getTrailer(id){
   const res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}`);
   const data = await res.json();
   const t = data.results.find(v => v.type === "Trailer");
-
-  return t
-    ? `https://www.youtube.com/embed/${t.key}`
-    : "https://www.youtube.com/embed/dQw4w9WgXcQ";
+  return t ? `https://www.youtube.com/embed/${t.key}` : "https://www.youtube.com/embed/dQw4w9WgXcQ";
 }
 
 /* =========================
@@ -99,11 +96,7 @@ function renderHero(movie){
   DOM.hero.style.backgroundImage = `url('${movie.backdrop}')`;
   DOM.heroTitle.textContent = movie.title;
   DOM.heroOverview.textContent = movie.overview;
-
-  DOM.heroWatch.onclick = async () => {
-    openPlayer(await getTrailer(movie.id), movie);
-  };
-
+  DOM.heroWatch.onclick = async () => openPlayer(await getTrailer(movie.id), movie);
   updateHeroFav(movie);
 }
 
@@ -170,25 +163,17 @@ function renderRow(key, movies){
   const container = DOM.rows[key];
   if(!container) return;
   container.innerHTML = "";
-  movies.forEach(movie => {
-    container.appendChild(createCard(movie));
-  });
+  movies.forEach(movie => container.appendChild(createCard(movie)));
 }
 
 function createCard(movie){
   const el = document.createElement("div");
   el.className = "card";
-
-  el.innerHTML = `
-    <img src="${movie.poster}">
-    <div class="card-title">${movie.title}</div>
-  `;
-
+  el.innerHTML = `<img src="${movie.poster}"><div class="card-title">${movie.title}</div>`;
   el.onclick = async () => {
     animateClick(el);
     openPlayer(await getTrailer(movie.id), movie);
   };
-
   return el;
 }
 
@@ -206,16 +191,14 @@ function setupPlayer(){
     DOM.playerOverlay.classList.remove("active");
     DOM.playerFrame.src = "";
   };
-
   DOM.playerOverlay.onclick = (e) => {
     if(e.target === DOM.playerOverlay){
       DOM.playerOverlay.classList.remove("active");
       DOM.playerFrame.src = "";
     }
   };
-
   document.addEventListener('keydown', e => {
-    if(e.key === "Escape") {
+    if(e.key === "Escape"){
       DOM.playerOverlay.classList.remove("active");
       DOM.playerFrame.src = "";
     }
@@ -253,14 +236,8 @@ function setupArrows(){
     const right = row.querySelector('.right');
     const container = row.querySelector('.row-cards');
     if(!container) return;
-
-    left?.addEventListener('click', () => {
-      container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' });
-    });
-
-    right?.addEventListener('click', () => {
-      container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' });
-    });
+    left?.addEventListener('click', () => container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' }));
+    right?.addEventListener('click', () => container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' }));
   });
 }
 
@@ -271,10 +248,8 @@ function setupSearch(){
   DOM.searchInput?.addEventListener('input', async e => {
     const q = e.target.value.trim();
     if(!q) return init();
-
     const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${q}`);
     const data = await res.json();
-
     renderRow("populares", data.results.map(m => ({
       id: m.id,
       title: m.title,
@@ -284,5 +259,3 @@ function setupSearch(){
     })));
   });
 }
-
-setupSearch();
