@@ -57,6 +57,8 @@ container.innerHTML = `<p>Erro ao carregar filmes.</p>`
 
 function showMovies(movies, container){
 
+if(!container) return
+
 container.innerHTML = ""
 
 movies.slice(0,10).forEach((movie,index) => {
@@ -216,6 +218,28 @@ alert("Esse filme já está nos favoritos")
 }
 
 // ==========================
+// CARREGAR FAVORITOS
+// ==========================
+
+function loadFavorites(){
+
+if(!searchContainer) return
+
+const favorites = JSON.parse(localStorage.getItem("favorites")) || []
+
+if(favorites.length === 0){
+
+searchContainer.innerHTML = "<p>Você ainda não adicionou filmes aos favoritos.</p>"
+
+return
+
+}
+
+showMovies(favorites, searchContainer)
+
+}
+
+// ==========================
 // BUSCA
 // ==========================
 
@@ -237,7 +261,7 @@ getMovies(SEARCH_URL + encodeURIComponent(searchTerm), searchContainer)
 
 }else{
 
-searchContainer.innerHTML = ""
+if(searchContainer) searchContainer.innerHTML = ""
 
 }
 
@@ -260,6 +284,7 @@ const right = carousel.querySelector(".arrow.right")
 
 if(!container) return
 
+if(right){
 right.addEventListener("click", () => {
 
 container.scrollBy({
@@ -268,7 +293,9 @@ behavior:"smooth"
 })
 
 })
+}
 
+if(left){
 left.addEventListener("click", () => {
 
 container.scrollBy({
@@ -277,18 +304,7 @@ behavior:"smooth"
 })
 
 })
-
-// efeito infinito
-
-container.addEventListener("scroll", () => {
-
-if(container.scrollLeft + container.clientWidth >= container.scrollWidth - 5){
-
-container.scrollLeft = 0
-
 }
-
-})
 
 })
 
