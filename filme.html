@@ -13,7 +13,7 @@
 
 <body>
 
-<!-- HEADER CORRIGIDO -->
+<!-- HEADER -->
 <header class="site-header">
   <div class="header-inner container">
 
@@ -28,7 +28,7 @@
       <a href="minha-lista.html">Minha Lista</a>
     </nav>
 
-    <button onclick="history.back()" class="btn btn-info">
+    <button onclick="history.back()" class="btn btn-info" aria-label="Voltar">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
 
@@ -37,7 +37,7 @@
 
 <main>
 
-<!-- HERO MELHORADO -->
+<!-- HERO -->
 <section id="filmHero" class="hero">
   <div class="hero-content container">
 
@@ -67,16 +67,19 @@
 <!-- PLAYER -->
 <div id="playerOverlay" class="player-overlay">
   <div class="player-inner">
-    <button id="playerClose" class="player-close">
+
+    <button id="playerClose" class="player-close" aria-label="Fechar player">
       <i class="fa-solid fa-xmark"></i>
     </button>
-    <iframe id="playerFrame" class="player-iframe"></iframe>
+
+    <iframe id="playerFrame" class="player-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
   </div>
 </div>
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <div>LuminaPlay</div>
+    <div>© 2026 LuminaPlay</div>
   </div>
 </footer>
 
@@ -105,64 +108,81 @@
   const playerClose = document.getElementById('playerClose');
 
   /* ===== DADOS ===== */
-  title.textContent = movie.title || "Sem título";
-  overview.textContent = movie.overview || "Sem descrição";
+  if(title) title.textContent = movie.title || "Sem título";
+  if(overview) overview.textContent = movie.overview || "Sem descrição";
 
-  const rating = movie.rating ? movie.rating.toFixed(1) : "—";
+  const rating = movie.rating ? Number(movie.rating).toFixed(1) : "—";
   const year = movie.year || "—";
 
-  info.textContent = `${year} • ★ ${rating}`;
+  if(info) info.textContent = `${year} • ★ ${rating}`;
 
-  genres.textContent = movie.genres?.length
-    ? movie.genres.join(' • ')
-    : "";
+  if(genres){
+    genres.textContent = Array.isArray(movie.genres) && movie.genres.length
+      ? movie.genres.join(' • ')
+      : "";
+  }
 
-  if(movie.backdrop){
+  if(hero && movie.backdrop){
     hero.style.backgroundImage = `url('${movie.backdrop}')`;
   }
 
   /* ===== SIMILARES ===== */
-  const list = shuffle(allMovies)
-    .filter(m => m.id !== movie.id)
-    .slice(0,8);
+  if(similarRow && allMovies.length){
 
-  list.forEach(sm => {
-    const el = document.createElement('div');
-    el.className = 'card';
+    const list = shuffle(allMovies)
+      .filter(m => m.id !== movie.id)
+      .slice(0,8);
 
-    el.innerHTML = `
-      <img src="${sm.poster || ''}">
-    `;
+    list.forEach(sm => {
+      const el = document.createElement('div');
+      el.className = 'card';
 
-    el.onclick = () => {
-      localStorage.setItem('lumina_selectedMovie', JSON.stringify(sm));
-      location.reload();
-    };
+      el.innerHTML = `
+        <img src="${sm.poster || ''}" alt="${sm.title || 'Filme'}">
+      `;
 
-    similarRow.appendChild(el);
-  });
+      el.onclick = () => {
+        localStorage.setItem('lumina_selectedMovie', JSON.stringify(sm));
+        location.reload();
+      };
+
+      similarRow.appendChild(el);
+    });
+  }
 
   /* ===== PLAYER ===== */
-  document.getElementById('filmWatch').onclick = () => {
-    openPlayer(movie.trailer);
-  };
+  const watchBtn = document.getElementById('filmWatch');
 
-  playerClose.onclick = closePlayer;
+  if(watchBtn){
+    watchBtn.onclick = () => {
+      openPlayer(movie.trailer);
+    };
+  }
 
-  playerOverlay.onclick = (e)=>{
-    if(e.target === playerOverlay) closePlayer();
-  };
+  if(playerClose){
+    playerClose.onclick = closePlayer;
+  }
+
+  if(playerOverlay){
+    playerOverlay.onclick = (e)=>{
+      if(e.target === playerOverlay) closePlayer();
+    };
+  }
 
   document.addEventListener('keydown', e=>{
     if(e.key === 'Escape') closePlayer();
   });
 
   function openPlayer(url){
+    if(!playerFrame || !playerOverlay) return;
+
     playerFrame.src = (url || "https://www.youtube.com/embed/dQw4w9WgXcQ") + "?autoplay=1";
     playerOverlay.classList.add('active');
   }
 
   function closePlayer(){
+    if(!playerFrame || !playerOverlay) return;
+
     playerFrame.src = '';
     playerOverlay.classList.remove('active');
   }
