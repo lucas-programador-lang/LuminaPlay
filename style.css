@@ -34,7 +34,6 @@ nav a{
 margin-left:20px;
 text-decoration:none;
 color:white;
-font-weight:500;
 transition:0.3s;
 }
 
@@ -48,8 +47,6 @@ color:#ff004c;
 padding:8px 12px;
 border-radius:5px;
 border:none;
-outline:none;
-font-size:14px;
 }
 
 /* BANNER */
@@ -67,51 +64,12 @@ position:relative;
 position:absolute;
 width:100%;
 height:100%;
-background:linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.3));
+background:linear-gradient(to right, rgba(0,0,0,0.9), transparent);
 }
 
 .banner-text{
 position:relative;
 max-width:500px;
-animation:fadeBanner 1.5s ease;
-}
-
-@keyframes fadeBanner{
-from{
-opacity:0;
-transform:translateY(30px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
-
-.banner h1{
-font-size:50px;
-margin-bottom:10px;
-}
-
-.banner p{
-font-size:18px;
-margin-bottom:10px;
-}
-
-.banner button{
-background:#ff004c;
-border:none;
-padding:12px 25px;
-font-size:18px;
-color:white;
-cursor:pointer;
-border-radius:6px;
-margin-top:20px;
-transition:0.3s;
-}
-
-.banner button:hover{
-background:#ff2d63;
-transform:scale(1.05);
 }
 
 /* SEÇÕES */
@@ -124,21 +82,47 @@ padding:40px 60px;
 margin-bottom:20px;
 }
 
-/* LISTA DE FILMES */
+/* CARROSSEL */
+
+.carousel{
+position:relative;
+}
 
 .movies{
 display:flex;
 gap:15px;
 overflow-x:auto;
 scroll-behavior:smooth;
-padding-bottom:10px;
 }
 
 .movies::-webkit-scrollbar{
 display:none;
 }
 
-/* CARD FILME */
+/* BOTÕES */
+
+.arrow{
+position:absolute;
+top:40%;
+background:black;
+color:white;
+border:none;
+font-size:30px;
+width:40px;
+height:60px;
+cursor:pointer;
+z-index:10;
+}
+
+.arrow.left{
+left:0;
+}
+
+.arrow.right{
+right:0;
+}
+
+/* FILMES */
 
 .movie{
 min-width:180px;
@@ -149,89 +133,50 @@ transition:0.4s;
 .movie img{
 width:100%;
 border-radius:6px;
-cursor:pointer;
-transition:0.4s;
 }
-
-/* EFEITO NETFLIX */
 
 .movie:hover{
-transform:scale(1.25);
-z-index:10;
+transform:scale(1.2);
+z-index:5;
 }
-
-.movie:hover img{
-box-shadow:0 10px 25px rgba(0,0,0,0.8);
-}
-
-/* OVERLAY INFO */
-
-.movie::after{
-content:"Assistir";
-position:absolute;
-bottom:0;
-left:0;
-width:100%;
-height:100%;
-background:linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-display:flex;
-align-items:flex-end;
-justify-content:center;
-padding-bottom:15px;
-font-size:14px;
-opacity:0;
-transition:0.3s;
-border-radius:6px;
-}
-
-.movie:hover::after{
-opacity:1;
-}
-
-/* TITULO */
 
 .movie p{
 margin-top:6px;
 font-size:14px;
 }
 
-/* MODAL PLAYER */
+/* RANKING */
+
+.rank{
+position:absolute;
+top:5px;
+left:5px;
+background:#ff004c;
+padding:3px 6px;
+font-size:12px;
+border-radius:4px;
+}
+
+/* MODAL */
 
 .modal{
 display:none;
 position:fixed;
-z-index:200;
 left:0;
 top:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.95);
+background:rgba(0,0,0,0.9);
 justify-content:center;
 align-items:center;
 }
 
 .modal-content{
-position:relative;
 width:80%;
 max-width:900px;
-animation:modalOpen 0.4s ease;
-}
-
-@keyframes modalOpen{
-from{
-transform:scale(0.8);
-opacity:0;
-}
-to{
-transform:scale(1);
-opacity:1;
-}
 }
 
 .close{
-position:absolute;
-top:-40px;
-right:0;
 font-size:35px;
 cursor:pointer;
 }
@@ -243,35 +188,4 @@ text-align:center;
 padding:20px;
 background:black;
 margin-top:40px;
-}
-
-/* RESPONSIVO */
-
-@media(max-width:900px){
-
-header{
-flex-direction:column;
-gap:10px;
-}
-
-.banner{
-padding-left:20px;
-}
-
-.movies-section{
-padding:30px 20px;
-}
-
-.banner h1{
-font-size:35px;
-}
-
-.movie{
-min-width:140px;
-}
-
-.movie:hover{
-transform:scale(1.1);
-}
-
 }
