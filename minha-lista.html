@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Minha Lista</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-inner container">
+    <h2>Minha Lista</h2>
+    <a href="index.html">← Voltar</a>
+  </div>
+</header>
+
+<main class="lista-grid" id="lista"></main>
+
+<script>
+const lista = document.getElementById("lista");
+
+function getFav(){
+  return JSON.parse(localStorage.getItem("lumina_favorites") || "[]");
+}
+
+function render(){
+  lista.innerHTML = "";
+
+  const favs = getFav();
+
+  if(!favs.length){
+    lista.innerHTML = "<h2>Lista vazia 😢</h2>";
+    return;
+  }
+
+  favs.forEach(movie => {
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <img src="${movie.poster}">
+      <div class="card-play">
+        <button onclick="remove(${movie.id})">❌</button>
+      </div>
+    `;
+
+    lista.appendChild(card);
+  });
+}
+
+function remove(id){
+  let favs = getFav().filter(m => m.id !== id);
+  localStorage.setItem("lumina_favorites", JSON.stringify(favs));
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>
