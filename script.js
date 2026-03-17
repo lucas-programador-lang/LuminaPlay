@@ -1,23 +1,47 @@
 /* =========================
-   LuminaPlay — Script PRO (API REAL)
+   LuminaPlay — Script PRO FINAL
 ========================= */
 
-/* =========================
-   CONFIG API (TMDB)
-========================= */
-const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd"; // 🔴 coloque sua chave aqui
+const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/w500";
 
 /* =========================
-   DOM Cache
+   FAVORITOS (Minha Lista)
+========================= */
+function getFavorites() {
+  return JSON.parse(localStorage.getItem("lumina_favorites") || "[]");
+}
+
+function saveFavorites(list) {
+  localStorage.setItem("lumina_favorites", JSON.stringify(list));
+}
+
+function isFavorite(id) {
+  return getFavorites().some(m => m.id === id);
+}
+
+function toggleFavorite(movie) {
+  let favs = getFavorites();
+
+  if (isFavorite(movie.id)) {
+    favs = favs.filter(m => m.id !== movie.id);
+  } else {
+    favs.push(movie);
+  }
+
+  saveFavorites(favs);
+}
+
+/* =========================
+   DOM
 ========================= */
 const DOM = {
   hero: document.getElementById('hero'),
   heroTitle: document.getElementById('heroTitle'),
   heroOverview: document.getElementById('heroOverview'),
   heroWatch: document.getElementById('heroWatch'),
-  heroMore: document.getElementById('heroMore'),
+  heroFav: document.getElementById('heroFav'),
 
   rows: {
     populares: document.getElementById('row-populares'),
@@ -47,7 +71,6 @@ async function init() {
   const lancamentos = await getMovies("/movie/now_playing");
   const recomendados = await getMovies("/movie/top_rated");
 
-  // salvar tudo
   localStorage.setItem('lumina_allMovies', JSON.stringify([
     ...populares, ...emAlta, ...lancamentos, ...recomendados
   ]));
@@ -71,31 +94,28 @@ async function getMovies(endpoint) {
 
   return data.results.map(movie => ({
     id: movie.id,
-    title: movie.title || movie.name,
+    title: movie.title,
     overview: movie.overview,
-    poster: movie.poster_path ? IMG + movie.poster_path : "https://via.placeholder.com/300x450",
+    poster: movie.poster_path ? IMG + movie.poster_path : "",
     backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : "",
     rating: movie.vote_average,
-    year: movie.release_date ? movie.release_date.split("-")[0] : "—",
-    duration: "—",
-    trailer: null,
-    genres: []
+    year: movie.release_date?.split("-")[0],
+    trailer: null
   }));
 }
 
-async function getTrailer(movieId) {
-  const res = await fetch(`${BASE_URL}/movie/${movieId}/videos?api_key=${API_KEY}`);
+async function getTrailer(id) {
+  const res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}`);
   const data = await res.json();
+  const t = data.results.find(v => v.type === "Trailer");
 
-  const trailer = data.results.find(v => v.type === "Trailer");
-
-  return trailer
-    ? `https://www.youtube.com/embed/${trailer.key}`
+  return t
+    ? `https://www.youtube.com/embed/${t.key}`
     : "https://www.youtube.com/embed/dQw4w9WgXcQ";
 }
 
 /* =========================
-   Render
+   HERO
 ========================= */
 function renderHero(movie) {
   DOM.hero.style.backgroundImage = `url('${movie.backdrop}')`;
@@ -103,179 +123,127 @@ function renderHero(movie) {
   DOM.heroOverview.textContent = movie.overview;
 
   DOM.heroWatch.onclick = async () => {
-    const trailer = await getTrailer(movie.id);
-    openPlayer(trailer);
+    openPlayer(await getTrailer(movie.id));
   };
 
-  DOM.heroMore.onclick = () => openDetails(movie);
+  updateHeroFav(movie);
 }
 
+function updateHeroFav(movie) {
+  if (!DOM.heroFav) return;
+
+  const update = () => {
+    if (isFavorite(movie.id)) {
+      DOM.heroFav.innerHTML = `<i class="fa-solid fa-check"></i> Na Lista`;
+    } else {
+      DOM.heroFav.innerHTML = `<i class="fa-solid fa-plus"></i> Minha Lista`;
+    }
+  };
+
+  update();
+
+  DOM.heroFav.onclick = () => {
+    toggleFavorite(movie);
+    update();
+  };
+}
+
+/* =========================
+   CARDS
+========================= */
 function renderRow(key, movies) {
   const container = DOM.rows[key];
   if (!container) return;
 
-  const fragment = document.createDocumentFragment();
+  container.innerHTML = "";
 
   movies.forEach(movie => {
-    const card = createCard(movie);
-    fragment.appendChild(card);
+    container.appendChild(createCard(movie));
   });
-
-  container.innerHTML = '';
-  container.appendChild(fragment);
 }
 
 function createCard(movie) {
-  const el = document.createElement('div');
-  el.className = 'card';
+  const el = document.createElement("div");
+  el.className = "card";
+
+  const favIcon = isFavorite(movie.id)
+    ? `<i class="fa-solid fa-check"></i>`
+    : `<i class="fa-solid fa-plus"></i>`;
 
   el.innerHTML = `
-    <img src="${movie.poster}" alt="${escapeHtml(movie.title)}" loading="lazy">
+    <img src="${movie.poster}">
+    
     <div class="card-play">
-      <button class="btn btn-info small-play">▶</button>
+      <button class="small-play">▶</button>
+      <button class="fav-btn">${favIcon}</button>
     </div>
-    <div class="card-title">${escapeHtml(movie.title)}</div>
+
+    <div class="card-title">${movie.title}</div>
   `;
 
-  el.addEventListener('click', async (e) => {
-    if (e.target.closest('.small-play')) {
-      const trailer = await getTrailer(movie.id);
-      openPlayer(trailer);
-      return;
-    }
-    openDetails(movie);
-  });
+  el.querySelector(".small-play").onclick = async (e) => {
+    e.stopPropagation();
+    openPlayer(await getTrailer(movie.id));
+  };
+
+  el.querySelector(".fav-btn").onclick = (e) => {
+    e.stopPropagation();
+    toggleFavorite(movie);
+    renderRow("populares", JSON.parse(localStorage.getItem('lumina_allMovies')));
+  };
+
+  el.onclick = () => openDetails(movie);
 
   return el;
 }
 
 /* =========================
-   Player
+   PLAYER
 ========================= */
 function openPlayer(url) {
-  DOM.playerFrame.src = `${url}?autoplay=1`;
-  DOM.playerOverlay.classList.add('active');
+  DOM.playerFrame.src = url + "?autoplay=1";
+  DOM.playerOverlay.classList.add("active");
 }
 
 function closePlayer() {
-  DOM.playerOverlay.classList.remove('active');
-  DOM.playerFrame.src = '';
+  DOM.playerOverlay.classList.remove("active");
+  DOM.playerFrame.src = "";
 }
 
 /* =========================
-   Navegação
+   NAV
 ========================= */
 function openDetails(movie) {
-  localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
-  window.location.href = 'filme.html';
+  localStorage.setItem("lumina_selectedMovie", JSON.stringify(movie));
+  location.href = "filme.html";
 }
 
 /* =========================
-   UI Setup
+   UI
 ========================= */
 function setupUI() {
-  setupScrollHeader();
-  setupPlayerControls();
-  setupSearch();
-  setupTheme();
-  setupRows();
-}
+  DOM.playerClose.onclick = closePlayer;
 
-function setupScrollHeader() {
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-
-    DOM.header.classList.toggle('scrolled', y > 30);
-  });
-}
-
-function setupPlayerControls() {
-  DOM.playerClose?.addEventListener('click', closePlayer);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closePlayer();
-  });
-
-  DOM.playerOverlay?.addEventListener('click', (e) => {
+  DOM.playerOverlay.onclick = (e) => {
     if (e.target === DOM.playerOverlay) closePlayer();
-  });
+  };
 }
 
 /* =========================
-   SEARCH REAL 🔥
+   SEARCH
 ========================= */
-function setupSearch() {
-  let timeout;
+DOM.searchInput?.addEventListener("input", async (e) => {
+  const q = e.target.value;
 
-  DOM.searchInput?.addEventListener('input', (e) => {
-    clearTimeout(timeout);
+  if (!q) return init();
 
-    timeout = setTimeout(async () => {
-      const q = e.target.value.trim();
+  const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${q}`);
+  const data = await res.json();
 
-      if (!q) return init();
-
-      const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${q}`);
-      const data = await res.json();
-
-      const results = data.results.map(movie => ({
-        id: movie.id,
-        title: movie.title,
-        overview: movie.overview,
-        poster: movie.poster_path ? IMG + movie.poster_path : "",
-        backdrop: movie.backdrop_path ? IMG + movie.backdrop_path : "",
-        rating: movie.vote_average,
-        year: movie.release_date?.split("-")[0],
-        duration: "—",
-        genres: []
-      }));
-
-      renderRow("populares", results);
-      renderRow("emalta", []);
-    }, 300);
-  });
-}
-
-/* =========================
-   Theme
-========================= */
-function setupTheme() {
-  const saved = localStorage.getItem('lumina_theme');
-
-  if (saved === 'light') document.body.classList.add('light-theme');
-
-  DOM.themeBtn?.addEventListener('click', () => {
-    const isLight = document.body.classList.toggle('light-theme');
-    localStorage.setItem('lumina_theme', isLight ? 'light' : 'dark');
-  });
-}
-
-/* =========================
-   Row scroll
-========================= */
-function setupRows() {
-  document.querySelectorAll('.row').forEach(row => {
-    const left = row.querySelector('.left');
-    const right = row.querySelector('.right');
-    const cards = row.querySelector('.row-cards');
-
-    left?.addEventListener('click', () => scroll(cards, -1));
-    right?.addEventListener('click', () => scroll(cards, 1));
-  });
-}
-
-function scroll(container, dir) {
-  container.scrollBy({
-    left: container.clientWidth * 0.7 * dir,
-    behavior: 'smooth'
-  });
-}
-
-/* =========================
-   Utils
-========================= */
-function escapeHtml(text) {
-  return text.replace(/[&<>"']/g, m =>
-    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]
-  );
-}
+  renderRow("populares", data.results.map(m => ({
+    id: m.id,
+    title: m.title,
+    poster: IMG + m.poster_path,
+    backdrop: IMG + m.backdrop_path
+  })));
+});
