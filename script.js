@@ -19,12 +19,7 @@ const searchContainer = document.getElementById("searchResults")
 
 const searchInput = document.getElementById("search")
 
-const modal = document.getElementById("movieModal")
-const trailer = document.getElementById("movieTrailer")
-const closeModal = document.querySelector(".close")
-
 let previewTimeout = null
-let currentTrailer = null
 
 // ==========================
 // CARREGAR FILMES
@@ -39,7 +34,7 @@ try{
 const res = await fetch(url)
 
 if(!res.ok){
-throw new Error("Erro na API")
+throw new Error("Erro API")
 }
 
 const data = await res.json()
@@ -62,8 +57,6 @@ container.innerHTML = `<p>Erro ao carregar filmes.</p>`
 
 function showMovies(movies, container){
 
-if(!container) return
-
 container.innerHTML = ""
 
 movies.slice(0,10).forEach((movie,index) => {
@@ -82,35 +75,39 @@ movieEl.innerHTML = `
 
 <img src="${IMG_PATH + poster_path}" alt="${title}">
 
+<div class="movie-info">
+
 <p>${title}</p>
 
 <span class="rating">⭐ ${vote_average.toFixed(1)}</span>
 
+<div class="movie-buttons">
+
+<button class="play">▶</button>
+
 <button class="fav">❤️</button>
+
+</div>
+
+</div>
+
+<div class="trailer-preview"></div>
 
 `
 
-// ==========================
-// ABRIR TRAILER
-// ==========================
+// abrir página de detalhes
 
 movieEl.querySelector("img").addEventListener("click", () => {
-openTrailer(id)
+openDetails(movie)
 })
 
-// ==========================
-// PREVIEW AO PASSAR MOUSE
-// ==========================
+// preview trailer
 
 movieEl.addEventListener("mouseenter", () => {
 
 previewTimeout = setTimeout(() => {
-
-if(currentTrailer !== id){
-openTrailer(id)
-}
-
-},2000)
+loadTrailerPreview(id, movieEl)
+},1000)
 
 })
 
@@ -118,11 +115,13 @@ movieEl.addEventListener("mouseleave", () => {
 
 clearTimeout(previewTimeout)
 
+const preview = movieEl.querySelector(".trailer-preview")
+
+preview.innerHTML = ""
+
 })
 
-// ==========================
-// FAVORITOS
-// ==========================
+// favoritos
 
 movieEl.querySelector(".fav").addEventListener("click", (e) => {
 
@@ -139,10 +138,10 @@ container.appendChild(movieEl)
 }
 
 // ==========================
-// ABRIR TRAILER
+// TRAILER DENTRO DO CARD
 // ==========================
 
-async function openTrailer(movieId){
+async function loadTrailerPreview(movieId, movieEl){
 
 try{
 
@@ -156,53 +155,62 @@ const video = data.results.find(v => v.type === "Trailer")
 
 if(video){
 
-currentTrailer = movieId
+const preview = movieEl.querySelector(".trailer-preview")
 
-const youtubeURL =
-`https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1`
+preview.innerHTML = `
 
-trailer.src = youtubeURL
+<iframe
+width="100%"
+height="100%"
+src="https://www.youtube.com/embed/${video.key}?autoplay=1&mute=1"
+frameborder="0"
+allowfullscreen>
+</iframe>
 
-if(modal){
-modal.style.display = "flex"
-}
+`
 
 }
 
 }catch(error){
 
-console.error("Erro ao carregar trailer:", error)
+console.error("Erro preview trailer", error)
 
 }
 
 }
 
 // ==========================
-// FECHAR MODAL
+// PÁGINA DETALHES FILME
 // ==========================
 
-function closeTrailer(){
+function openDetails(movie){
 
-if(modal){
-modal.style.display = "none"
-}
+localStorage.setItem("selectedMovie", JSON.stringify(movie))
 
-if(trailer){
-trailer.src = ""
-}
-
-currentTrailer = null
+window.location.href = "filme.html"
 
 }
 
-if(closeModal){
-closeModal.onclick = closeTrailer
-}
+// ==========================
+// FAVORITOS
+// ==========================
 
-window.onclick = (event) => {
+function addFavorite(movie){
 
-if(event.target == modal){
-closeTrailer()
+let favorites = JSON.parse(localStorage.getItem("favorites")) || []
+
+if(!favorites.find(f => f.id === movie.id)){
+
+favorites.push(movie)
+
+localStorage.setItem("favorites", JSON.stringify(favorites))
+
+alert("Adicionado aos favoritos ❤️")
+
+}else{
+
+alert("Esse filme já está nos favoritos")
+
 }
 
 }
@@ -240,48 +248,49 @@ searchContainer.innerHTML = ""
 }
 
 // ==========================
-// FAVORITOS
+// CARROSSEL INFINITO
 // ==========================
 
-function addFavorite(movie){
+document.querySelectorAll(".carousel").forEach(carousel => {
 
-let favorites = JSON.parse(localStorage.getItem("favorites")) || []
+const container = carousel.querySelector(".movies")
 
-if(!favorites.find(f => f.id === movie.id)){
+const left = carousel.querySelector(".arrow.left")
+const right = carousel.querySelector(".arrow.right")
 
-favorites.push(movie)
+if(!container) return
 
-localStorage.setItem("favorites", JSON.stringify(favorites))
+right.addEventListener("click", () => {
 
-alert("Adicionado aos favoritos ❤️")
+container.scrollBy({
+left:400,
+behavior:"smooth"
+})
 
-}else{
+})
 
-alert("Esse filme já está nos favoritos")
+left.addEventListener("click", () => {
 
-}
+container.scrollBy({
+left:-400,
+behavior:"smooth"
+})
 
-}
+})
 
-// ==========================
-// CARREGAR FAVORITOS
-// ==========================
+// efeito infinito
 
-function loadFavorites(){
+container.addEventListener("scroll", () => {
 
-const favorites = JSON.parse(localStorage.getItem("favorites")) || []
+if(container.scrollLeft + container.clientWidth >= container.scrollWidth - 5){
 
-if(favorites.length === 0){
-
-searchContainer.innerHTML = "<p>Você ainda não tem favoritos.</p>"
-
-return
-
-}
-
-showMovies(favorites, searchContainer)
+container.scrollLeft = 0
 
 }
+
+})
+
+})
 
 // ==========================
 // BANNER AUTOMÁTICO
@@ -306,11 +315,7 @@ bannerIndex = 0
 const banner = document.querySelector(".banner")
 
 if(banner){
-
-banner.style.transition = "background-image 1s ease"
-
 banner.style.backgroundImage = `url(${banners[bannerIndex]})`
-
 }
 
 }
@@ -318,31 +323,7 @@ banner.style.backgroundImage = `url(${banners[bannerIndex]})`
 setInterval(changeBanner,5000)
 
 // ==========================
-// CARROSSEL
-// ==========================
-
-document.querySelectorAll(".carousel").forEach(carousel => {
-
-const movies = carousel.querySelector(".movies")
-const left = carousel.querySelector(".arrow.left")
-const right = carousel.querySelector(".arrow.right")
-
-if(left){
-left.addEventListener("click", () => {
-movies.scrollLeft -= 400
-})
-}
-
-if(right){
-right.addEventListener("click", () => {
-movies.scrollLeft += 400
-})
-}
-
-})
-
-// ==========================
-// MODO ESCURO / CLARO
+// MODO CLARO / ESCURO
 // ==========================
 
 function toggleTheme(){
