@@ -1,6 +1,17 @@
-/* =========================
-   LuminaPlay — CONFIGURAÇÃO API
-========================= */
+/* ============================================================
+   LUMINA PLAY - SERVICE WORKER REGISTRATION (PWA)
+============================================================ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('🚀 Lumina Play: Service Worker Ativo!', reg.scope))
+            .catch(err => console.error('❌ Falha ao registrar Service Worker:', err));
+    });
+}
+
+/* ============================================================
+   CONFIGURAÇÃO API
+============================================================ */
 const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
 const BASE_URL = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/original"; 
@@ -22,12 +33,12 @@ const DOM = {
     searchInput: document.getElementById('searchInput')
 };
 
-// Guardar dados originais para restaurar após a busca
-let backupPopulares = [];
+// Variável para guardar os filmes originais da home
+let originalMovies = [];
 
-/* =========================
+/* ============================================================
    INICIALIZAÇÃO
-========================= */
+============================================================ */
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
@@ -52,7 +63,7 @@ async function setupHomePage() {
         getMovies("/movie/now_playing")
     ]);
 
-    backupPopulares = populares; // Salva para restaurar depois da busca
+    originalMovies = populares; // Salva para restaurar após a busca
 
     // 3. Renderizar Hero
     if (populares.length > 0) renderHero(populares[Math.floor(Math.random() * 5)]);
@@ -68,7 +79,7 @@ async function setupHomePage() {
 }
 
 /* =========================
-   LÓGICA DE NAVEGAÇÃO E FAVORITOS
+   NAVEGAÇÃO E FAVORITOS
 ========================= */
 function goToDetails(movie) {
     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
@@ -82,8 +93,9 @@ function saveToList(movie) {
     if (!list.find(m => m.id === movie.id)) {
         list.push(movie);
         localStorage.setItem("luminaLista", JSON.stringify(list));
-        // Feedback visual mais moderno que o alert
-        console.log(`Adicionado: ${movie.title || movie.name}`);
+        alert(`✅ "${movie.title || movie.name}" adicionado à sua lista!`);
+    } else {
+        alert("ℹ️ Este item já está na sua lista.");
     }
 }
 
@@ -92,19 +104,14 @@ function saveToList(movie) {
 ========================= */
 function renderRow(type, movies) {
     const container = DOM.rows[type];
-    if (!container) return;
+    if (!container || !movies) return;
     container.innerHTML = ""; 
 
-    if (movies.length === 0) {
-        container.innerHTML = "<p style='padding:20px; opacity:0.5;'>Nenhum resultado encontrado.</p>";
-        return;
-    }
-
     movies.forEach(movie => {
-        const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=Sem+Imagem';
+        if (!movie.poster_path) return;
         const card = document.createElement("div");
         card.className = "card";
-        card.innerHTML = `<img src="${poster}" alt="${movie.title || movie.name}" loading="lazy">`;
+        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title || movie.name}" loading="lazy">`;
         
         card.onclick = () => goToDetails(movie);
         container.appendChild(card);
@@ -116,12 +123,8 @@ function renderHero(movie) {
     
     const bg = movie.backdrop_path ? `${IMG}${movie.backdrop_path}` : `${IMG}${movie.poster_path}`;
     
-    // Aplicando gradiente duplo para garantir leitura do texto
-    DOM.hero.style.backgroundImage = `
-        linear-gradient(to right, rgba(4, 7, 20, 0.8) 10%, transparent 70%),
-        linear-gradient(to top, #040714 5%, transparent 40%), 
-        url(${bg})
-    `;
+    // Gradiente para melhor leitura do texto
+    DOM.hero.style.backgroundImage = `linear-gradient(to top, #040714 10%, transparent 50%), url(${bg})`;
     
     if (DOM.heroTitle) DOM.heroTitle.textContent = movie.title || movie.name;
     
@@ -131,10 +134,14 @@ function renderHero(movie) {
     }
     
     if (DOM.heroWatch) DOM.heroWatch.onclick = () => goToDetails(movie);
+    if (DOM.heroFav) DOM.heroFav.onclick = (e) => {
+        e.stopPropagation();
+        saveToList(movie);
+    };
 }
 
 /* =========================
-   FUNÇÕES AUXILIARES E EVENTOS
+   API E AUXILIARES
 ========================= */
 async function getMovies(endpoint) {
     const urlSep = endpoint.includes('?') ? '&' : '?';
@@ -181,16 +188,17 @@ function setupArrows() {
 
 function setupSearch() {
     if (!DOM.searchInput) return;
-    
+
     const sectionTitle = DOM.rows.populares.parentElement.querySelector('h3');
-    const originalTitle = sectionTitle ? sectionTitle.innerHTML : "Populares";
+    const titleText = sectionTitle ? sectionTitle.innerText : "Populares";
 
     DOM.searchInput.addEventListener("input", debounce(async (e) => {
         const query = e.target.value.trim();
         
+        // Se a busca estiver vazia, restaura os filmes originais
         if (query.length === 0) {
-            renderRow("populares", backupPopulares);
-            if (sectionTitle) sectionTitle.innerHTML = originalTitle;
+            renderRow("populares", originalMovies);
+            if (sectionTitle) sectionTitle.innerHTML = `<i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; margin-right: 12px;"></i> Séries Populares`;
             return;
         }
 
@@ -199,9 +207,7 @@ function setupSearch() {
         const results = await getMovies(`/search/multi?query=${encodeURIComponent(query)}`);
         renderRow("populares", results);
         
-        if (sectionTitle) {
-            sectionTitle.innerHTML = `<i class="fa-solid fa-magnifying-glass" style="color:#00e5ff; margin-right:12px;"></i> Resultados para: "${query}"`;
-        }
+        if (sectionTitle) sectionTitle.textContent = `Resultados para: "${query}"`;
     }, 600));
 }
 
