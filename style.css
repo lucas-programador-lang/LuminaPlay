@@ -1,59 +1,320 @@
-/* --- AJUSTES EXTRAS PARA PLAYER E SÉRIES --- */
+/* ============================================================
+   VARIÁVEIS E RESET
+============================================================ */
+:root {
+    --primary-bg: #040714;
+    --sidebar-bg: #090b13;
+    --accent-color: #00e5ff; /* Azul Neon Lumina */
+    --accent-glow: rgba(0, 229, 255, 0.5);
+    --text-main: #f9f9f9;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
 
-/* Garante que o iframe ocupe todo o espaço sem barras de rolagem internas */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* ============================================================
+   SIDEBAR NAV
+============================================================ */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 90px;
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    z-index: 1000;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    transition: var(--transition);
+}
+
+.logo-horizontal {
+    width: 50px;
+    margin-bottom: 40px;
+    filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+
+.nav-links {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-links li {
+    font-size: 22px;
+    margin: 30px 0;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: var(--transition);
+    position: relative;
+}
+
+.nav-links li:hover, .nav-links li.active {
+    opacity: 1;
+    color: var(--accent-color);
+    transform: scale(1.1);
+    text-shadow: 0 0 15px var(--accent-glow);
+}
+
+.user-profile img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.user-profile img:hover {
+    border-color: var(--accent-color);
+}
+
+/* ============================================================
+   CONTEÚDO E BUSCA
+============================================================ */
+.content {
+    margin-left: 90px;
+    padding-bottom: 50px;
+}
+
+.search-section {
+    padding: 20px 4%;
+}
+
+#searchInput {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 25px;
+    border-radius: 30px;
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: var(--transition);
+}
+
+#searchInput:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+/* ============================================================
+   HERO BANNER
+============================================================ */
+.hero {
+    height: 80vh;
+    background-size: cover;
+    background-position: center 20%;
+    position: relative;
+    transition: background-image 0.8s ease-in-out;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(70deg, var(--primary-bg) 20%, transparent 90%);
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+}
+
+.hero-content { max-width: 650px; }
+.hero-content h1 { font-size: 4rem; font-weight: 800; margin-bottom: 15px; }
+.hero-overview { font-size: 1.1rem; opacity: 0.8; line-height: 1.6; margin-bottom: 25px; }
+
+.btn-play {
+    padding: 12px 35px;
+    background: var(--text-main);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-right: 15px;
+    transition: var(--transition);
+}
+
+.btn-play:hover { background: var(--accent-color); transform: scale(1.05); }
+
+.btn-info {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-info:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+/* ============================================================
+   CARDS E CARROSSEL
+============================================================ */
+.row { padding: 20px 0 20px 4%; }
+.row h3 { margin-bottom: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+.carousel-container { display: flex; align-items: center; overflow: hidden; }
+
+.movie-list {
+    display: flex;
+    gap: 15px;
+    overflow-x: scroll;
+    padding: 10px 0;
+    scroll-behavior: smooth;
+}
+
+.movie-list::-webkit-scrollbar { display: none; }
+
+.card {
+    min-width: 180px;
+    height: 270px;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 3px solid transparent;
+}
+
+.card:hover {
+    transform: scale(1.08);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    z-index: 10;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #1a1d29; /* Skeleton Lite */
+}
+
+/* Botões do Carrossel */
+.handle {
+    position: absolute;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 100%;
+    z-index: 5;
+    cursor: pointer;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.carousel-container:hover .handle { opacity: 1; }
+.handle.left { left: 0; }
+.handle.right { right: 0; }
+
+/* ============================================================
+   PLAYER OVERLAY
+============================================================ */
+.player-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.player-overlay.active { display: flex; }
+
+.player-content {
+    width: 85%;
+    height: 80%;
+    position: relative;
+    background: black;
+    animation: fadeIn 0.4s ease-out;
+}
+
 .player-content iframe {
     width: 100%;
     height: 100%;
     border-radius: 12px;
     border: 2px solid rgba(0, 229, 255, 0.2);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
 }
 
-/* Estilo para a Grade da "Minha Lista" */
-.favorites-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+.close-btn {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-/* Efeito de carregamento para as imagens (Skeleton Lite) */
-.card img {
-    background: #1a1d29;
-    min-height: 240px;
-}
+.close-btn:hover { color: var(--accent-color); transform: rotate(90deg); }
 
-/* Ajuste do botão de fechar o player no mobile */
-@media (max-width: 768px) {
-    .close-btn {
-        top: -60px;
-        right: 10px;
-        font-size: 35px;
-    }
-    
-    .player-content {
-        width: 100%;
-        border-radius: 0;
-    }
-    
-    .player-content iframe {
-        border-radius: 0;
-        border: none;
-    }
-
-    /* Melhora a visualização da grade no mobile */
-    .favorites-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
-    }
-}
-
-/* Animação suave para a entrada do Player */
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
 
-.player-overlay.active .player-content {
-    animation: fadeIn 0.4s ease-out;
+/* ============================================================
+   MINHA LISTA (GRADE)
+============================================================ */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    padding: 20px 4%;
+}
+
+/* ============================================================
+   RESPONSIVO (MOBILE)
+============================================================ */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: 60px;
+        bottom: 0;
+        top: auto;
+        flex-direction: row;
+        padding: 0 20px;
+        border-right: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .logo-container, .user-profile { display: none; }
+    
+    .nav-links {
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        margin: 0;
+    }
+    
+    .nav-links li { margin: 0; }
+
+    .content { margin-left: 0; padding-bottom: 80px; }
+
+    .hero-content h1 { font-size: 2.5rem; }
+    
+    .player-content { width: 100%; height: 60%; }
+    .close-btn { top: -60px; right: 10px; }
+
+    .favorites-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+    }
 }
