@@ -3,11 +3,11 @@
 ============================================================ */
 :root {
     --primary-bg: #040714;
-    --sidebar-bg: #090b13;
-    --accent-color: #00e5ff; /* Azul Neon Lumina */
+    --sidebar-bg: rgba(9, 11, 19, 0.95);
+    --accent-color: #00e5ff; 
     --accent-glow: rgba(0, 229, 255, 0.5);
     --text-main: #f9f9f9;
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 * {
@@ -33,6 +33,7 @@ body {
     height: 100vh;
     width: 90px;
     background: var(--sidebar-bg);
+    backdrop-filter: blur(10px); /* Efeito de vidro */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,7 +47,10 @@ body {
     width: 50px;
     margin-bottom: 40px;
     filter: drop-shadow(0 0 8px var(--accent-glow));
+    transition: 0.3s;
 }
+
+.logo-horizontal:hover { transform: scale(1.1); }
 
 .nav-links {
     list-style: none;
@@ -57,15 +61,15 @@ body {
     font-size: 22px;
     margin: 30px 0;
     cursor: pointer;
-    opacity: 0.6;
+    opacity: 0.5;
     transition: var(--transition);
-    position: relative;
+    text-align: center;
 }
 
 .nav-links li:hover, .nav-links li.active {
     opacity: 1;
     color: var(--accent-color);
-    transform: scale(1.1);
+    transform: scale(1.2);
     text-shadow: 0 0 15px var(--accent-glow);
 }
 
@@ -77,9 +81,7 @@ body {
     transition: var(--transition);
 }
 
-.user-profile img:hover {
-    border-color: var(--accent-color);
-}
+.user-profile img:hover { border-color: var(--accent-color); }
 
 /* ============================================================
    CONTEÚDO E BUSCA
@@ -87,11 +89,15 @@ body {
 .content {
     margin-left: 90px;
     padding-bottom: 50px;
+    animation: pageFadeIn 0.8s ease-out;
 }
 
-.search-section {
-    padding: 20px 4%;
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+
+.search-section { padding: 20px 4%; }
 
 #searchInput {
     width: 100%;
@@ -108,74 +114,82 @@ body {
 #searchInput:focus {
     background: rgba(255, 255, 255, 0.1);
     border-color: var(--accent-color);
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
 }
 
 /* ============================================================
    HERO BANNER
 ============================================================ */
 .hero {
-    height: 80vh;
+    height: 85vh;
     background-size: cover;
     background-position: center 20%;
     position: relative;
-    transition: background-image 0.8s ease-in-out;
+    transition: background-image 1s ease-in-out;
 }
 
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(70deg, var(--primary-bg) 20%, transparent 90%);
+    /* Degradê mais profundo para destacar o texto */
+    background: linear-gradient(70deg, var(--primary-bg) 25%, transparent 100%),
+                linear-gradient(to top, var(--primary-bg) 5%, transparent 40%);
     display: flex;
     align-items: center;
     padding: 0 5%;
 }
 
 .hero-content { max-width: 650px; }
-.hero-content h1 { font-size: 4rem; font-weight: 800; margin-bottom: 15px; }
+.hero-content h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
 .hero-overview { font-size: 1.1rem; opacity: 0.8; line-height: 1.6; margin-bottom: 25px; }
 
 .btn-play {
-    padding: 12px 35px;
+    padding: 14px 40px;
     background: var(--text-main);
     color: black;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     font-weight: 800;
+    text-transform: uppercase;
     cursor: pointer;
     margin-right: 15px;
     transition: var(--transition);
 }
 
-.btn-play:hover { background: var(--accent-color); transform: scale(1.05); }
+.btn-play:hover { background: var(--accent-color); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); }
 
 .btn-info {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    border: 2px solid white;
-    background: rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
     color: white;
-    font-size: 20px;
+    font-size: 22px;
     cursor: pointer;
     transition: var(--transition);
 }
 
-.btn-info:hover { border-color: var(--accent-color); color: var(--accent-color); }
+.btn-info:hover { border-color: var(--accent-color); color: var(--accent-color); transform: rotate(90deg); }
 
 /* ============================================================
    CARDS E CARROSSEL
 ============================================================ */
-.row { padding: 20px 0 20px 4%; }
-.row h3 { margin-bottom: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-.carousel-container { display: flex; align-items: center; overflow: hidden; }
+.row { padding: 30px 0 20px 4%; }
+.row h3 { 
+    margin-bottom: 20px; 
+    font-weight: 600; 
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+}
 
 .movie-list {
     display: flex;
-    gap: 15px;
+    gap: 18px;
     overflow-x: scroll;
-    padding: 10px 0;
+    padding: 15px 0;
     scroll-behavior: smooth;
 }
 
@@ -184,17 +198,17 @@ body {
 .card {
     min-width: 180px;
     height: 270px;
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
     transition: var(--transition);
-    border: 3px solid transparent;
+    position: relative;
+    background: #1a1d29;
 }
 
 .card:hover {
-    transform: scale(1.08);
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    transform: scale(1.1) translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7);
     z-index: 10;
 }
 
@@ -202,26 +216,27 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    background: #1a1d29; /* Skeleton Lite */
 }
 
-/* Botões do Carrossel */
 .handle {
     position: absolute;
-    background: rgba(0,0,0,0.7);
+    background: linear-gradient(to right, rgba(4,7,20,0.8), transparent);
     color: white;
     border: none;
-    width: 50px;
-    height: 100%;
-    z-index: 5;
+    width: 60px;
+    height: 270px;
+    z-index: 50;
     cursor: pointer;
     opacity: 0;
-    transition: var(--transition);
+    transition: 0.3s;
+}
+
+.handle.right { 
+    right: 0; 
+    background: linear-gradient(to left, rgba(4,7,20,0.8), transparent); 
 }
 
 .carousel-container:hover .handle { opacity: 1; }
-.handle.left { left: 0; }
-.handle.right { right: 0; }
 
 /* ============================================================
    PLAYER OVERLAY
@@ -229,55 +244,39 @@ body {
 .player-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.95);
+    background: rgba(0,0,0,0.9);
+    backdrop-filter: blur(15px);
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 2000;
+    z-index: 3000; /* Acima da sidebar */
 }
 
 .player-overlay.active { display: flex; }
 
 .player-content {
-    width: 85%;
-    height: 80%;
+    width: 90%;
+    max-width: 1100px;
+    aspect-ratio: 16/9;
     position: relative;
-    background: black;
-    animation: fadeIn 0.4s ease-out;
+    background: #000;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
 
 .player-content iframe {
     width: 100%;
     height: 100%;
-    border-radius: 12px;
-    border: 2px solid rgba(0, 229, 255, 0.2);
+    border: none;
 }
 
 .close-btn {
     position: absolute;
-    top: -40px;
+    top: -50px;
     right: 0;
-    font-size: 40px;
+    font-size: 45px;
     color: white;
     cursor: pointer;
-    transition: var(--transition);
-}
-
-.close-btn:hover { color: var(--accent-color); transform: rotate(90deg); }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-/* ============================================================
-   MINHA LISTA (GRADE)
-============================================================ */
-.favorites-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px;
-    padding: 20px 4%;
+    line-height: 1;
 }
 
 /* ============================================================
@@ -286,11 +285,11 @@ body {
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
-        height: 60px;
+        height: 70px;
         bottom: 0;
         top: auto;
         flex-direction: row;
-        padding: 0 20px;
+        padding: 0;
         border-right: none;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -301,20 +300,15 @@ body {
         display: flex;
         width: 100%;
         justify-content: space-around;
+        align-items: center;
         margin: 0;
     }
     
-    .nav-links li { margin: 0; }
+    .nav-links li { margin: 0; font-size: 24px; }
 
-    .content { margin-left: 0; padding-bottom: 80px; }
+    .content { margin-left: 0; padding-bottom: 90px; }
 
-    .hero-content h1 { font-size: 2.5rem; }
+    .hero-content h1 { font-size: 2.2rem; }
     
-    .player-content { width: 100%; height: 60%; }
-    .close-btn { top: -60px; right: 10px; }
-
-    .favorites-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
-    }
+    .card { min-width: 140px; height: 210px; }
 }
