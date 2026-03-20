@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Play | Detalhes</title>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo-container" onclick="location.href='index.html'" style="cursor: pointer;">
-            <img src="logo.png" alt="Lumina Play Logo" class="logo-horizontal">
+        <div class="logo-container" onclick="window.location.href='/'" style="cursor: pointer;">
+            <img src="/logo.png" alt="Lumina Play Logo" class="logo-horizontal">
         </div>
 
         <ul class="nav-links">
-            <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar" onclick="location.href='index.html'"><i class="fa-solid fa-magnifying-glass"></i></li>
-            <li onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
-            <li class="active" onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
-            <li onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
+            <li onclick="window.location.href='/'" title="Início"><i class="fa-solid fa-house"></i></li>
+            <li title="Pesquisar" onclick="window.location.href='/'"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li onclick="window.location.href='/minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
+            <li class="active" onclick="window.location.href='/filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
+            <li onclick="window.location.href='/series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
         </ul>
         <div class="user-profile">
             <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
@@ -75,15 +75,13 @@
             const movieData = localStorage.getItem('lumina_selectedMovie');
             
             if(!movieData) {
-                window.location.href = 'index.html';
+                window.location.href = '/';
                 return;
             }
 
             const movie = JSON.parse(movieData);
-            // Melhora na detecção do tipo para suportar buscas variadas
             const type = (movie.media_type) ? movie.media_type : (movie.title ? 'movie' : 'tv');
 
-            // --- ATUALIZAÇÃO DA INTERFACE ---
             document.title = `Lumina Play | ${movie.title || movie.name}`;
             document.getElementById('filmTitle').textContent = movie.title || movie.name;
             document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível no momento.";
@@ -99,21 +97,18 @@
             updateListButton(movie.id);
             fetchSimilar(movie.id, type);
 
-            // --- LÓGICA DO PLAYER DINÂMICO ---
             document.getElementById('filmWatch').onclick = async () => {
                 const overlay = document.getElementById('playerOverlay');
                 const frame = document.getElementById('playerFrame');
 
                 overlay.classList.add('active');
-                frame.src = "about:blank"; // Limpa o frame antes de carregar o novo
+                frame.src = "about:blank"; 
 
                 try {
-                    // Busca ID Externo para precisão
                     const response = await fetch(`https://api.themoviedb.org/3/${type}/${movie.id}/external_ids?api_key=${API_KEY}`);
                     const ids = await response.json();
                     const imdbId = ids.imdb_id;
 
-                    // Prioriza o ID do IMDB, caso contrário usa o ID do TMDB
                     const idToUse = imdbId || movie.id;
                     const embedType = type === 'movie' ? 'filme' : 'serie';
                     
@@ -121,7 +116,6 @@
                     
                 } catch (err) {
                     console.error("Erro ao carregar o player:", err);
-                    // Fallback imediato para TMDB ID se a busca de IDs falhar
                     frame.src = `https://embed.warezcdn.com/${type === 'movie' ? 'filme' : 'serie'}/${movie.id}`;
                 }
             };
@@ -130,16 +124,14 @@
                 const overlay = document.getElementById('playerOverlay');
                 const frame = document.getElementById('playerFrame');
                 overlay.classList.remove('active');
-                frame.src = ""; // Para o vídeo imediatamente ao fechar
+                frame.src = ""; 
             };
 
-            // Lógica da Lista
             document.getElementById('addToList').onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                 const index = favs.findIndex(item => item.id === movie.id);
                 
                 if (index === -1) {
-                    // Adiciona o media_type antes de salvar para garantir que a lista saiba o que é
                     movie.media_type = type;
                     favs.push(movie);
                 } else {
@@ -183,6 +175,7 @@
                     card.onclick = () => {
                         localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
                         window.scrollTo({top: 0, behavior: 'smooth'});
+                        // Pequeno delay para a experiência de scroll ser melhor
                         setTimeout(() => window.location.reload(), 300);
                     };
                     container.appendChild(card);
@@ -190,7 +183,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
