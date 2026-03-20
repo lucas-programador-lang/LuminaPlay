@@ -1,249 +1,133 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>LuminaPlay | Séries</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Play | Séries</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-
 <body>
 
-<!-- HEADER (PADRÃO IGUAL TODAS PÁGINAS) -->
-<header class="site-header" id="siteHeader">
-  <div class="header-inner container">
-
-    <div class="logo">
-      <span class="logoL">Lumina</span><span class="logoPlay">Play</span>
-    </div>
-
-    <nav class="main-nav">
-      <a class="nav-link" href="index.html">Início</a>
-      <a class="nav-link" href="filme.html">Filmes</a>
-      <a class="nav-link active" href="series.html">Séries</a>
-      <a class="nav-link" href="minha-lista.html">
-        <i class="fa-solid fa-bookmark"></i> Minha Lista
-      </a>
+    <nav class="sidebar">
+        <div class="logo">L<span>P</span></div>
+        <ul class="nav-links">
+            <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
+            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
+            <li onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
+            <li class="active" onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
+        </ul>
+        <div class="user-profile">
+            <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
+        </div>
     </nav>
 
-    <div class="search-box">
-      <input type="text" placeholder="Buscar...">
+    <main class="content">
+        <section class="hero" id="hero">
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <h1 id="heroTitle">Séries Lumina</h1>
+                    <p id="heroOverview">As séries mais assistidas do momento, agora em um só lugar.</p>
+                    <div class="buttons">
+                        <button class="btn-play" id="heroWatch">▶ ASSISTIR AGORA</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="row">
+            <h3>🔥 Séries Populares</h3>
+            <div class="carousel-container">
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="movie-list row-cards" id="row-populares"></div>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>⭐ Em Alta</h3>
+            <div class="carousel-container">
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="movie-list row-cards" id="row-emalta"></div>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>🏆 Mais bem avaliadas</h3>
+            <div class="carousel-container">
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="movie-list row-cards" id="row-top"></div>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <div id="playerOverlay" class="player-overlay">
+        <div class="player-content">
+            <span id="playerClose" class="close-btn">&times;</span>
+            <iframe id="playerFrame" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
     </div>
 
-  </div>
-</header>
+    <script>
+        const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
+        const BASE = "https://api.themoviedb.org/3";
+        const IMG = "https://image.tmdb.org/t/p/original";
 
-<!-- HERO -->
-<section id="hero" class="hero">
-  <div class="hero-content container">
-    <h1 id="heroTitle">Carregando...</h1>
-    <p id="heroOverview"></p>
-  </div>
-</section>
+        async function fetchSeries(endpoint) {
+            const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+            const data = await res.json();
+            return data.results;
+        }
 
-<!-- ROWS -->
-<section class="rows container">
+        function renderRow(id, series) {
+            const container = document.getElementById(id);
+            container.innerHTML = "";
+            series.forEach(s => {
+                if(!s.poster_path) return;
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${s.poster_path}" alt="${s.name}">`;
+                card.onclick = () => {
+                    // Reutilizamos a lógica de detalhes, adaptando para série
+                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(s));
+                    window.location.href = 'filme.html'; // Usamos a mesma página de detalhes
+                };
+                container.appendChild(card);
+            });
+        }
 
-  <section>
-    <h2 class="row-title">🔥 Populares</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div class="row-cards" id="row-populares"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
+        async function init() {
+            const populares = await fetchSeries("/tv/popular");
+            const emAlta = await fetchSeries("/trending/tv/week");
+            const top = await fetchSeries("/tv/top_rated");
 
-  <section>
-    <h2 class="row-title">⭐ Em Alta</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div class="row-cards" id="row-emalta"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
+            if(populares.length) {
+                const heroS = populares[0];
+                document.getElementById('hero').style.backgroundImage = `url(${IMG}${heroS.backdrop_path})`;
+                document.getElementById('heroTitle').textContent = heroS.name;
+                document.getElementById('heroOverview').textContent = heroS.overview.substring(0, 150) + "...";
+            }
 
-  <section>
-    <h2 class="row-title">🏆 Mais bem avaliadas</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div class="row-cards" id="row-top"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
+            renderRow("row-populares", populares);
+            renderRow("row-emalta", emAlta);
+            renderRow("row-top", top);
+        }
 
-</section>
+        // Setas do Carrossel
+        document.querySelectorAll('.handle').forEach(btn => {
+            btn.onclick = () => {
+                const list = btn.parentElement.querySelector('.movie-list');
+                const direction = btn.classList.contains('left') ? -450 : 450;
+                list.scrollBy({ left: direction, behavior: 'smooth' });
+            };
+        });
 
-<!-- PLAYER -->
-<div id="playerOverlay" class="player-overlay">
-  <div class="player-inner">
-    <button id="playerClose" class="player-close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <iframe id="playerFrame" class="player-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  </div>
-</div>
-
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <div>© 2026 LuminaPlay</div>
-  </div>
-</footer>
-
-<!-- SCRIPT -->
-<script>
-const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
-const BASE = "https://api.themoviedb.org/3";
-const IMG = "https://image.tmdb.org/t/p/w500";
-
-const rows = {
-  populares: document.getElementById('row-populares'),
-  emalta: document.getElementById('row-emalta'),
-  top: document.getElementById('row-top')
-};
-
-const hero = document.getElementById('hero');
-
-function showSkeleton(id){
-  const row = document.getElementById(id);
-  if(!row) return;
-
-  row.innerHTML = "";
-  for(let i=0;i<8;i++){
-    const s = document.createElement("div");
-    s.className = "skeleton";
-    row.appendChild(s);
-  }
-}
-
-async function getSeries(endpoint){
-  try{
-    const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
-    const data = await res.json();
-
-    return (data.results || []).map(s => ({
-      id: s.id,
-      title: s.name,
-      poster: s.poster_path ? IMG + s.poster_path : "",
-      backdrop: s.backdrop_path ? IMG + s.backdrop_path : "",
-      overview: s.overview || "Sem descrição"
-    }));
-  }catch{
-    return [];
-  }
-}
-
-async function init(){
-
-  showSkeleton("row-populares");
-  showSkeleton("row-emalta");
-  showSkeleton("row-top");
-
-  const populares = await getSeries("/tv/popular");
-  const emAlta = await getSeries("/trending/tv/week");
-  const top = await getSeries("/tv/top_rated");
-
-  if(populares.length){
-    renderHero(populares[0]);
-  }
-
-  renderRow("populares", populares);
-  renderRow("emalta", emAlta);
-  renderRow("top", top);
-
-  setupArrows();
-  setupPlayer();
-}
-
-function renderHero(s){
-  if(!hero) return;
-
-  hero.style.backgroundImage = s.backdrop ? `url('${s.backdrop}')` : "";
-
-  document.getElementById('heroTitle').textContent = s.title || "Sem título";
-  document.getElementById('heroOverview').textContent = s.overview;
-}
-
-function renderRow(key, list){
-  const container = rows[key];
-  if(!container) return;
-
-  container.innerHTML = "";
-
-  list.forEach(s => {
-    const card = document.createElement('div');
-    card.className = "card";
-
-    card.innerHTML = `<img src="${s.poster}" alt="${s.title}">`;
-
-    card.onclick = () => openPlayer();
-
-    container.appendChild(card);
-  });
-}
-
-function setupArrows(){
-  document.querySelectorAll('.row').forEach(row => {
-    const left = row.querySelector('.left');
-    const right = row.querySelector('.right');
-    const container = row.querySelector('.row-cards');
-
-    if(left) left.onclick = () => container.scrollBy({ left: -300, behavior: 'smooth' });
-    if(right) right.onclick = () => container.scrollBy({ left: 300, behavior: 'smooth' });
-  });
-}
-
-function openPlayer(){
-  const overlay = document.getElementById('playerOverlay');
-  const frame = document.getElementById('playerFrame');
-
-  if(!overlay || !frame) return;
-
-  overlay.classList.add('active');
-  frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
-}
-
-function setupPlayer(){
-  const overlay = document.getElementById('playerOverlay');
-  const frame = document.getElementById('playerFrame');
-  const closeBtn = document.getElementById('playerClose');
-
-  if(closeBtn) closeBtn.onclick = close;
-
-  if(overlay){
-    overlay.onclick = (e)=>{
-      if(e.target === overlay) close();
-    };
-  }
-
-  document.addEventListener('keydown', e=>{
-    if(e.key === "Escape") close();
-  });
-
-  function close(){
-    if(!overlay || !frame) return;
-    overlay.classList.remove('active');
-    frame.src = "";
-  }
-}
-
-init();
-</script>
-
-<!-- SCROLL HEADER -->
-<script>
-window.addEventListener("scroll", () => {
-  const header = document.getElementById("siteHeader");
-  if(window.scrollY > 20){
-    header.classList.add("scrolled");
-  } else {
-    header.classList.remove("scrolled");
-  }
-});
-</script>
-
+        init();
+    </script>
 </body>
 </html>
