@@ -13,11 +13,11 @@
     <nav class="sidebar">
         <div class="logo">L<span>P</span></div>
         <ul class="nav-links">
-            <li class="active" title="Início"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
-            <li title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
-            <li title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
-            <li title="Séries"><i class="fa-solid fa-tv"></i></li>
+            <li class="active" title="Início" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i></li>
+            <li title="Pesquisar" onclick="document.getElementById('searchInput').focus()"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li title="Minha Lista" onclick="window.location.href='minha-lista.html'"><i class="fa-solid fa-plus"></i></li>
+            <li title="Filmes" onclick="window.location.href='filme.html'"><i class="fa-solid fa-clapperboard"></i></li>
+            <li title="Séries" onclick="window.location.href='series.html'"><i class="fa-solid fa-tv"></i></li>
         </ul>
         <div class="user-profile">
             <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
@@ -43,38 +43,37 @@
         </section>
 
         <section class="categories">
-            <div class="category-card">LUMINA</div>
-            <div class="category-card">PIXAR</div>
-            <div class="category-card">MARVEL</div>
-            <div class="category-card">WARS</div>
-            <div class="category-card">NATGEO</div>
+            <div class="category-card" onclick="alert('Explorar Lumina Originals')">LUMINA</div>
+            <div class="category-card" onclick="alert('Explorar Pixar')">PIXAR</div>
+            <div class="category-card" onclick="alert('Explorar Marvel')">MARVEL</div>
+            <div class="category-card" onclick="alert('Explorar Star Wars')">WARS</div>
+            <div class="category-card" onclick="alert('Explorar NatGeo')">NATGEO</div>
         </section>
 
         <div class="row">
             <h3>Populares</h3>
             <div class="carousel-container">
-                <button class="handle left">&#10094;</button>
-                <div class="movie-list row-cards" id="row-populares">
-                    </div>
-                <button class="handle right">&#10095;</button>
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="movie-list row-cards" id="row-populares"></div>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
 
         <div class="row">
             <h3>Em Alta</h3>
             <div class="carousel-container">
-                <button class="handle left">&#10094;</button>
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-emalta"></div>
-                <button class="handle right">&#10095;</button>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
 
         <div class="row">
             <h3>Lançamentos</h3>
             <div class="carousel-container">
-                <button class="handle left">&#10094;</button>
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-lancamentos"></div>
-                <button class="handle right">&#10095;</button>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
     </main>
