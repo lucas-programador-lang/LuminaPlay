@@ -12,10 +12,13 @@
 <body>
 
     <nav class="sidebar">
-        <div class="logo">L<span>P</span></div>
+        <div class="logo-container" onclick="location.href='index.html'" style="cursor: pointer;">
+            <img src="logo.png" alt="Lumina Play Logo" class="logo-horizontal">
+        </div>
+
         <ul class="nav-links">
             <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li title="Pesquisar" onclick="location.href='index.html'"><i class="fa-solid fa-magnifying-glass"></i></li>
             <li onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
             <li onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
             <li class="active" onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
@@ -66,51 +69,60 @@
         </div>
     </main>
 
-    <div id="playerOverlay" class="player-overlay">
-        <div class="player-content">
-            <span id="playerClose" class="close-btn">&times;</span>
-            <iframe id="playerFrame" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-
     <script>
         const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
         const BASE = "https://api.themoviedb.org/3";
         const IMG = "https://image.tmdb.org/t/p/original";
 
         async function fetchSeries(endpoint) {
-            const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
-            const data = await res.json();
-            return data.results;
+            try {
+                const res = await fetch(`${BASE}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+                const data = await res.json();
+                return data.results || [];
+            } catch (err) {
+                console.error("Erro ao buscar séries:", err);
+                return [];
+            }
         }
 
         function renderRow(id, series) {
             const container = document.getElementById(id);
+            if (!container) return;
             container.innerHTML = "";
+            
             series.forEach(s => {
                 if(!s.poster_path) return;
                 const card = document.createElement('div');
                 card.className = "card";
-                card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${s.poster_path}" alt="${s.name}">`;
+                card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${s.poster_path}" alt="${s.name}" loading="lazy">`;
                 card.onclick = () => {
-                    // Reutilizamos a lógica de detalhes, adaptando para série
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(s));
-                    window.location.href = 'filme.html'; // Usamos a mesma página de detalhes
+                    window.location.href = 'filme.html';
                 };
                 container.appendChild(card);
             });
         }
 
         async function init() {
-            const populares = await fetchSeries("/tv/popular");
-            const emAlta = await fetchSeries("/trending/tv/week");
-            const top = await fetchSeries("/tv/top_rated");
+            const [populares, emAlta, top] = await Promise.all([
+                fetchSeries("/tv/popular"),
+                fetchSeries("/trending/tv/week"),
+                fetchSeries("/tv/top_rated")
+            ]);
 
             if(populares.length) {
-                const heroS = populares[0];
-                document.getElementById('hero').style.backgroundImage = `url(${IMG}${heroS.backdrop_path})`;
+                const heroS = populares[Math.floor(Math.random() * 5)];
+                const bg = heroS.backdrop_path ? `${IMG}${heroS.backdrop_path}` : `${IMG}${heroS.poster_path}`;
+                document.getElementById('hero').style.backgroundImage = `url(${bg})`;
                 document.getElementById('heroTitle').textContent = heroS.name;
-                document.getElementById('heroOverview').textContent = heroS.overview.substring(0, 150) + "...";
+                
+                const overview = heroS.overview || "Explore as reviravoltas desta série incrível disponível na Lumina Play.";
+                document.getElementById('heroOverview').textContent = overview.length > 180 ? overview.substring(0, 180) + "..." : overview;
+                
+                document.getElementById('heroWatch').onclick = () => {
+                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(heroS));
+                    window.location.href = 'filme.html';
+                };
             }
 
             renderRow("row-populares", populares);
@@ -118,11 +130,11 @@
             renderRow("row-top", top);
         }
 
-        // Setas do Carrossel
+        // Scroll do Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
-                const direction = btn.classList.contains('left') ? -450 : 450;
+                const direction = btn.classList.contains('left') ? -500 : 500;
                 list.scrollBy({ left: direction, behavior: 'smooth' });
             };
         });
