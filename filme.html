@@ -1,178 +1,106 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>LuminaPlay | Filme</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Play | Detalhes do Filme</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-
 <body>
 
-<!-- HEADER PADRÃO -->
-<header class="site-header" id="siteHeader">
-  <div class="header-inner container">
-
-    <div class="logo">
-      <span class="logoL">Lumina</span><span class="logoPlay">Play</span>
-    </div>
-
-    <nav class="main-nav">
-      <a class="nav-link" href="index.html">Início</a>
-      <a class="nav-link active" href="filme.html">Filmes</a>
-      <a class="nav-link" href="series.html">Séries</a>
-      <a class="nav-link" href="minha-lista.html">
-        <i class="fa-solid fa-bookmark"></i> Minha Lista
-      </a>
+    <nav class="sidebar">
+        <div class="logo">L<span>P</span></div>
+        <ul class="nav-links">
+            <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
+            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
+            <li class="active" onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
+            <li onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
+        </ul>
+        <div class="user-profile">
+            <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
+        </div>
     </nav>
 
-    <div class="search-box">
-      <input type="text" placeholder="Buscar...">
+    <main class="content">
+        <section class="hero" id="filmHero">
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <h1 id="filmTitle">Carregando...</h1>
+                    <p id="filmInfo" style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;"></p>
+                    <p id="filmOverview" class="hero-overview">Aguarde enquanto buscamos os detalhes do filme.</p>
+                    
+                    <div class="buttons">
+                        <button class="btn-play" id="filmWatch">▶ ASSISTIR AGORA</button>
+                        <button class="btn-info" id="addToList">+</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="row">
+            <h3>🎬 Filmes semelhantes</h3>
+            <div class="carousel-container">
+                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="movie-list row-cards" id="similarRow">
+                    </div>
+                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <div id="playerOverlay" class="player-overlay">
+        <div class="player-content">
+            <span id="playerClose" class="close-btn">&times;</span>
+            <iframe id="playerFrame" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
     </div>
 
-  </div>
-</header>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Pega o filme que foi clicado no index.html
+            const movieData = localStorage.getItem('lumina_selectedMovie');
+            
+            if(!movieData) {
+                // Se não tiver filme selecionado, volta pro início
+                window.location.href = 'index.html';
+                return;
+            }
 
-<main>
+            const movie = JSON.parse(movieData);
 
-  <!-- HERO -->
-  <section id="filmHero" class="hero">
-    <div class="hero-content container">
-      <h1 id="filmTitle"></h1>
-      <p id="filmInfo" class="hero-overview"></p>
-      <p id="filmGenres" class="hero-overview"></p>
-      <p id="filmOverview" class="hero-overview"></p>
+            // Preenche a página com os dados
+            document.getElementById('filmTitle').textContent = movie.title || movie.name;
+            document.getElementById('filmOverview').textContent = movie.overview;
+            document.getElementById('filmHero').style.backgroundImage = `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`;
+            document.getElementById('filmInfo').textContent = `${movie.release_date ? movie.release_date.split('-')[0] : '2026'} • ★ ${movie.vote_average.toFixed(1)}`;
 
-      <div class="hero-actions">
-        <button id="filmWatch" class="btn btn-watch">
-          <i class="fa-solid fa-play"></i> Assistir
-        </button>
-      </div>
-    </div>
-  </section>
+            // Botão de Assistir
+            document.getElementById('filmWatch').onclick = () => {
+                const overlay = document.getElementById('playerOverlay');
+                const frame = document.getElementById('playerFrame');
+                overlay.classList.add('active');
+                frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+            };
 
-  <!-- SIMILARES -->
-  <section class="container" style="margin-top:40px">
-    <h3>🎬 Filmes semelhantes</h3>
+            // Fechar Player
+            document.getElementById('playerClose').onclick = () => {
+                document.getElementById('playerOverlay').classList.remove('active');
+                document.getElementById('playerFrame').src = "";
+            };
+        });
 
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div class="row-cards" id="similarRow"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
-
-</main>
-
-<!-- PLAYER -->
-<div id="playerOverlay" class="player-overlay">
-  <div class="player-inner">
-
-    <button id="playerClose" class="player-close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-
-    <iframe id="playerFrame"
-      class="player-iframe"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-
-  </div>
-</div>
-
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <div>© 2026 LuminaPlay</div>
-  </div>
-</footer>
-
-<script>
-(function(){
-  const movieJson = localStorage.getItem('lumina_selectedMovie');
-  const allMovies = JSON.parse(localStorage.getItem('lumina_allMovies') || '[]');
-
-  if(!movieJson){
-    location.href = "index.html";
-    return;
-  }
-
-  const movie = JSON.parse(movieJson);
-
-  const title = document.getElementById('filmTitle');
-  const overview = document.getElementById('filmOverview');
-  const info = document.getElementById('filmInfo');
-  const genres = document.getElementById('filmGenres');
-  const hero = document.getElementById('filmHero');
-  const similarRow = document.getElementById('similarRow');
-
-  const playerOverlay = document.getElementById('playerOverlay');
-  const playerFrame = document.getElementById('playerFrame');
-  const playerClose = document.getElementById('playerClose');
-
-  if(title) title.textContent = movie.title || "Sem título";
-  if(overview) overview.textContent = movie.overview || "Sem descrição";
-  if(info) info.textContent = `${movie.year || '—'} • ★ ${movie.rating ? Number(movie.rating).toFixed(1) : '—'}`;
-  if(genres) genres.textContent = Array.isArray(movie.genres) && movie.genres.length ? movie.genres.join(' • ') : "";
-  if(hero && movie.backdrop) hero.style.backgroundImage = `url('${movie.backdrop}')`;
-
-  if(similarRow && allMovies.length){
-    const list = shuffle(allMovies).filter(m => m.id !== movie.id).slice(0,8);
-    list.forEach(sm => {
-      const el = document.createElement('div');
-      el.className = 'card';
-      el.innerHTML = `<img src="${sm.poster || ''}" alt="${sm.title || 'Filme'}">`;
-      el.onclick = () => {
-        localStorage.setItem('lumina_selectedMovie', JSON.stringify(sm));
-        location.reload();
-      };
-      similarRow.appendChild(el);
-    });
-  }
-
-  document.querySelectorAll('.row').forEach(row => {
-    const left = row.querySelector('.left');
-    const right = row.querySelector('.right');
-    const container = row.querySelector('.row-cards');
-    if(left) left.onclick = () => container.scrollBy({ left: -300, behavior: 'smooth' });
-    if(right) right.onclick = () => container.scrollBy({ left: 300, behavior: 'smooth' });
-  });
-
-  const watchBtn = document.getElementById('filmWatch');
-  if(watchBtn) watchBtn.onclick = () => openPlayer(movie.trailer);
-
-  if(playerClose) playerClose.onclick = closePlayer;
-  if(playerOverlay) playerOverlay.onclick = e => { if(e.target === playerOverlay) closePlayer(); };
-
-  function openPlayer(url){
-    playerFrame.src = (url || "https://www.youtube.com/embed/dQw4w9WgXcQ") + "?autoplay=1";
-    playerOverlay.classList.add('active');
-  }
-
-  function closePlayer(){
-    playerFrame.src = '';
-    playerOverlay.classList.remove('active');
-  }
-
-  function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
-})();
-</script>
-
-<!-- SCROLL HEADER -->
-<script>
-window.addEventListener("scroll", () => {
-  const header = document.getElementById("siteHeader");
-  if(window.scrollY > 20){
-    header.classList.add("scrolled");
-  } else {
-    header.classList.remove("scrolled");
-  }
-});
-</script>
-
+        // Configuração simples das setas
+        document.querySelectorAll('.handle').forEach(btn => {
+            btn.onclick = () => {
+                const list = btn.parentElement.querySelector('.movie-list');
+                const direction = btn.classList.contains('left') ? -400 : 400;
+                list.scrollBy({ left: direction, behavior: 'smooth' });
+            };
+        });
+    </script>
 </body>
 </html>
