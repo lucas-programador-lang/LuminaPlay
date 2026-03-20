@@ -46,8 +46,9 @@
                 <div class="hero-overlay">
                     <div class="hero-content">
                         <h1 id="heroTitle">Lumina Play</h1>
-                        <p id="heroOverview">Carregando as melhores histórias...</p>
-                        <div class="buttons">
+                        <p id="heroOverview" class="hero-overview">Carregando as melhores histórias...</p>
+                        
+                        <div class="hero-buttons">
                             <button class="btn-play" id="heroWatch">▶ ASSISTIR AGORA</button>
                             <button class="btn-info" id="heroFav" title="Adicionar à Lista">+</button>
                         </div>
@@ -65,7 +66,7 @@
 
             <div class="row">
                 <h3><i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Populares</h3>
-                <div class="carousel-container">
+                <div class="carousel-container" style="position: relative;">
                     <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                     <div class="movie-list row-cards" id="row-populares"></div>
                     <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
@@ -74,7 +75,7 @@
 
             <div class="row">
                 <h3><i class="fa-solid fa-star" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Em Alta</h3>
-                <div class="carousel-container">
+                <div class="carousel-container" style="position: relative;">
                     <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                     <div class="movie-list row-cards" id="row-emalta"></div>
                     <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
@@ -83,7 +84,7 @@
 
             <div class="row">
                 <h3><i class="fa-solid fa-calendar-day" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Lançamentos</h3>
-                <div class="carousel-container">
+                <div class="carousel-container" style="position: relative;">
                     <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                     <div class="movie-list row-cards" id="row-lancamentos"></div>
                     <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
@@ -150,19 +151,19 @@
 
             // Hero Dinâmico
             if (pops.length > 0) {
-                const movie = pops[Math.floor(Math.random() * 8)]; // Pega um dos 8 primeiros populares
+                const movie = pops[Math.floor(Math.random() * 8)];
                 document.getElementById('hero').style.backgroundImage = `linear-gradient(to top, #040714 10%, transparent 60%), url(${IMG_URL}${movie.backdrop_path})`;
                 document.getElementById('heroTitle').innerText = movie.title || movie.name;
                 
                 const overview = movie.overview || "Uma história incrível aguarda por você no Lumina Play.";
-                document.getElementById('heroOverview').innerText = overview.substring(0, 160) + "...";
+                // No JS mantemos o texto completo, o CSS cuidará de cortar se for muito grande no mobile
+                document.getElementById('heroOverview').innerText = overview;
 
                 document.getElementById('heroWatch').onclick = () => {
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
                     window.location.href = 'filme.html';
                 };
 
-                // Botão de favoritar no Hero
                 document.getElementById('heroFav').onclick = () => {
                     let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                     if (!favs.find(f => f.id === movie.id)) {
