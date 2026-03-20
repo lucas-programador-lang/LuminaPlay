@@ -28,12 +28,11 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
-    // Melhorado: Verifica se é a página inicial independente do caminho do arquivo
-    const isHomePage = window.location.pathname.endsWith("index.html") || 
-                       window.location.pathname.endsWith("/") || 
-                       window.location.pathname === "";
+    // Correção na verificação da Home: mais robusto para evitar erros em subpáginas
+    const path = window.location.pathname;
+    const isHomePage = path.endsWith("index.html") || path.endsWith("/") || path === "" || !path.includes(".html");
 
-    if (isHomePage) {
+    if (isHomePage && DOM.rows.populares) {
         setupHomePage();
     }
     
@@ -41,22 +40,25 @@ async function init() {
 }
 
 async function setupHomePage() {
-    // 1. Mostrar Skeletons
+    // 1. Mostrar Skeletons (Animação de carregamento)
     Object.keys(DOM.rows).forEach(key => showSkeleton(key));
 
-    // 2. Buscar Dados
-    const populares = await getMovies("/movie/popular");
-    const emAlta = await getMovies("/trending/movie/week");
-    const lancamentos = await getMovies("/movie/now_playing");
+    // 2. Buscar Dados da API
+    const [populares, emAlta, lancamentos] = await Promise.all([
+        getMovies("/movie/popular"),
+        getMovies("/trending/all/week"), // Trending ALL para pegar séries e filmes em alta
+        getMovies("/movie/now_playing")
+    ]);
 
-    // 3. Renderizar
-    if (populares.length > 0) renderHero(populares[0]);
+    // 3. Renderizar Hero (Destaque principal)
+    if (populares.length > 0) renderHero(populares[Math.floor(Math.random() * 5)]); // Pega um dos 5 primeiros aleatoriamente
 
+    // 4. Renderizar Fileiras
     renderRow("populares", populares);
     renderRow("emalta", emAlta);
     renderRow("lancamentos", lancamentos);
 
-    // 4. Configurar eventos da Home
+    // 5. Configurar eventos
     setupArrows();
     setupSearch();
 }
@@ -65,22 +67,22 @@ async function setupHomePage() {
    LÓGICA DE NAVEGAÇÃO E FAVORITOS
 ========================= */
 function goToDetails(movie) {
+    // Salva o objeto completo para a página filme.html ler
     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
     window.location.href = 'filme.html';
 }
 
 function saveToList(movie) {
     if (!movie) return;
-    // Padronizado para "luminaLista" como no seu arquivo minha-lista.html
     let list = JSON.parse(localStorage.getItem("luminaLista") || "[]");
     
     if (!list.find(m => m.id === movie.id)) {
         list.push(movie);
-        alert(`"${movie.title || movie.name}" adicionado à sua lista!`);
+        localStorage.setItem("luminaLista", JSON.stringify(list));
+        alert(`✅ "${movie.title || movie.name}" adicionado à sua lista!`);
     } else {
-        alert("Este item já está na sua lista.");
+        alert("ℹ️ Este item já está na sua lista.");
     }
-    localStorage.setItem("luminaLista", JSON.stringify(list));
 }
 
 /* =========================
@@ -95,7 +97,7 @@ function renderRow(type, movies) {
         if (!movie.poster_path) return;
         const card = document.createElement("div");
         card.className = "card";
-        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">`;
+        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title || movie.name}" loading="lazy">`;
         
         card.onclick = () => goToDetails(movie);
         container.appendChild(card);
@@ -105,29 +107,35 @@ function renderRow(type, movies) {
 function renderHero(movie) {
     if (!DOM.hero || !movie) return;
     
-    DOM.hero.style.backgroundImage = `url(${IMG}${movie.backdrop_path})`;
+    const bg = movie.backdrop_path ? `${IMG}${movie.backdrop_path}` : `${IMG}${movie.poster_path}`;
+    DOM.hero.style.backgroundImage = `url(${bg})`;
+    
     if (DOM.heroTitle) DOM.heroTitle.textContent = movie.title || movie.name;
     
     if (DOM.heroOverview) {
-        const text = movie.overview || "Sinopse indisponível.";
-        DOM.heroOverview.textContent = text.length > 180 ? text.substring(0, 180) + "..." : text;
+        const text = movie.overview || "Sinopse indisponível no momento.";
+        DOM.heroOverview.textContent = text.length > 200 ? text.substring(0, 200) + "..." : text;
     }
     
     // Configura botões do Hero
     if (DOM.heroWatch) DOM.heroWatch.onclick = () => goToDetails(movie);
-    if (DOM.heroFav) DOM.heroFav.onclick = () => saveToList(movie);
+    if (DOM.heroFav) DOM.heroFav.onclick = (e) => {
+        e.stopPropagation();
+        saveToList(movie);
+    };
 }
 
 /* =========================
-   FUNÇÕES AUXILIARES
+   FUNÇÕES AUXILIARES E EVENTOS
 ========================= */
 async function getMovies(endpoint) {
+    const urlSep = endpoint.includes('?') ? '&' : '?';
     try {
-        const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+        const res = await fetch(`${BASE_URL}${endpoint}${urlSep}api_key=${API_KEY}&language=pt-BR`);
         const data = await res.json();
         return data.results || [];
     } catch (e) { 
-        console.error("Erro na API:", e);
+        console.error("Erro na API Lumina:", e);
         return []; 
     }
 }
@@ -157,7 +165,7 @@ function setupArrows() {
         btn.onclick = (e) => {
             e.preventDefault();
             const list = btn.parentElement.querySelector('.movie-list');
-            const direction = btn.classList.contains('left') ? -450 : 450;
+            const direction = btn.classList.contains('left') ? -500 : 500;
             list.scrollBy({ left: direction, behavior: 'smooth' });
         };
     });
@@ -167,13 +175,14 @@ function setupSearch() {
     if (!DOM.searchInput) return;
     DOM.searchInput.addEventListener("input", debounce(async (e) => {
         const query = e.target.value.trim();
-        if (query.length < 3) return;
-        const results = await getMovies(`/search/movie?query=${encodeURIComponent(query)}`);
+        if (query.length < 2) return;
+        
+        const results = await getMovies(`/search/multi?query=${encodeURIComponent(query)}`);
         renderRow("populares", results);
         
         const sectionTitle = DOM.rows.populares.parentElement.querySelector('h3');
-        if (sectionTitle) sectionTitle.textContent = `Resultados para: ${query}`;
-    }, 500));
+        if (sectionTitle) sectionTitle.textContent = `Resultados para: "${query}"`;
+    }, 600));
 }
 
 function debounce(func, timeout = 300){
