@@ -107,6 +107,8 @@
                 card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${s.poster_path}" alt="${s.name}" loading="lazy">`;
                 
                 card.onclick = () => {
+                    // Importante: Forçamos o media_type como 'tv' para o player saber que é série
+                    s.media_type = 'tv'; 
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(s));
                     window.location.href = 'filme.html';
                 };
@@ -126,10 +128,9 @@
                 const heroS = populares[Math.floor(Math.random() * 5)];
                 const bg = heroS.backdrop_path ? `${IMG}${heroS.backdrop_path}` : `${IMG}${heroS.poster_path}`;
                 
-                // Melhorando o gradiente para leitura de texto
                 document.getElementById('hero').style.backgroundImage = 
-                    `linear-gradient(to right, rgba(4, 7, 20, 0.9) 20%, transparent 80%), 
-                     linear-gradient(to top, #040714 10%, transparent 40%), url(${bg})`;
+                    `linear-gradient(to right, rgba(4, 7, 20, 0.95) 10%, rgba(4, 7, 20, 0.4) 50%, transparent 100%), 
+                     linear-gradient(to top, #040714 5%, transparent 30%), url(${bg})`;
                 
                 document.getElementById('heroTitle').textContent = heroS.name;
                 
@@ -137,6 +138,7 @@
                 document.getElementById('heroOverview').textContent = overview.length > 200 ? overview.substring(0, 200) + "..." : overview;
                 
                 document.getElementById('heroWatch').onclick = () => {
+                    heroS.media_type = 'tv';
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(heroS));
                     window.location.href = 'filme.html';
                 };
@@ -147,6 +149,7 @@
             renderRow("row-top", top);
         }
 
+        // Controles de scroll
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
