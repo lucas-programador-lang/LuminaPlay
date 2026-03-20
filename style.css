@@ -35,18 +35,38 @@ body {
 }
 .logo span { color: white; }
 
-.nav-links { list-style: none; }
+.nav-links { 
+    list-style: none; 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .nav-links li {
-    margin: 30px 0;
+    margin: 25px 0;
     cursor: pointer;
+    transition: 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Ajuste específico para os ícones Font Awesome */
+.nav-links li i {
+    font-size: 22px; /* Tamanho elegante */
+    color: white;
     opacity: 0.6;
     transition: 0.3s;
-    font-size: 24px;
 }
-.nav-links li.active, .nav-links li:hover {
+
+.nav-links li.active i, 
+.nav-links li:hover i {
     opacity: 1;
+    color: #00e5ff; /* Brilho neon */
     transform: scale(1.2);
-    color: #00e5ff;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
 }
 
 .user-profile img {
@@ -183,7 +203,6 @@ body {
 }
 .movie-list::-webkit-scrollbar { display: none; }
 
-/* Cards Individuais (Injetados pelo JS) */
 .card {
     min-width: 200px;
     transition: 0.3s;
@@ -197,7 +216,6 @@ body {
 .card:hover { transform: scale(1.1); z-index: 10; }
 .card:hover img { border-color: #00e5ff; }
 
-/* Setas */
 .handle {
     position: absolute;
     height: 100%;
@@ -236,7 +254,7 @@ body {
     cursor: pointer;
 }
 
-/* Skeletons (Carregamento) */
+/* Skeletons */
 .skeleton {
     min-width: 200px;
     height: 300px;
