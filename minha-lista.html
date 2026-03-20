@@ -11,44 +11,15 @@
     <link rel="manifest" href="manifest.json">
 
     <style>
-        /* Estilos específicos para a Grade de Favoritos */
-        body { background-color: #040714; }
-
-        .content { padding-bottom: 100px; min-height: 100vh; } 
+        /* Estilos exclusivos desta página */
+        .content { min-height: 100vh; } 
 
         .fav-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 30px;
-            padding: 20px 60px;
+            padding: 20px 4%;
             width: 100%;
-        }
-
-        .card {
-            position: relative;
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            cursor: pointer;
-            border-radius: 10px;
-        }
-
-        .card img {
-            width: 100%;
-            height: 270px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid transparent;
-            transition: 0.3s;
-            display: block;
-        }
-
-        .card:hover {
-            transform: scale(1.1);
-            z-index: 10;
-        }
-
-        .card:hover img {
-            border-color: #00e5ff;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
         }
 
         .remove-btn {
@@ -68,7 +39,7 @@
             z-index: 15;
             opacity: 0; 
             transform: scale(0.5);
-            transition: 0.3s;
+            transition: var(--transition);
             box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
         }
 
@@ -99,30 +70,28 @@
             margin-top: 25px;
             padding: 12px 30px;
             border-radius: 30px;
-            border: 2px solid #00e5ff;
+            border: 2px solid var(--accent-color);
             background: transparent;
-            color: #00e5ff;
+            color: var(--accent-color);
             cursor: pointer;
             font-weight: 800;
-            transition: 0.3s;
+            transition: var(--transition);
             text-transform: uppercase;
         }
 
         .btn-back:hover {
-            background: #00e5ff;
+            background: var(--accent-color);
             color: #000;
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
         @media (max-width: 768px) {
             .fav-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                padding: 20px;
-                gap: 20px;
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 15px;
             }
-            .card img { height: 210px; }
             .remove-btn { opacity: 1; transform: scale(1); }
-            header { padding: 40px 20px 10px !important; margin-top: 20px !important; }
+            header { padding: 40px 4% 10px !important; }
         }
     </style>
 </head>
@@ -137,8 +106,8 @@
             <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
             <li title="Pesquisar" onclick="location.href='index.html'"><i class="fa-solid fa-magnifying-glass"></i></li>
             <li class="active" onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
-            <li onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
-            <li onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
+            <li onclick="location.href='index.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
+            <li onclick="location.href='index.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
         </ul>
         <div class="user-profile">
             <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
@@ -146,15 +115,16 @@
     </nav>
 
     <main class="content">
-        <header style="padding: 60px 60px 20px; margin-top: 20px;">
+        <header style="padding: 60px 4% 20px; margin-top: 20px;">
             <h2 style="font-size: 2.5rem; font-weight: 800; display: flex; align-items: center;">
-                <i class="fa-solid fa-bookmark" style="color: #00e5ff; margin-right: 15px; filter: drop-shadow(0 0 8px #00e5ff);"></i>
+                <i class="fa-solid fa-bookmark" style="color: var(--accent-color); margin-right: 15px; filter: drop-shadow(0 0 8px var(--accent-glow));"></i>
                 Minha Lista
             </h2>
             <p style="opacity: 0.6; margin-top: 5px; font-size: 1.1rem;">Seus filmes e séries favoritos salvos para assistir depois.</p>
         </header>
 
-        <div id="lista" class="fav-grid"></div>
+        <div id="lista" class="fav-grid">
+            </div>
     </main>
 
     <script>
@@ -172,7 +142,7 @@
                 listaContainer.innerHTML = `
                     <div class="empty-list-container">
                         <i class="fa-solid fa-clapperboard" style="font-size: 5rem; margin-bottom: 20px; display: block; opacity: 0.2;"></i>
-                        <p style="font-size: 1.3rem;">Você ainda não guardou nada na sua lista.</p>
+                        <p style="font-size: 1.3rem;">Sua lista está vazia por enquanto.</p>
                         <button class="btn-back" onclick="location.href='index.html'">Explorar Catálogo</button>
                     </div>`;
                 return;
@@ -188,17 +158,17 @@
                 const imgPath = item.poster_path ? 'https://image.tmdb.org/t/p/w500' + item.poster_path : 'https://via.placeholder.com/500x750?text=Sem+Imagem';
                 
                 card.innerHTML = `
-                    <img src="${imgPath}" alt="${item.title || item.name}" class="movie-img">
+                    <img src="${imgPath}" alt="${item.title || item.name}" class="movie-img" loading="lazy">
                     <button class="remove-btn" title="Remover da lista" onclick="removeMovie(event, ${item.id})">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 `;
 
-                // Função de clique corrigida para detectar media_type
+                // Redirecionamento inteligente para o Player
                 card.querySelector('.movie-img').onclick = () => {
-                    // Se o item não tiver media_type, inferimos pelo título (filme) ou nome (série)
+                    // Garante que o tipo seja identificado antes de abrir
                     if (!item.media_type) {
-                        item.media_type = item.title ? 'movie' : 'tv';
+                        item.media_type = (item.title || item.release_date) ? 'movie' : 'tv';
                     }
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
                     window.location.href = 'filme.html';
@@ -209,7 +179,7 @@
         }
 
         function removeMovie(event, id) {
-            event.stopPropagation(); 
+            event.stopPropagation(); // Evita que clique no botão abra o player
             const card = document.getElementById(`card-${id}`);
             if(card) {
                 card.classList.add('removing'); 
