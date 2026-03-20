@@ -28,12 +28,11 @@ body {
     z-index: 1000;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     transition: 0.3s;
-    overflow: visible; /* Permite que a logo grande "saia" da barra */
 }
 
-/* --- NOVA LOGO GIGANTE E BRILHANTE --- */
+/* --- LOGO LUMINA --- */
 .logo-container {
-    width: 200px; /* Largura ideal para o texto da sua logo aparecer */
+    width: 200px; 
     position: absolute;
     top: 15px;
     left: 10px;
@@ -45,7 +44,6 @@ body {
 .logo-horizontal {
     width: 100%;
     height: auto;
-    /* Brilho Neon Azul intenso para destacar a logo */
     filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8));
 }
 
@@ -60,7 +58,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 100px; /* Espaço para não bater na logo grande */
+    margin-top: 100px;
 }
 
 .nav-links li {
@@ -151,7 +149,7 @@ body {
 .btn-play:hover { 
     background: #00e5ff; 
     color: white; 
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
 }
 
 .btn-info {
@@ -182,7 +180,7 @@ body {
     outline: none;
     transition: 0.3s;
 }
-#searchInput:focus { border-color: #00e5ff; background: rgba(255,255,255,0.15); }
+#searchInput:focus { border-color: #00e5ff; background: rgba(255,255,255,0.15); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
 
 .categories {
     display: flex;
@@ -210,47 +208,75 @@ body {
 .category-card:hover {
     border-color: #00e5ff;
     transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
 }
 
-/* --- FILEIRAS E CARDS --- */
+/* --- FILEIRAS E TÍTULOS --- */
 .row { padding: 30px 60px; position: relative; }
-.row h3 { margin-bottom: 15px; font-size: 1.5rem; letter-spacing: 1px; }
+
+.row h3 { 
+    margin-bottom: 15px; 
+    font-size: 1.5rem; 
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+/* Ajuste para os ícones que adicionamos no HTML */
+.row h3 i {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 0 5px rgba(0, 229, 255, 0.5));
+}
 
 .movie-list {
     display: flex;
     gap: 18px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 15px 0;
+    padding: 20px 0; /* Espaço para o zoom não cortar o card */
 }
 .movie-list::-webkit-scrollbar { display: none; }
 
+/* --- EFEITO ZOOM E BRILHO NOS CARDS --- */
 .card {
     min-width: 180px;
-    transition: 0.4s;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
     cursor: pointer;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
 }
+
 .card img { 
     width: 100%; 
     border-radius: 8px; 
     border: 2px solid transparent; 
     transition: 0.3s;
+    display: block;
 }
-.card:hover { transform: translateY(-10px); }
-.card:hover img { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
 
+.card:hover { 
+    transform: scale(1.1); /* Zoom elegante */
+    z-index: 100; /* Fica na frente de tudo */
+}
+
+.card:hover img { 
+    border-color: #00e5ff; 
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.6); 
+}
+
+/* --- CONTROLES DO CARROSSEL --- */
 .handle {
     position: absolute;
-    height: 70%;
-    top: 55px;
+    height: 260px; /* Altura aproximada do card */
+    top: 75px;
     width: 45px;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.7);
     border: none;
     color: white;
     font-size: 24px;
     cursor: pointer;
-    z-index: 20;
+    z-index: 1000;
     opacity: 0;
     transition: 0.3s;
 }
@@ -277,7 +303,6 @@ body {
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
     body { flex-direction: column; }
-
     .sidebar {
         width: 100%;
         height: 70px;
@@ -287,37 +312,13 @@ body {
         padding: 0 15px;
         border-right: none;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        overflow: hidden;
     }
-
-    /* Esconde a logo flutuante no Mobile para não cobrir os filmes */
     .logo-container { display: none; }
-
-    .nav-links {
-        flex-direction: row;
-        justify-content: space-around;
-        margin-top: 0;
-    }
-
+    .nav-links { flex-direction: row; justify-content: space-around; margin-top: 0; }
     .nav-links li { margin: 0; width: auto; }
-    .user-profile { display: none; }
-
-    .content {
-        margin-left: 0;
-        width: 100%;
-        padding-bottom: 80px; 
-    }
-
-    .hero { height: 55vh; }
-    .hero-overlay { padding: 0 25px; }
-    .hero-content h1 { font-size: 2.2rem; }
-    .hero-content p { font-size: 0.95rem; }
-
+    .content { margin-left: 0; width: 100%; padding-bottom: 80px; }
+    .hero { height: 50vh; }
+    .hero-content h1 { font-size: 2rem; }
     .row { padding: 20px 25px; }
-    .search-section, .categories { padding: 10px 25px; }
     .handle { display: none; }
 }
-
-/* Animação Skeleton */
-.skeleton { min-width: 180px; height: 260px; background: linear-gradient(90deg, #1e1f2a 25%, #2a2b38 50%, #1e1f2a 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
-@keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
