@@ -80,11 +80,12 @@
             }
 
             const movie = JSON.parse(movieData);
+            const type = movie.title ? 'movie' : 'tv';
 
-            // Atualiza Dados da Página
+            // --- ATUALIZAÇÃO DA INTERFACE ---
             document.title = `Lumina Play | ${movie.title || movie.name}`;
             document.getElementById('filmTitle').textContent = movie.title || movie.name;
-            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível em português.";
+            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível.";
             
             const bgPath = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : `https://image.tmdb.org/t/p/original${movie.poster_path}`;
             document.getElementById('filmHero').style.backgroundImage = `linear-gradient(to top, #040714 10%, transparent 60%), url(${bgPath})`;
@@ -94,55 +95,60 @@
             document.getElementById('filmInfo').textContent = `${year} • ★ ${rating}`;
 
             updateListButton(movie.id);
-            fetchSimilar(movie.id, movie.title ? 'movie' : 'tv');
+            fetchSimilar(movie.id, type);
 
-            // --- LÓGICA DO PLAYER REDECANAIS ---
-            document.getElementById('filmWatch').onclick = () => {
+            // --- LÓGICA DO PLAYER DINÂMICO ---
+            document.getElementById('filmWatch').onclick = async () => {
                 const overlay = document.getElementById('playerOverlay');
                 const frame = document.getElementById('playerFrame');
 
                 overlay.classList.add('active');
 
-                // Tenta carregar usando o ID da TMDB. 
-                // Nota: Alguns servidores de embed podem exigir o ID do IMDB (tt000000).
-                const videoID = movie.id; 
-                frame.src = `https://redecanais.ooo/player3/server.php?server=RCFServer2&subfolder=ondemand&vid=${videoID}`;
+                try {
+                    // 1. Buscamos o ID Externo (IMDB) para garantir que o player encontre o filme correto
+                    const response = await fetch(`https://api.themoviedb.org/3/${type}/${movie.id}/external_ids?api_key=${API_KEY}`);
+                    const ids = await response.json();
+                    const imdbId = ids.imdb_id;
+
+                    // 2. Montamos a URL do Player (Usando Warez ou SuperEmbed para maior compatibilidade com TMDB/IMDB)
+                    if (imdbId) {
+                        // Se for Série, o player costuma precisar de um tratamento diferente para temporadas
+                        const embedBase = type === 'movie' ? 'https://embed.warezcdn.com/filme/' : 'https://embed.warezcdn.com/serie/';
+                        frame.src = `${embedBase}${imdbId}`;
+                    } else {
+                        // Backup caso não tenha IMDB
+                        frame.src = `https://embed.warezcdn.com/${type}/${movie.id}`;
+                    }
+                } catch (err) {
+                    console.error("Erro ao carregar o player:", err);
+                    alert("Não foi possível carregar o player para este título.");
+                }
             };
 
             document.getElementById('playerClose').onclick = () => {
                 document.getElementById('playerOverlay').classList.remove('active');
-                document.getElementById('playerFrame').src = ""; // Para o vídeo ao fechar
+                document.getElementById('playerFrame').src = ""; 
             };
 
-            // Lógica de Adicionar/Remover da Lista
+            // Lógica da Lista
             document.getElementById('addToList').onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                 const index = favs.findIndex(item => item.id === movie.id);
-
-                if (index === -1) {
-                    favs.push(movie);
-                } else {
-                    favs.splice(index, 1);
-                }
+                if (index === -1) favs.push(movie);
+                else favs.splice(index, 1);
                 localStorage.setItem("luminaLista", JSON.stringify(favs));
                 updateListButton(movie.id);
             };
         });
 
+        // Funções auxiliares mantidas (fetchSimilar, updateListButton, handles)
         function updateListButton(movieId) {
             const btnAdd = document.getElementById('addToList');
             let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
             const isFav = favs.find(item => item.id === movieId);
-
-            if (isFav) {
-                btnAdd.innerHTML = '<i class="fa-solid fa-check"></i>';
-                btnAdd.style.borderColor = "#00e5ff";
-                btnAdd.style.color = "#00e5ff";
-            } else {
-                btnAdd.innerHTML = '<i class="fa-solid fa-plus"></i>';
-                btnAdd.style.borderColor = "white";
-                btnAdd.style.color = "white";
-            }
+            btnAdd.innerHTML = isFav ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-plus"></i>';
+            btnAdd.style.color = isFav ? "#00e5ff" : "white";
+            btnAdd.style.borderColor = isFav ? "#00e5ff" : "white";
         }
 
         async function fetchSimilar(id, type) {
@@ -151,31 +157,24 @@
                 const data = await res.json();
                 const container = document.getElementById('similarRow');
                 container.innerHTML = "";
-                
-                if(data.results && data.results.length > 0) {
-                    data.results.forEach(m => {
-                        if(!m.poster_path) return;
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${m.poster_path}" alt="${m.title || m.name}">`;
-                        card.onclick = () => {
-                            localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            setTimeout(() => window.location.reload(), 400);
-                        };
-                        container.appendChild(card);
-                    });
-                } else {
-                    container.innerHTML = "<p style='padding: 20px; opacity: 0.5;'>Nenhuma recomendação encontrada.</p>";
-                }
+                data.results?.forEach(m => {
+                    if(!m.poster_path) return;
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${m.poster_path}" alt="${m.title || m.name}">`;
+                    card.onclick = () => {
+                        localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
+                        window.location.reload();
+                    };
+                    container.appendChild(card);
+                });
             } catch (err) { console.error(err); }
         }
 
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
-                const direction = btn.classList.contains('left') ? -450 : 450;
-                list.scrollBy({ left: direction, behavior: 'smooth' });
+                list.scrollBy({ left: btn.classList.contains('left') ? -450 : 450, behavior: 'smooth' });
             };
         });
     </script>
