@@ -1,158 +1,61 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>LuminaPlay | Streaming de Filmes e Séries</title>
-  <meta name="description" content="Assista filmes e séries no LuminaPlay">
-
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Play | Onde a luz encontra a história</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<!-- HEADER -->
-<header class="site-header" id="siteHeader">
-  <div class="header-inner container">
-
-    <!-- LOGO -->
-    <div class="logo">
-      <span class="logoL">Lumina</span><span class="logoPlay">Play</span>
-    </div>
-
-    <!-- NAV -->
-    <nav class="main-nav">
-      <a class="nav-link active" href="index.html">Início</a>
-      <a class="nav-link" href="filme.html">Filmes</a>
-      <a class="nav-link" href="series.html">Séries</a>
-      <a class="nav-link" href="minha-lista.html">
-        <i class="fa-solid fa-bookmark"></i> Minha Lista
-      </a>
+    <nav class="sidebar">
+        <div class="logo">L<span>P</span></div>
+        <ul class="nav-links">
+            <li class="active"><i class="icon">🏠</i></li>
+            <li><i class="icon">🔍</i></li>
+            <li><i class="icon">➕</i></li>
+            <li><i class="icon">🎬</i></li>
+            <li><i class="icon">📺</i></li>
+        </ul>
+        <div class="user-profile">
+            <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
+        </div>
     </nav>
 
-    <!-- SEARCH -->
-    <div class="search-box">
-      <input id="searchInput" type="text" placeholder="Buscar...">
-    </div>
+    <main class="content">
+        <section class="hero">
+            <div class="hero-overlay">
+                <div class="hero-content">
+                    <img src="https://logodownload.org/wp-content/uploads/2015/12/star-wars-logo-1-1.png" alt="Logo Filme" class="movie-logo">
+                    <p>Em uma galáxia muito, muito distante...</p>
+                    <div class="buttons">
+                        <button class="btn-play">ASSISTIR AGORA</button>
+                        <button class="btn-info">+</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  </div>
-</header>
+        <section class="categories">
+            <div class="category-card">LUMINA</div>
+            <div class="category-card">PIXAR</div>
+            <div class="category-card">MARVEL</div>
+            <div class="category-card">WARS</div>
+            <div class="category-card">NATGEO</div>
+        </section>
 
-<!-- HERO -->
-<section id="hero" class="hero">
-  <div class="hero-content container">
-    <h1 id="heroTitle"></h1>
-    <p id="heroOverview"></p>
-
-    <div class="hero-actions">
-      <button id="heroWatch" class="btn btn-watch">
-        <i class="fa-solid fa-play"></i> Assistir
-      </button>
-
-      <button id="heroFav" class="btn btn-info">
-        <i class="fa-solid fa-plus"></i> Minha Lista
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ROWS -->
-<main class="rows container">
-
-  <section>
-    <h2 class="row-title">▶ Continuar assistindo</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div id="row-continuar" class="row-cards"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
-
-  <section>
-    <h2 class="row-title">🔥 Populares</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div id="row-populares" class="row-cards"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
-
-  <section>
-    <h2 class="row-title">⭐ Em Alta</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div id="row-emalta" class="row-cards"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
-
-  <section>
-    <h2 class="row-title">🎬 Lançamentos</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div id="row-lancamentos" class="row-cards"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
-
-  <section>
-    <h2 class="row-title">💡 Recomendados</h2>
-    <div class="row">
-      <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-      <div id="row-recomendados" class="row-cards"></div>
-      <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
-  </section>
-
-</main>
-
-<!-- PLAYER -->
-<div id="playerOverlay" class="player-overlay">
-  <div class="player-inner">
-
-    <button id="playerClose" class="player-close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-
-    <iframe id="playerFrame"
-      class="player-iframe"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <div>© 2026 LuminaPlay</div>
-  </div>
-</footer>
-
-<!-- SCRIPT -->
-<script src="script.js"></script>
-
-<!-- HEADER SCROLL -->
-<script>
-window.addEventListener("scroll", () => {
-  const header = document.getElementById("siteHeader");
-  if(window.scrollY > 20){
-    header.classList.add("scrolled");
-  } else {
-    header.classList.remove("scrolled");
-  }
-});
-</script>
+        <section class="movie-row">
+            <h3>Recomendados para Você</h3>
+            <div class="movie-list">
+                <div class="movie-card"><img src="https://picsum.photos/seed/1/300/450" alt="Filme"></div>
+                <div class="movie-card"><img src="https://picsum.photos/seed/2/300/450" alt="Filme"></div>
+                <div class="movie-card"><img src="https://picsum.photos/seed/3/300/450" alt="Filme"></div>
+                <div class="movie-card"><img src="https://picsum.photos/seed/4/300/450" alt="Filme"></div>
+                <div class="movie-card"><img src="https://picsum.photos/seed/5/300/450" alt="Filme"></div>
+            </div>
+        </section>
+    </main>
 
 </body>
 </html>
