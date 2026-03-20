@@ -42,7 +42,10 @@
         </section>
 
         <div class="row">
-            <h3>🔥 Séries Populares</h3>
+            <h3>
+                <i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
+                Séries Populares
+            </h3>
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-populares"></div>
@@ -51,7 +54,10 @@
         </div>
 
         <div class="row">
-            <h3>⭐ Em Alta</h3>
+            <h3>
+                <i class="fa-solid fa-star" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
+                Em Alta
+            </h3>
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-emalta"></div>
@@ -60,7 +66,10 @@
         </div>
 
         <div class="row">
-            <h3>🏆 Mais bem avaliadas</h3>
+            <h3>
+                <i class="fa-solid fa-trophy" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
+                Mais bem avaliadas
+            </h3>
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-top"></div>
@@ -130,7 +139,6 @@
             renderRow("row-top", top);
         }
 
-        // Scroll do Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
