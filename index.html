@@ -11,7 +11,7 @@
 <body>
 
     <nav class="sidebar">
-        <div class="logo-container" onclick="window.location.href='index.html'">
+        <div class="logo-container" onclick="window.location.href='index.html'" style="cursor: pointer;">
             <img src="logo.png" alt="Lumina Play Logo" class="logo-horizontal">
         </div>
 
@@ -46,6 +46,11 @@
             <input type="text" id="searchInput" placeholder="Pesquisar filmes ou séries...">
         </section>
 
+        <div class="row" id="searchRow" style="display: none; margin-bottom: 40px;">
+            <h3><i class="fa-solid fa-magnifying-glass" style="color: #00e5ff; margin-right: 10px;"></i> Resultados encontrados</h3>
+            <div class="movie-list row-cards" id="row-search-results"></div>
+        </div>
+
         <section class="categories">
             <div class="category-card" onclick="alert('Explorar Lumina Originals')">LUMINA</div>
             <div class="category-card" onclick="alert('Explorar Pixar')">PIXAR</div>
@@ -55,7 +60,7 @@
         </section>
 
         <div class="row">
-            <h3>Populares</h3>
+            <h3><i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Populares</h3>
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-populares"></div>
@@ -64,7 +69,7 @@
         </div>
 
         <div class="row">
-            <h3>Em Alta</h3>
+            <h3><i class="fa-solid fa-star" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Em Alta</h3>
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-emalta"></div>
@@ -73,7 +78,7 @@
         </div>
 
         <div class="row">
-            <h3>Lançamentos</h3>
+            <h3><i class="fa-solid fa-calendar-day" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Lançamentos</h3>
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-lancamentos"></div>
@@ -82,13 +87,81 @@
         </div>
     </main>
 
-    <div id="playerOverlay" class="player-overlay">
-        <div class="player-content">
-            <span id="playerClose" class="close-btn">&times;</span>
-            <iframe id="playerFrame" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
+    <script>
+        const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
+        const IMG_URL = "https://image.tmdb.org/t/p/original";
 
-    <script src="script.js"></script>
+        // --- BUSCA EM TEMPO REAL ---
+        const searchInput = document.getElementById('searchInput');
+        const searchRow = document.getElementById('searchRow');
+        const searchResults = document.getElementById('row-search-results');
+
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value;
+            if (query.length > 2) {
+                const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=pt-BR&query=${query}`);
+                const data = await res.json();
+                
+                if (data.results.length > 0) {
+                    searchRow.style.display = 'block';
+                    renderMovies(searchResults, data.results);
+                }
+            } else {
+                searchRow.style.display = 'none';
+            }
+        });
+
+        // --- CARREGAR CONTEÚDO ---
+        async function fetchMovies(endpoint, rowId) {
+            const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+            const data = await res.json();
+            renderMovies(document.getElementById(rowId), data.results);
+            return data.results;
+        }
+
+        function renderMovies(container, list) {
+            container.innerHTML = "";
+            list.forEach(item => {
+                if (!item.poster_path) return;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}">`;
+                card.onclick = () => {
+                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
+                    window.location.href = 'filme.html';
+                };
+                container.appendChild(card);
+            });
+        }
+
+        async function init() {
+            const pops = await fetchMovies('/movie/popular', 'row-populares');
+            fetchMovies('/trending/all/week', 'row-emalta');
+            fetchMovies('/movie/now_playing', 'row-lancamentos');
+
+            // Configurar Hero com um filme aleatório dos populares
+            if (pops.length > 0) {
+                const movie = pops[Math.floor(Math.random() * pops.length)];
+                document.getElementById('hero').style.backgroundImage = `url(${IMG_URL}${movie.backdrop_path})`;
+                document.getElementById('heroTitle').innerText = movie.title || movie.name;
+                document.getElementById('heroOverview').innerText = movie.overview.substring(0, 160) + "...";
+                document.getElementById('heroWatch').onclick = () => {
+                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
+                    window.location.href = 'filme.html';
+                };
+            }
+        }
+
+        // --- CONTROLES DE SCROLL ---
+        document.querySelectorAll('.handle').forEach(btn => {
+            btn.onclick = () => {
+                const list = btn.parentElement.querySelector('.movie-list');
+                const direction = btn.classList.contains('left') ? -500 : 500;
+                list.scrollBy({ left: direction, behavior: 'smooth' });
+            };
+        });
+
+        init();
+    </script>
 </body>
 </html>
