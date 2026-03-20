@@ -12,10 +12,13 @@
 <body>
 
     <nav class="sidebar">
-        <div class="logo">L<span>P</span></div>
+        <div class="logo" onclick="location.href='index.html'" style="cursor: pointer;">
+            <img src="logo.png" alt="Lumina Play Logo">
+        </div>
+
         <ul class="nav-links">
             <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li title="Pesquisar" onclick="location.href='index.html'"><i class="fa-solid fa-magnifying-glass"></i></li>
             <li onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
             <li class="active" onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
             <li onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
@@ -26,16 +29,16 @@
     </nav>
 
     <main class="content">
-        <section class="hero" id="filmHero">
+        <section class="hero" id="filmHero" style="background-size: cover; background-position: center;">
             <div class="hero-overlay">
                 <div class="hero-content">
                     <h1 id="filmTitle">Carregando...</h1>
                     <p id="filmInfo" style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;"></p>
-                    <p id="filmOverview" class="hero-overview">Aguarde enquanto buscamos os detalhes do filme.</p>
+                    <p id="filmOverview" class="hero-overview">Aguarde enquanto buscamos os detalhes.</p>
                     
                     <div class="buttons">
                         <button class="btn-play" id="filmWatch">▶ ASSISTIR AGORA</button>
-                        <button class="btn-info" id="addToList">+</button>
+                        <button class="btn-info" id="addToList" title="Adicionar à Lista">+</button>
                     </div>
                 </div>
             </div>
@@ -61,39 +64,60 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Pega o filme que foi clicado no index.html
             const movieData = localStorage.getItem('lumina_selectedMovie');
             
             if(!movieData) {
-                // Se não tiver filme selecionado, volta pro início
                 window.location.href = 'index.html';
                 return;
             }
 
             const movie = JSON.parse(movieData);
 
-            // Preenche a página com os dados
+            // Preenchimento dos dados
             document.getElementById('filmTitle').textContent = movie.title || movie.name;
-            document.getElementById('filmOverview').textContent = movie.overview;
-            document.getElementById('filmHero').style.backgroundImage = `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`;
-            document.getElementById('filmInfo').textContent = `${movie.release_date ? movie.release_date.split('-')[0] : '2026'} • ★ ${movie.vote_average.toFixed(1)}`;
+            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível para este título.";
+            
+            // Fundo do Hero
+            const bgPath = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : `https://image.tmdb.org/t/p/original${movie.poster_path}`;
+            document.getElementById('filmHero').style.backgroundImage = `url(${bgPath})`;
+            
+            // Info Ano e Nota
+            const year = (movie.release_date || movie.first_air_date || "2026").split('-')[0];
+            const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
+            document.getElementById('filmInfo').textContent = `${year} • ★ ${rating}`;
 
-            // Botão de Assistir
+            // --- LÓGICA DO PLAYER ---
             document.getElementById('filmWatch').onclick = () => {
                 const overlay = document.getElementById('playerOverlay');
                 const frame = document.getElementById('playerFrame');
                 overlay.classList.add('active');
+                // Link de exemplo (Rickroll) ou link dinâmico se tiver
                 frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
             };
 
-            // Fechar Player
             document.getElementById('playerClose').onclick = () => {
                 document.getElementById('playerOverlay').classList.remove('active');
                 document.getElementById('playerFrame').src = "";
             };
+
+            // --- LÓGICA DA MINHA LISTA ---
+            document.getElementById('addToList').onclick = () => {
+                let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
+                
+                // Verifica se já existe para não duplicar
+                const exists = favs.find(item => item.id === movie.id);
+                
+                if (!exists) {
+                    favs.push(movie);
+                    localStorage.setItem("luminaLista", JSON.stringify(favs));
+                    alert("✅ Adicionado à sua lista!");
+                } else {
+                    alert("ℹ️ Este filme já está na sua lista.");
+                }
+            };
         });
 
-        // Configuração simples das setas
+        // Scroll do Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
