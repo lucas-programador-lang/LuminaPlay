@@ -30,11 +30,11 @@
     </nav>
 
     <main class="content">
-        <section class="hero" id="hero">
-            <div class="hero-overlay">
+        <section class="hero" id="hero" style="min-height: 85vh;">
+            <div class="hero-overlay" style="background: linear-gradient(to right, #040714 15%, rgba(4, 7, 20, 0.6) 50%, transparent 100%), linear-gradient(to top, #040714 5%, transparent 40%);">
                 <div class="hero-content">
-                    <h1 id="heroTitle">Séries Lumina</h1>
-                    <p id="heroOverview" class="hero-overview">As séries mais assistidas do momento, agora em um só lugar.</p>
+                    <h1 id="heroTitle" style="font-size: 3.5rem; text-shadow: 2px 2px 10px rgba(0,0,0,0.8);">Carregando...</h1>
+                    <p id="heroOverview" class="hero-overview" style="max-width: 600px; font-size: 1.1rem; margin-bottom: 30px;">Buscando as melhores histórias para você.</p>
                     <div class="hero-buttons">
                         <button class="btn-play" id="heroWatch">▶ ASSISTIR AGORA</button>
                     </div>
@@ -43,10 +43,7 @@
         </section>
 
         <div class="row">
-            <h3>
-                <i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
-                Séries Populares
-            </h3>
+            <h3><i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; margin-right: 12px;"></i> Séries Populares</h3>
             <div class="carousel-container" style="position: relative;">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-populares"></div>
@@ -55,10 +52,7 @@
         </div>
 
         <div class="row">
-            <h3>
-                <i class="fa-solid fa-star" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
-                Em Alta na Semana
-            </h3>
+            <h3><i class="fa-solid fa-star" style="color: #00e5ff; margin-right: 12px;"></i> Em Alta na Semana</h3>
             <div class="carousel-container" style="position: relative;">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-emalta"></div>
@@ -67,10 +61,7 @@
         </div>
 
         <div class="row">
-            <h3>
-                <i class="fa-solid fa-trophy" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
-                Melhores Avaliadas
-            </h3>
+            <h3><i class="fa-solid fa-trophy" style="color: #00e5ff; margin-right: 12px;"></i> Melhores Avaliadas</h3>
             <div class="carousel-container" style="position: relative;">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="row-top"></div>
@@ -90,7 +81,7 @@
                 const data = await res.json();
                 return data.results || [];
             } catch (err) {
-                console.error("Erro ao buscar séries:", err);
+                console.error("Erro na API:", err);
                 return [];
             }
         }
@@ -107,7 +98,6 @@
                 card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${s.poster_path}" alt="${s.name}" loading="lazy">`;
                 
                 card.onclick = () => {
-                    // Garante que o objeto tenha o identificador de série
                     s.media_type = 'tv'; 
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(s));
                     window.location.href = 'filme.html';
@@ -123,18 +113,20 @@
                 fetchSeries("/tv/top_rated")
             ]);
 
-            // Configuração do Hero Dinâmico
+            // Setup do Hero Aleatório
             if(populares.length) {
-                const heroS = populares[Math.floor(Math.random() * 5)];
+                const heroS = populares[Math.floor(Math.random() * Math.min(populares.length, 10))];
                 const bg = heroS.backdrop_path ? `${IMG}${heroS.backdrop_path}` : `${IMG}${heroS.poster_path}`;
                 
                 const heroEl = document.getElementById('hero');
-                heroEl.style.backgroundImage = `linear-gradient(to right, rgba(4, 7, 20, 0.95) 10%, rgba(4, 7, 20, 0.4) 50%, transparent 100%), linear-gradient(to top, #040714 5%, transparent 30%), url(${bg})`;
+                heroEl.style.backgroundImage = `url(${bg})`;
+                heroEl.style.backgroundSize = "cover";
+                heroEl.style.backgroundPosition = "center top";
                 
                 document.getElementById('heroTitle').textContent = heroS.name;
                 
-                const overview = heroS.overview || "Entre no universo desta série incrível disponível agora na Lumina Play.";
-                document.getElementById('heroOverview').textContent = overview.length > 200 ? overview.substring(0, 200) + "..." : overview;
+                const overview = heroS.overview || "Descubra uma nova história épica agora na Lumina Play.";
+                document.getElementById('heroOverview').textContent = overview.length > 250 ? overview.substring(0, 250) + "..." : overview;
                 
                 document.getElementById('heroWatch').onclick = () => {
                     heroS.media_type = 'tv';
@@ -146,19 +138,14 @@
             renderRow("row-populares", populares);
             renderRow("row-emalta", emAlta);
             renderRow("row-top", top);
-
-            // Registrar Service Worker (PWA)
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log("Erro SW:", err));
-            }
         }
 
-        // Controles de scroll (Carrossel)
+        // Sistema de Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
-                const direction = btn.classList.contains('left') ? -600 : 600;
-                list.scrollBy({ left: direction, behavior: 'smooth' });
+                const scrollX = window.innerWidth > 768 ? 800 : 400;
+                list.scrollBy({ left: btn.classList.contains('left') ? -scrollX : scrollX, behavior: 'smooth' });
             };
         });
 
