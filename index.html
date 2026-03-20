@@ -12,11 +12,11 @@
     <nav class="sidebar">
         <div class="logo">L<span>P</span></div>
         <ul class="nav-links">
-            <li class="active" title="Início"><i class="icon">🏠</i></li>
-            <li title="Pesquisar"><i class="icon">🔍</i></li>
-            <li title="Minha Lista"><i class="icon">➕</i></li>
-            <li title="Filmes"><i class="icon">🎬</i></li>
-            <li title="Séries"><i class="icon">📺</i></li>
+            <li class="active"><i class="icon">🏠</i></li>
+            <li><i class="icon">🔍</i></li>
+            <li><i class="icon">➕</i></li>
+            <li><i class="icon">🎬</i></li>
+            <li><i class="icon">📺</i></li>
         </ul>
         <div class="user-profile">
             <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
@@ -24,47 +24,66 @@
     </nav>
 
     <main class="content">
-        <section class="hero">
+        <section class="hero" id="hero">
             <div class="hero-overlay">
                 <div class="hero-content">
-                    <img src="https://logodownload.org/wp-content/uploads/2015/12/star-wars-logo-1-1.png" alt="Logo Filme" class="movie-logo">
-                    <p>A saga épica continua. Explore os confins da galáxia no Lumina Play.</p>
+                    <h1 id="heroTitle">Lumina Play</h1>
+                    <p id="heroOverview">Carregando as melhores histórias...</p>
                     <div class="buttons">
-                        <button class="btn-play">▶ ASSISTIR AGORA</button>
-                        <button class="btn-info">+</button>
+                        <button class="btn-play" id="heroWatch">▶ ASSISTIR AGORA</button>
+                        <button class="btn-info" id="heroFav">+</button>
                     </div>
                 </div>
             </div>
         </section>
 
+        <section class="search-section">
+            <input type="text" id="searchInput" placeholder="Pesquisar filmes ou séries...">
+        </section>
+
         <section class="categories">
-            <div class="category-card"><span>LUMINA</span></div>
-            <div class="category-card"><span>PIXAR</span></div>
-            <div class="category-card"><span>MARVEL</span></div>
-            <div class="category-card"><span>WARS</span></div>
-            <div class="category-card"><span>NATGEO</span></div>
+            <div class="category-card">LUMINA</div>
+            <div class="category-card">PIXAR</div>
+            <div class="category-card">MARVEL</div>
+            <div class="category-card">WARS</div>
+            <div class="category-card">NATGEO</div>
         </section>
 
-        <section class="movie-row">
-            <h3>Recomendados para Você</h3>
+        <div class="row">
+            <h3>Populares</h3>
             <div class="carousel-container">
-                <button class="handle handle-left" onclick="moveCarousel(-1)">&#10094;</button>
-                
-                <div class="movie-list" id="movieList">
-                    <div class="movie-card"><img src="https://picsum.photos/seed/10/300/450" alt="Filme 1"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/20/300/450" alt="Filme 2"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/30/300/450" alt="Filme 3"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/40/300/450" alt="Filme 4"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/50/300/450" alt="Filme 5"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/60/300/450" alt="Filme 6"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/70/300/450" alt="Filme 7"></div>
-                    <div class="movie-card"><img src="https://picsum.photos/seed/80/300/450" alt="Filme 8"></div>
-                </div>
-
-                <button class="handle handle-right" onclick="moveCarousel(1)">&#10095;</button>
+                <button class="handle left">&#10094;</button>
+                <div class="movie-list row-cards" id="row-populares">
+                    </div>
+                <button class="handle right">&#10095;</button>
             </div>
-        </section>
+        </div>
+
+        <div class="row">
+            <h3>Em Alta</h3>
+            <div class="carousel-container">
+                <button class="handle left">&#10094;</button>
+                <div class="movie-list row-cards" id="row-emalta"></div>
+                <button class="handle right">&#10095;</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Lançamentos</h3>
+            <div class="carousel-container">
+                <button class="handle left">&#10094;</button>
+                <div class="movie-list row-cards" id="row-lancamentos"></div>
+                <button class="handle right">&#10095;</button>
+            </div>
+        </div>
     </main>
+
+    <div id="playerOverlay" class="player-overlay">
+        <div class="player-content">
+            <span id="playerClose" class="close-btn">&times;</span>
+            <iframe id="playerFrame" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
