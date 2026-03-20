@@ -11,10 +11,10 @@ body {
     color: white;
     overflow-x: hidden;
     display: flex;
-    flex-direction: row; /* Sidebar ao lado no PC */
+    flex-direction: row; 
 }
 
-/* --- BARRA LATERAL (SIDEBAR) / NAV MOBILE --- */
+/* --- BARRA LATERAL (SIDEBAR) --- */
 .sidebar {
     width: 80px;
     height: 100vh;
@@ -28,41 +28,43 @@ body {
     z-index: 1000;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     transition: 0.3s;
+    overflow: visible; /* Permite que a logo grande "saia" da barra */
 }
 
-/* --- AJUSTE DA NOVA LOGO (IMAGEM) --- */
-.logo {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    transition: transform 0.3s ease;
+/* --- NOVA LOGO GIGANTE E BRILHANTE --- */
+.logo-container {
+    width: 200px; /* Largura ideal para o texto da sua logo aparecer */
+    position: absolute;
+    top: 15px;
+    left: 10px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 1001;
 }
 
-.logo img {
+.logo-horizontal {
     width: 100%;
-    max-width: 65px; /* Tamanho perfeito para a sidebar */
     height: auto;
-    /* Efeito de brilho neon azul que combina com sua logo */
-    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.7));
+    /* Brilho Neon Azul intenso para destacar a logo */
+    filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8));
 }
 
-.logo:hover {
-    transform: scale(1.1);
+.logo-container:hover {
+    transform: scale(1.05);
 }
 
+/* --- LINKS DE NAVEGAÇÃO --- */
 .nav-links { 
     list-style: none; 
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 100px; /* Espaço para não bater na logo grande */
 }
 
 .nav-links li {
-    margin: 25px 0;
+    margin: 20px 0;
     cursor: pointer;
     transition: 0.3s ease;
     display: flex;
@@ -82,15 +84,16 @@ body {
     opacity: 1;
     color: #00e5ff;
     transform: scale(1.2);
-    text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    text-shadow: 0 0 15px rgba(0, 229, 255, 0.8);
 }
 
 .user-profile img {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     border: 2px solid #00e5ff;
     object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 
 /* --- CONTEÚDO PRINCIPAL --- */
@@ -102,7 +105,7 @@ body {
 
 /* --- BANNER PRINCIPAL (HERO) --- */
 .hero {
-    height: 80vh;
+    height: 85vh;
     background-size: cover;
     background-position: center;
     position: relative;
@@ -111,99 +114,112 @@ body {
 .hero-overlay {
     height: 100%;
     width: 100%;
-    background: linear-gradient(to right, #040714 15%, transparent 85%),
-                linear-gradient(to top, #040714 5%, transparent 30%);
+    background: linear-gradient(to right, #040714 20%, transparent 90%),
+                linear-gradient(to top, #040714 10%, transparent 40%);
     display: flex;
     align-items: center;
-    padding: 0 50px;
+    padding: 0 60px;
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 800;
-    margin-bottom: 10px;
-    max-width: 700px;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
 }
 
 .hero-content p {
-    font-size: 1.1rem;
-    max-width: 500px;
+    font-size: 1.2rem;
+    max-width: 600px;
     margin-bottom: 30px;
-    color: #cacaca;
-    line-height: 1.5;
+    color: #efefef;
+    line-height: 1.6;
 }
 
 .btn-play {
-    padding: 15px 40px;
-    font-weight: bold;
+    padding: 16px 45px;
+    font-weight: 800;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     background: white;
     color: black;
     cursor: pointer;
     transition: 0.3s;
+    text-transform: uppercase;
 }
-.btn-play:hover { background: #00e5ff; color: white; }
+
+.btn-play:hover { 
+    background: #00e5ff; 
+    color: white; 
+    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+}
 
 .btn-info {
-    width: 50px;
-    height: 50px;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
     border: 2px solid white;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.6);
     color: white;
-    margin-left: 10px;
-    font-size: 24px;
+    margin-left: 15px;
+    font-size: 26px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-/* --- BUSCA --- */
-.search-section { padding: 20px 50px; }
+.btn-info:hover { border-color: #00e5ff; color: #00e5ff; }
+
+/* --- BUSCA E CATEGORIAS --- */
+.search-section { padding: 30px 60px; }
 #searchInput {
     width: 100%;
-    max-width: 400px;
-    padding: 12px 20px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 25px;
+    max-width: 450px;
+    padding: 14px 25px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 30px;
     color: white;
     outline: none;
+    transition: 0.3s;
 }
+#searchInput:focus { border-color: #00e5ff; background: rgba(255,255,255,0.15); }
 
-/* --- CATEGORIAS --- */
 .categories {
     display: flex;
-    gap: 15px;
-    padding: 20px 50px;
+    gap: 20px;
+    padding: 10px 60px;
     overflow-x: auto;
 }
 .categories::-webkit-scrollbar { display: none; }
 
 .category-card {
-    min-width: 150px;
-    height: 100px;
+    min-width: 160px;
+    height: 90px;
     border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 900;
-    background: linear-gradient(#1e1f2a, #040714);
+    background: linear-gradient(145deg, #1e1f2a, #040714);
     cursor: pointer;
     flex-shrink: 0;
-    transition: 0.3s;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .category-card:hover {
     border-color: #00e5ff;
-    transform: translateY(-5px);
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-/* --- FILEIRAS --- */
-.row { padding: 20px 50px; position: relative; }
+/* --- FILEIRAS E CARDS --- */
+.row { padding: 30px 60px; position: relative; }
+.row h3 { margin-bottom: 15px; font-size: 1.5rem; letter-spacing: 1px; }
+
 .movie-list {
     display: flex;
-    gap: 15px;
+    gap: 18px;
     overflow-x: auto;
     scroll-behavior: smooth;
     padding: 15px 0;
@@ -211,87 +227,97 @@ body {
 .movie-list::-webkit-scrollbar { display: none; }
 
 .card {
-    min-width: 160px;
-    transition: 0.3s;
+    min-width: 180px;
+    transition: 0.4s;
     cursor: pointer;
 }
-.card img { width: 100%; border-radius: 10px; border: 3px solid transparent; }
-.card:hover { transform: scale(1.05); }
+.card img { 
+    width: 100%; 
+    border-radius: 8px; 
+    border: 2px solid transparent; 
+    transition: 0.3s;
+}
+.card:hover { transform: translateY(-10px); }
+.card:hover img { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
 
 .handle {
     position: absolute;
-    height: 100%;
-    width: 40px;
-    background: rgba(0,0,0,0.7);
+    height: 70%;
+    top: 55px;
+    width: 45px;
+    background: rgba(0,0,0,0.8);
     border: none;
     color: white;
     font-size: 24px;
     cursor: pointer;
     z-index: 20;
     opacity: 0;
+    transition: 0.3s;
 }
 .carousel-container:hover .handle { opacity: 1; }
+.handle.left { left: 10px; border-radius: 0 8px 8px 0; }
+.handle.right { right: 10px; border-radius: 8px 0 0 8px; }
 
 /* --- PLAYER --- */
 .player-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.95);
+    background: rgba(0,0,0,0.98);
     display: none;
-    z-index: 2000;
+    z-index: 3000;
     justify-content: center;
     align-items: center;
 }
 .player-overlay.active { display: flex; }
-.player-content { width: 90%; max-width: 900px; position: relative; }
-.close-btn { position: absolute; top: -50px; right: 0; font-size: 40px; color: white; cursor: pointer; }
+.player-content { width: 95%; max-width: 1000px; aspect-ratio: 16/9; position: relative; }
+.player-content iframe { width: 100%; height: 100%; border-radius: 12px; box-shadow: 0 0 30px rgba(0, 229, 255, 0.2); }
+.close-btn { position: absolute; top: -50px; right: 0; font-size: 45px; color: white; cursor: pointer; transition: 0.3s; }
+.close-btn:hover { color: #00e5ff; transform: rotate(90deg); }
 
-/* =========================================
-   MEDIA QUERIES (RESPONSIVIDADE)
-   ========================================= */
-
+/* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
     body { flex-direction: column; }
 
     .sidebar {
         width: 100%;
-        height: 60px;
+        height: 70px;
         bottom: 0;
         top: auto;
         flex-direction: row;
-        padding: 0 20px;
+        padding: 0 15px;
         border-right: none;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
     }
 
-    /* Escondemos a logo na nav inferior para não poluir o visual mobile */
-    .logo, .user-profile { display: none; } 
+    /* Esconde a logo flutuante no Mobile para não cobrir os filmes */
+    .logo-container { display: none; }
 
     .nav-links {
         flex-direction: row;
         justify-content: space-around;
+        margin-top: 0;
     }
 
-    .nav-links li { margin: 0; }
+    .nav-links li { margin: 0; width: auto; }
+    .user-profile { display: none; }
 
     .content {
         margin-left: 0;
         width: 100%;
-        padding-bottom: 70px; 
+        padding-bottom: 80px; 
     }
 
-    .hero { height: 60vh; }
-    .hero-overlay { padding: 0 20px; }
+    .hero { height: 55vh; }
+    .hero-overlay { padding: 0 25px; }
     .hero-content h1 { font-size: 2.2rem; }
-    .hero-content p { font-size: 0.9rem; }
+    .hero-content p { font-size: 0.95rem; }
 
-    .row { padding: 15px 20px; }
-    .search-section { padding: 10px 20px; }
-    .categories { padding: 10px 20px; }
-
+    .row { padding: 20px 25px; }
+    .search-section, .categories { padding: 10px 25px; }
     .handle { display: none; }
 }
 
-/* Skeletons */
-.skeleton { min-width: 160px; height: 240px; background: #1e1f2a; border-radius: 10px; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+/* Animação Skeleton */
+.skeleton { min-width: 180px; height: 260px; background: linear-gradient(90deg, #1e1f2a 25%, #2a2b38 50%, #1e1f2a 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 8px; }
+@keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
