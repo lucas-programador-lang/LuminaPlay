@@ -17,7 +17,7 @@
 
         <ul class="nav-links">
             <li class="active" title="Início" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar" onclick="document.getElementById('searchInput').focus()"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li title="Pesquisar" onclick="document.getElementById('searchInput').focus(); window.scrollTo({top: 0, behavior: 'smooth'});"><i class="fa-solid fa-magnifying-glass"></i></li>
             <li title="Minha Lista" onclick="window.location.href='minha-lista.html'"><i class="fa-solid fa-plus"></i></li>
             <li title="Filmes" onclick="window.location.href='filme.html'"><i class="fa-solid fa-clapperboard"></i></li>
             <li title="Séries" onclick="window.location.href='series.html'"><i class="fa-solid fa-tv"></i></li>
@@ -29,60 +29,65 @@
     </nav>
 
     <main class="content">
-        <section class="hero" id="hero">
-            <div class="hero-overlay">
-                <div class="hero-content">
-                    <h1 id="heroTitle">Lumina Play</h1>
-                    <p id="heroOverview">Carregando as melhores histórias...</p>
-                    <div class="buttons">
-                        <button class="btn-play" id="heroWatch">▶ ASSISTIR AGORA</button>
-                        <button class="btn-info" id="heroFav">+</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section class="search-section">
             <input type="text" id="searchInput" placeholder="Pesquisar filmes ou séries...">
         </section>
 
-        <div class="row" id="searchRow" style="display: none; margin-bottom: 40px;">
-            <h3><i class="fa-solid fa-magnifying-glass" style="color: #00e5ff; margin-right: 10px;"></i> Resultados encontrados</h3>
-            <div class="movie-list row-cards" id="row-search-results"></div>
+        <div class="row" id="searchRow" style="display: none; padding: 0 4%; margin-top: 20px;">
+            <h3 style="border-left: 5px solid #00e5ff; padding-left: 15px;">
+                <i class="fa-solid fa-magnifying-glass" style="color: #00e5ff; margin-right: 10px;"></i> 
+                Resultados para: <span id="searchTerm" style="color: #00e5ff; font-weight: 300;"></span>
+            </h3>
+            <div id="row-search-results" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 20px;"></div>
         </div>
 
-        <section class="categories">
-            <div class="category-card" onclick="alert('Explorar Lumina Originals')">LUMINA</div>
-            <div class="category-card" onclick="alert('Explorar Pixar')">PIXAR</div>
-            <div class="category-card" onclick="alert('Explorar Marvel')">MARVEL</div>
-            <div class="category-card" onclick="alert('Explorar Star Wars')">WARS</div>
-            <div class="category-card" onclick="alert('Explorar NatGeo')">NATGEO</div>
-        </section>
+        <div id="main-content-area">
+            <section class="hero" id="hero">
+                <div class="hero-overlay">
+                    <div class="hero-content">
+                        <h1 id="heroTitle">Lumina Play</h1>
+                        <p id="heroOverview">Carregando as melhores histórias...</p>
+                        <div class="buttons">
+                            <button class="btn-play" id="heroWatch">▶ ASSISTIR AGORA</button>
+                            <button class="btn-info" id="heroFav" title="Adicionar à Lista">+</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <div class="row">
-            <h3><i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Populares</h3>
-            <div class="carousel-container">
-                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="movie-list row-cards" id="row-populares"></div>
-                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            <section class="categories">
+                <div class="category-card">LUMINA</div>
+                <div class="category-card">PIXAR</div>
+                <div class="category-card">MARVEL</div>
+                <div class="category-card">WARS</div>
+                <div class="category-card">NATGEO</div>
+            </section>
+
+            <div class="row">
+                <h3><i class="fa-solid fa-fire-flame-curved" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Populares</h3>
+                <div class="carousel-container">
+                    <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="movie-list row-cards" id="row-populares"></div>
+                    <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
             </div>
-        </div>
 
-        <div class="row">
-            <h3><i class="fa-solid fa-star" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Em Alta</h3>
-            <div class="carousel-container">
-                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="movie-list row-cards" id="row-emalta"></div>
-                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="row">
+                <h3><i class="fa-solid fa-star" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Em Alta</h3>
+                <div class="carousel-container">
+                    <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="movie-list row-cards" id="row-emalta"></div>
+                    <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
             </div>
-        </div>
 
-        <div class="row">
-            <h3><i class="fa-solid fa-calendar-day" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Lançamentos</h3>
-            <div class="carousel-container">
-                <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="movie-list row-cards" id="row-lancamentos"></div>
-                <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="row">
+                <h3><i class="fa-solid fa-calendar-day" style="color: #00e5ff; text-shadow: 0 0 10px #00e5ff; margin-right: 10px;"></i> Lançamentos</h3>
+                <div class="carousel-container">
+                    <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="movie-list row-cards" id="row-lancamentos"></div>
+                    <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
             </div>
         </div>
     </main>
@@ -91,41 +96,37 @@
         const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
         const IMG_URL = "https://image.tmdb.org/t/p/original";
 
-        // --- BUSCA EM TEMPO REAL ---
         const searchInput = document.getElementById('searchInput');
         const searchRow = document.getElementById('searchRow');
         const searchResults = document.getElementById('row-search-results');
+        const mainContentArea = document.getElementById('main-content-area');
+        const searchTermSpan = document.getElementById('searchTerm');
 
+        // --- BUSCA EM TEMPO REAL ---
         searchInput.addEventListener('input', async (e) => {
-            const query = e.target.value;
+            const query = e.target.value.trim();
             if (query.length > 2) {
+                mainContentArea.style.display = 'none';
+                searchRow.style.display = 'block';
+                searchTermSpan.innerText = query;
+
                 const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=pt-BR&query=${query}`);
                 const data = await res.json();
-                
-                if (data.results.length > 0) {
-                    searchRow.style.display = 'block';
-                    renderMovies(searchResults, data.results);
-                }
+                renderMovies(searchResults, data.results);
             } else {
                 searchRow.style.display = 'none';
+                mainContentArea.style.display = 'block';
             }
         });
 
-        // --- CARREGAR CONTEÚDO ---
-        async function fetchMovies(endpoint, rowId) {
-            const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${API_KEY}&language=pt-BR`);
-            const data = await res.json();
-            renderMovies(document.getElementById(rowId), data.results);
-            return data.results;
-        }
-
+        // --- RENDERIZAÇÃO DE CARDS ---
         function renderMovies(container, list) {
             container.innerHTML = "";
             list.forEach(item => {
                 if (!item.poster_path) return;
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}">`;
+                card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}" loading="lazy">`;
                 card.onclick = () => {
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
                     window.location.href = 'filme.html';
@@ -134,29 +135,52 @@
             });
         }
 
+        // --- BUSCAR DADOS DAS FILEIRAS ---
+        async function fetchMovies(endpoint, rowId) {
+            const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${API_KEY}&language=pt-BR`);
+            const data = await res.json();
+            renderMovies(document.getElementById(rowId), data.results);
+            return data.results;
+        }
+
         async function init() {
             const pops = await fetchMovies('/movie/popular', 'row-populares');
             fetchMovies('/trending/all/week', 'row-emalta');
             fetchMovies('/movie/now_playing', 'row-lancamentos');
 
-            // Configurar Hero com um filme aleatório dos populares
+            // Hero Dinâmico
             if (pops.length > 0) {
-                const movie = pops[Math.floor(Math.random() * pops.length)];
-                document.getElementById('hero').style.backgroundImage = `url(${IMG_URL}${movie.backdrop_path})`;
+                const movie = pops[Math.floor(Math.random() * 8)]; // Pega um dos 8 primeiros populares
+                document.getElementById('hero').style.backgroundImage = `linear-gradient(to top, #040714 10%, transparent 60%), url(${IMG_URL}${movie.backdrop_path})`;
                 document.getElementById('heroTitle').innerText = movie.title || movie.name;
-                document.getElementById('heroOverview').innerText = movie.overview.substring(0, 160) + "...";
+                
+                const overview = movie.overview || "Uma história incrível aguarda por você no Lumina Play.";
+                document.getElementById('heroOverview').innerText = overview.substring(0, 160) + "...";
+
                 document.getElementById('heroWatch').onclick = () => {
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
                     window.location.href = 'filme.html';
                 };
+
+                // Botão de favoritar no Hero
+                document.getElementById('heroFav').onclick = () => {
+                    let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
+                    if (!favs.find(f => f.id === movie.id)) {
+                        favs.push(movie);
+                        localStorage.setItem("luminaLista", JSON.stringify(favs));
+                        alert("✅ Adicionado à sua lista!");
+                    } else {
+                        alert("ℹ️ Já está na sua lista!");
+                    }
+                };
             }
         }
 
-        // --- CONTROLES DE SCROLL ---
+        // Controles de Scroll
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
-                const direction = btn.classList.contains('left') ? -500 : 500;
+                const direction = btn.classList.contains('left') ? -600 : 600;
                 list.scrollBy({ left: direction, behavior: 'smooth' });
             };
         });
