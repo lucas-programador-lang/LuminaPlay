@@ -8,14 +8,88 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        /* Estilos específicos para a Grade de Favoritos */
+        .content { padding-bottom: 100px; } /* Evita que a nav inferior cubra os cards */
+
+        .fav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 20px 50px;
+            width: 100%;
+        }
+
+        .card {
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+        }
+
+        /* Botão Remover Estilizado */
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 0, 0, 0.85);
+            border: 2px solid white;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0; /* Escondido por padrão no PC */
+            transform: scale(0.8);
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .card:hover .remove-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .remove-btn i { font-size: 18px; }
+
+        .remove-btn:hover {
+            background: #ff0000;
+            transform: scale(1.1) !important;
+        }
+
+        /* Animação de remoção */
+        .removing {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+
+        /* Responsividade para a Lista */
+        @media (max-width: 768px) {
+            .fav-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                padding: 20px;
+                gap: 15px;
+            }
+            .remove-btn {
+                opacity: 1; /* Sempre visível no celular (não tem hover) */
+                transform: scale(1);
+                width: 35px;
+                height: 35px;
+            }
+            header { padding: 30px 20px 10px !important; }
+        }
+    </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo">L<span>P</span></div>
+        <div class="logo" onclick="location.href='index.html'">L<span>P</span></div>
         <ul class="nav-links">
             <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li title="Pesquisar" onclick="location.href='index.html'"><i class="fa-solid fa-magnifying-glass"></i></li>
             <li class="active" onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
             <li onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
             <li onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
@@ -27,102 +101,77 @@
 
     <main class="content">
         <header style="padding: 40px 50px 10px;">
-            <h2 style="font-size: 2rem; border-left: 4px solid #00e5ff; padding-left: 15px;">📌 Minha Lista</h2>
-            <p style="opacity: 0.6; margin-top: 10px;">Seus filmes e séries favoritos guardados aqui.</p>
+            <h2 style="font-size: 2.2rem; border-left: 5px solid #00e5ff; padding-left: 15px; font-weight: 800;">Minha Lista</h2>
+            <p style="opacity: 0.6; margin-top: 5px; font-size: 1rem;">Filmes e séries que você quer ver de novo.</p>
         </header>
 
-        <div class="row">
-            <div class="carousel-container">
-                <div class="movie-list row-cards" id="lista" style="flex-wrap: wrap; gap: 20px;">
-                    </div>
+        <div id="lista" class="fav-grid">
             </div>
-        </div>
     </main>
 
     <script>
         const listaContainer = document.getElementById("lista");
 
         function getFav() {
-            // Buscamos a lista que o script.js salva (luminaLista)
             return JSON.parse(localStorage.getItem("luminaLista") || "[]");
         }
 
         function render() {
             if (!listaContainer) return;
-            listaContainer.innerHTML = "";
             const favs = getFav();
 
             if (favs.length === 0) {
+                listaContainer.style.display = "block";
                 listaContainer.innerHTML = `
-                    <div style="text-align: center; width: 100%; padding: 50px; opacity: 0.5;">
-                        <i class="fa-solid fa-ghost" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                        <p>Sua lista está vazia. Adicione algo no Início!</p>
+                    <div style="text-align: center; padding: 100px 20px; opacity: 0.4;">
+                        <i class="fa-solid fa- wand-magic-sparkles" style="font-size: 4rem; margin-bottom: 20px; display: block;"></i>
+                        <p style="font-size: 1.2rem;">Sua lista está vazia.<br>Explore o catálogo e adicione favoritos!</p>
+                        <button onclick="location.href='index.html'" style="margin-top:20px; padding: 10px 20px; border-radius: 20px; border: 1px solid white; background: transparent; color: white; cursor: pointer;">Voltar ao Início</button>
                     </div>`;
                 return;
             }
 
+            listaContainer.style.display = "grid";
+            listaContainer.innerHTML = "";
+
             favs.forEach(item => {
                 const card = document.createElement("div");
                 card.className = "card";
-                card.style.position = "relative";
+                card.id = `card-${item.id}`;
 
-                // Imagem do Filme/Série
                 const imgPath = item.poster_path ? 'https://image.tmdb.org/t/p/w500' + item.poster_path : 'https://via.placeholder.com/500x750?text=Sem+Imagem';
                 
                 card.innerHTML = `
-                    <img src="${imgPath}" alt="${item.title || item.name}">
-                    <button class="remove-btn" title="Remover da lista">
-                        <i class="fa-solid fa-xmark"></i>
+                    <img src="${imgPath}" alt="${item.title || item.name}" onclick="goToDetails(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                    <button class="remove-btn" title="Remover" onclick="removeMovie(event, ${item.id})">
+                        <i class="fa-solid fa-trash-can"></i>
                     </button>
                 `;
-
-                // Clique para ver detalhes
-                card.onclick = () => {
-                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
-                    window.location.href = 'filme.html';
-                };
-
-                // Botão de remover (estilizado via JS rápido)
-                const btn = card.querySelector(".remove-btn");
-                btn.style.cssText = `
-                    position: absolute; top: 10px; right: 10px; 
-                    background: rgba(255,0,0,0.8); border: none; 
-                    color: white; border-radius: 50%; width: 30px; 
-                    height: 30px; cursor: pointer; z-index: 5;
-                    display: flex; align-items: center; justify-content: center;
-                    transition: 0.3s;
-                `;
-                
-                btn.onclick = (e) => {
-                    e.stopPropagation(); // Não abre os detalhes ao clicar no X
-                    remove(item.id);
-                };
 
                 listaContainer.appendChild(card);
             });
         }
 
-        function remove(id) {
-            let favs = getFav().filter(m => m.id !== id);
-            localStorage.setItem("luminaLista", JSON.stringify(favs));
-            render();
+        function goToDetails(item) {
+            localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
+            window.location.href = 'filme.html';
         }
 
-        // Inicializa a página
+        function removeMovie(event, id) {
+            event.stopPropagation(); // Impede de abrir o filme ao clicar no lixo
+            
+            const card = document.getElementById(`card-${id}`);
+            card.classList.add('removing'); // Adiciona animação de sumir
+
+            setTimeout(() => {
+                let favs = getFav().filter(m => m.id !== id);
+                localStorage.setItem("luminaLista", JSON.stringify(favs));
+                render();
+            }, 300); // Espera 300ms da animação antes de atualizar a tela
+        }
+
+        // Inicializa
         render();
     </script>
-
-    <style>
-        /* Ajuste extra para a grade da Minha Lista */
-        .movie-list {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            width: 100%;
-        }
-        .remove-btn:hover {
-            transform: scale(1.2);
-            background: red !important;
-        }
-    </style>
 </body>
 </html>
