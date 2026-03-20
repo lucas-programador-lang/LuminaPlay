@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina Play | Detalhes do Filme</title>
+    <title>Lumina Play | Detalhes</title>
     
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
 <body>
 
     <nav class="sidebar">
-        <div class="logo" onclick="location.href='index.html'" style="cursor: pointer;">
-            <img src="logo.png" alt="Lumina Play Logo">
+        <div class="logo-container" onclick="location.href='index.html'" style="cursor: pointer;">
+            <img src="logo.png" alt="Lumina Play Logo" class="logo-horizontal">
         </div>
 
         <ul class="nav-links">
@@ -29,7 +29,7 @@
     </nav>
 
     <main class="content">
-        <section class="hero" id="filmHero" style="background-size: cover; background-position: center;">
+        <section class="hero" id="filmHero">
             <div class="hero-overlay">
                 <div class="hero-content">
                     <h1 id="filmTitle">Carregando...</h1>
@@ -63,7 +63,9 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        const API_KEY = "d552c7ad4779e6d50cb6de2ac397c6dd";
+
+        document.addEventListener('DOMContentLoaded', async () => {
             const movieData = localStorage.getItem('lumina_selectedMovie');
             
             if(!movieData) {
@@ -73,26 +75,25 @@
 
             const movie = JSON.parse(movieData);
 
-            // Preenchimento dos dados
+            // Preenchimento dos dados básicos
+            document.title = `Lumina Play | ${movie.title || movie.name}`;
             document.getElementById('filmTitle').textContent = movie.title || movie.name;
-            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível para este título.";
+            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível.";
             
-            // Fundo do Hero
             const bgPath = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : `https://image.tmdb.org/t/p/original${movie.poster_path}`;
             document.getElementById('filmHero').style.backgroundImage = `url(${bgPath})`;
             
-            // Info Ano e Nota
             const year = (movie.release_date || movie.first_air_date || "2026").split('-')[0];
             const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
             document.getElementById('filmInfo').textContent = `${year} • ★ ${rating}`;
 
-            // --- LÓGICA DO PLAYER ---
+            // --- BUSCAR SEMELHANTES ---
+            fetchSimilar(movie.id, movie.title ? 'movie' : 'tv');
+
+            // --- PLAYER ---
             document.getElementById('filmWatch').onclick = () => {
-                const overlay = document.getElementById('playerOverlay');
-                const frame = document.getElementById('playerFrame');
-                overlay.classList.add('active');
-                // Link de exemplo (Rickroll) ou link dinâmico se tiver
-                frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+                document.getElementById('playerOverlay').classList.add('active');
+                document.getElementById('playerFrame').src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
             };
 
             document.getElementById('playerClose').onclick = () => {
@@ -100,28 +101,48 @@
                 document.getElementById('playerFrame').src = "";
             };
 
-            // --- LÓGICA DA MINHA LISTA ---
+            // --- MINHA LISTA ---
             document.getElementById('addToList').onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
-                
-                // Verifica se já existe para não duplicar
-                const exists = favs.find(item => item.id === movie.id);
-                
-                if (!exists) {
+                if (!favs.find(item => item.id === movie.id)) {
                     favs.push(movie);
                     localStorage.setItem("luminaLista", JSON.stringify(favs));
                     alert("✅ Adicionado à sua lista!");
                 } else {
-                    alert("ℹ️ Este filme já está na sua lista.");
+                    alert("ℹ️ Já está na sua lista.");
                 }
             };
         });
 
-        // Scroll do Carrossel
+        async function fetchSimilar(id, type) {
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/${type}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
+                const data = await res.json();
+                const container = document.getElementById('similarRow');
+                
+                if(data.results && data.results.length > 0) {
+                    data.results.forEach(m => {
+                        if(!m.poster_path) return;
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${m.poster_path}" alt="${m.title || m.name}">`;
+                        card.onclick = () => {
+                            localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
+                            window.location.reload();
+                        };
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.innerHTML = "<p style='padding: 20px; opacity: 0.5;'>Nenhuma recomendação encontrada.</p>";
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // Scroll Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
-                const direction = btn.classList.contains('left') ? -400 : 400;
+                const direction = btn.classList.contains('left') ? -450 : 450;
                 list.scrollBy({ left: direction, behavior: 'smooth' });
             };
         });
