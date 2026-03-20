@@ -11,6 +11,8 @@
 
     <style>
         /* Estilos específicos para a Grade de Favoritos */
+        body { background-color: #040714; }
+
         .content { padding-bottom: 100px; min-height: 100vh; } 
 
         .fav-grid {
@@ -45,7 +47,6 @@
             box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
         }
 
-        /* Botão Remover com Design Lumina */
         .remove-btn {
             position: absolute;
             top: -10px;
@@ -79,7 +80,7 @@
 
         /* Animação ao apagar */
         .removing {
-            transform: scale(0);
+            transform: scale(0) rotate(15deg);
             opacity: 0;
             transition: 0.4s;
         }
@@ -116,7 +117,7 @@
                 gap: 20px;
             }
             .remove-btn { opacity: 1; transform: scale(1); }
-            header { padding: 40px 20px 10px !important; }
+            .content header { padding: 40px 20px 10px !important; margin-top: 60px !important; }
         }
     </style>
 </head>
@@ -156,7 +157,6 @@
         const listaContainer = document.getElementById("lista");
 
         function getFav() {
-            // Pega a lista do localStorage (a mesma que você alimenta na página de detalhes)
             return JSON.parse(localStorage.getItem("luminaLista") || "[]");
         }
 
@@ -192,7 +192,6 @@
                     </button>
                 `;
 
-                // Clique na imagem leva para os detalhes
                 card.querySelector('.movie-img').onclick = () => {
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
                     window.location.href = 'filme.html';
@@ -203,7 +202,6 @@
         }
 
         function removeMovie(event, id) {
-            // Evita que o clique no botão de remover abra os detalhes do filme
             event.stopPropagation(); 
             
             const card = document.getElementById(`card-${id}`);
@@ -214,11 +212,10 @@
                     let favs = getFav().filter(m => m.id !== id);
                     localStorage.setItem("luminaLista", JSON.stringify(favs));
                     render();
-                }, 400); // Tempo para a animação de sumir
+                }, 400); 
             }
         }
 
-        // Executa a função ao carregar a página
         render();
     </script>
 </body>
