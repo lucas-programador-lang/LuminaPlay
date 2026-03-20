@@ -8,7 +8,6 @@ const ASSETS_TO_CACHE = [
     './series.html',
     './minha-lista.html',
     './style.css',
-    './script.js',
     './logo.png',
     'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'
@@ -16,22 +15,24 @@ const ASSETS_TO_CACHE = [
 
 // Instalação: Salva os arquivos essenciais
 self.addEventListener('install', (event) => {
+    // Força o SW a se tornar ativo imediatamente
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('Lumina Cache: Arquivos principais armazenados.');
+            console.log('Lumina Cache: App Shell armazenado.');
             return cache.addAll(ASSETS_TO_CACHE);
         })
     );
 });
 
-// Ativação: Limpa caches antigos se você atualizar a versão (v1 -> v2)
+// Ativação: Limpa caches antigos e assume o controle das abas abertas
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(
                 keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
             );
-        })
+        }).then(() => self.clients.claim())
     );
 });
 
@@ -39,31 +40,45 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Estratégia especial para imagens da API (TMDB)
-    // Elas são salvas no cache conforme o usuário navega
+    // Estratégia Cache First para Imagens do TMDB (Cache Dinâmico)
     if (url.hostname === 'image.tmdb.org') {
         event.respondWith(cacheFirst(event.request));
     } else {
-        // Para os arquivos do próprio site: Tenta Cache, se não tiver, vai na Rede
+        // Estratégia Stale-While-Revalidate para arquivos locais
+        // (Mostra o cache rápido, mas atualiza por baixo dos panos)
         event.respondWith(
             caches.match(event.request).then((response) => {
-                return response || fetch(event.request);
+                const fetchPromise = fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, networkResponse.clone());
+                        });
+                    }
+                    return networkResponse;
+                }).catch(() => {}); // Falha silenciosa se estiver offline
+
+                return response || fetchPromise;
             })
         );
     }
 });
 
-// Função Auxiliar: Cache First, Network Second
+// Função Auxiliar: Cache First, Network Second (com Fallback)
 async function cacheFirst(request) {
     const cachedResponse = await caches.match(request);
     if (cachedResponse) return cachedResponse;
 
     try {
         const networkResponse = await fetch(request);
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(request, networkResponse.clone()); // Guarda a imagem nova no cache
+        // Só armazena no cache se a resposta for válida
+        if (networkResponse && networkResponse.status === 200) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, networkResponse.clone());
+        }
         return networkResponse;
     } catch (error) {
-        return cachedResponse;
+        // Se der erro de rede e não tiver cache, você poderia retornar uma imagem de placeholder aqui
+        console.error('Lumina Play: Erro ao buscar imagem offline.');
+        return cachedResponse; 
     }
 }
