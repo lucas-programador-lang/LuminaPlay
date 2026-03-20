@@ -22,13 +22,15 @@ const DOM = {
     searchInput: document.getElementById('searchInput')
 };
 
+// Guardar dados originais para restaurar após a busca
+let backupPopulares = [];
+
 /* =========================
    INICIALIZAÇÃO
 ========================= */
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
-    // Correção na verificação da Home: mais robusto para evitar erros em subpáginas
     const path = window.location.pathname;
     const isHomePage = path.endsWith("index.html") || path.endsWith("/") || path === "" || !path.includes(".html");
 
@@ -40,18 +42,20 @@ async function init() {
 }
 
 async function setupHomePage() {
-    // 1. Mostrar Skeletons (Animação de carregamento)
+    // 1. Mostrar Skeletons
     Object.keys(DOM.rows).forEach(key => showSkeleton(key));
 
-    // 2. Buscar Dados da API
+    // 2. Buscar Dados
     const [populares, emAlta, lancamentos] = await Promise.all([
         getMovies("/movie/popular"),
-        getMovies("/trending/all/week"), // Trending ALL para pegar séries e filmes em alta
+        getMovies("/trending/all/week"),
         getMovies("/movie/now_playing")
     ]);
 
-    // 3. Renderizar Hero (Destaque principal)
-    if (populares.length > 0) renderHero(populares[Math.floor(Math.random() * 5)]); // Pega um dos 5 primeiros aleatoriamente
+    backupPopulares = populares; // Salva para restaurar depois da busca
+
+    // 3. Renderizar Hero
+    if (populares.length > 0) renderHero(populares[Math.floor(Math.random() * 5)]);
 
     // 4. Renderizar Fileiras
     renderRow("populares", populares);
@@ -67,7 +71,6 @@ async function setupHomePage() {
    LÓGICA DE NAVEGAÇÃO E FAVORITOS
 ========================= */
 function goToDetails(movie) {
-    // Salva o objeto completo para a página filme.html ler
     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
     window.location.href = 'filme.html';
 }
@@ -79,9 +82,8 @@ function saveToList(movie) {
     if (!list.find(m => m.id === movie.id)) {
         list.push(movie);
         localStorage.setItem("luminaLista", JSON.stringify(list));
-        alert(`✅ "${movie.title || movie.name}" adicionado à sua lista!`);
-    } else {
-        alert("ℹ️ Este item já está na sua lista.");
+        // Feedback visual mais moderno que o alert
+        console.log(`Adicionado: ${movie.title || movie.name}`);
     }
 }
 
@@ -90,14 +92,19 @@ function saveToList(movie) {
 ========================= */
 function renderRow(type, movies) {
     const container = DOM.rows[type];
-    if (!container || !movies) return;
+    if (!container) return;
     container.innerHTML = ""; 
 
+    if (movies.length === 0) {
+        container.innerHTML = "<p style='padding:20px; opacity:0.5;'>Nenhum resultado encontrado.</p>";
+        return;
+    }
+
     movies.forEach(movie => {
-        if (!movie.poster_path) return;
+        const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=Sem+Imagem';
         const card = document.createElement("div");
         card.className = "card";
-        card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title || movie.name}" loading="lazy">`;
+        card.innerHTML = `<img src="${poster}" alt="${movie.title || movie.name}" loading="lazy">`;
         
         card.onclick = () => goToDetails(movie);
         container.appendChild(card);
@@ -108,7 +115,13 @@ function renderHero(movie) {
     if (!DOM.hero || !movie) return;
     
     const bg = movie.backdrop_path ? `${IMG}${movie.backdrop_path}` : `${IMG}${movie.poster_path}`;
-    DOM.hero.style.backgroundImage = `url(${bg})`;
+    
+    // Aplicando gradiente duplo para garantir leitura do texto
+    DOM.hero.style.backgroundImage = `
+        linear-gradient(to right, rgba(4, 7, 20, 0.8) 10%, transparent 70%),
+        linear-gradient(to top, #040714 5%, transparent 40%), 
+        url(${bg})
+    `;
     
     if (DOM.heroTitle) DOM.heroTitle.textContent = movie.title || movie.name;
     
@@ -117,12 +130,7 @@ function renderHero(movie) {
         DOM.heroOverview.textContent = text.length > 200 ? text.substring(0, 200) + "..." : text;
     }
     
-    // Configura botões do Hero
     if (DOM.heroWatch) DOM.heroWatch.onclick = () => goToDetails(movie);
-    if (DOM.heroFav) DOM.heroFav.onclick = (e) => {
-        e.stopPropagation();
-        saveToList(movie);
-    };
 }
 
 /* =========================
@@ -165,7 +173,7 @@ function setupArrows() {
         btn.onclick = (e) => {
             e.preventDefault();
             const list = btn.parentElement.querySelector('.movie-list');
-            const direction = btn.classList.contains('left') ? -500 : 500;
+            const direction = btn.classList.contains('left') ? -600 : 600;
             list.scrollBy({ left: direction, behavior: 'smooth' });
         };
     });
@@ -173,15 +181,27 @@ function setupArrows() {
 
 function setupSearch() {
     if (!DOM.searchInput) return;
+    
+    const sectionTitle = DOM.rows.populares.parentElement.querySelector('h3');
+    const originalTitle = sectionTitle ? sectionTitle.innerHTML : "Populares";
+
     DOM.searchInput.addEventListener("input", debounce(async (e) => {
         const query = e.target.value.trim();
+        
+        if (query.length === 0) {
+            renderRow("populares", backupPopulares);
+            if (sectionTitle) sectionTitle.innerHTML = originalTitle;
+            return;
+        }
+
         if (query.length < 2) return;
         
         const results = await getMovies(`/search/multi?query=${encodeURIComponent(query)}`);
         renderRow("populares", results);
         
-        const sectionTitle = DOM.rows.populares.parentElement.querySelector('h3');
-        if (sectionTitle) sectionTitle.textContent = `Resultados para: "${query}"`;
+        if (sectionTitle) {
+            sectionTitle.innerHTML = `<i class="fa-solid fa-magnifying-glass" style="color:#00e5ff; margin-right:12px;"></i> Resultados para: "${query}"`;
+        }
     }, 600));
 }
 
