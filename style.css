@@ -1,3 +1,4 @@
+/* --- CONFIGURAÇÕES GERAIS --- */
 * {
     margin: 0;
     padding: 0;
@@ -16,8 +17,7 @@ body {
 .sidebar {
     width: 80px;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(15px); /* Efeito de vidro */
+    background: rgba(0, 0, 0, 0.9);
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -25,27 +25,24 @@ body {
     justify-content: space-between;
     padding: 20px 0;
     z-index: 100;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
     font-size: 24px;
     font-weight: 800;
     color: #00e5ff;
-    cursor: pointer;
 }
-
 .logo span { color: white; }
 
 .nav-links { list-style: none; }
 .nav-links li {
     margin: 30px 0;
     cursor: pointer;
-    opacity: 0.5;
-    transition: 0.3s ease;
-    font-size: 22px;
+    opacity: 0.6;
+    transition: 0.3s;
+    font-size: 24px;
 }
-
 .nav-links li.active, .nav-links li:hover {
     opacity: 1;
     transform: scale(1.2);
@@ -56,7 +53,6 @@ body {
     width: 45px;
     border-radius: 50%;
     border: 2px solid #00e5ff;
-    cursor: pointer;
 }
 
 /* --- CONTEÚDO PRINCIPAL --- */
@@ -65,48 +61,50 @@ body {
     width: calc(100% - 80px);
 }
 
+/* --- BANNER PRINCIPAL (HERO) --- */
 .hero {
-    height: 85vh;
-    background: url('https://wallpaperaccess.com/full/1202061.jpg') no-repeat center center/cover;
+    height: 80vh;
+    background-size: cover;
+    background-position: center;
     position: relative;
+    transition: background-image 0.5s ease-in-out;
 }
 
 .hero-overlay {
     height: 100%;
-    background: linear-gradient(to right, #040714 5%, transparent 100%),
+    background: linear-gradient(to right, #040714 15%, transparent 85%),
                 linear-gradient(to top, #040714 5%, transparent 30%);
     display: flex;
     align-items: center;
-    padding: 0 60px;
+    padding: 0 50px;
 }
 
-.movie-logo {
-    width: 380px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    max-width: 700px;
 }
 
 .hero-content p {
     font-size: 1.1rem;
-    max-width: 550px;
-    margin-bottom: 35px;
-    color: #f9f9f9;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    max-width: 600px;
+    margin-bottom: 30px;
+    color: #cacaca;
+    line-height: 1.5;
 }
 
-.buttons { display: flex; gap: 15px; }
-
 .btn-play {
-    padding: 12px 35px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    padding: 15px 40px;
+    font-weight: bold;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     background: white;
     color: black;
     cursor: pointer;
     transition: 0.3s;
 }
+.btn-play:hover { background: #00e5ff; color: white; }
 
 .btn-info {
     width: 50px;
@@ -115,97 +113,139 @@ body {
     border: 2px solid white;
     background: rgba(0,0,0,0.5);
     color: white;
+    margin-left: 10px;
     font-size: 24px;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.btn-play:hover { background: #00e5ff; color: white; transform: scale(1.05); }
-.btn-info:hover { background: white; color: black; }
+/* --- BUSCA --- */
+.search-section {
+    padding: 20px 50px;
+}
+#searchInput {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 25px;
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+#searchInput:focus {
+    background: rgba(255,255,255,0.2);
+    border-color: #00e5ff;
+}
 
-/* --- CARDS DE CATEGORIA --- */
+/* --- CATEGORIAS --- */
 .categories {
     display: flex;
     gap: 20px;
-    padding: 30px 60px;
+    padding: 20px 50px;
 }
-
 .category-card {
     flex: 1;
-    height: 130px;
+    height: 120px;
     border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 900;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, #1e1f2a, #040714);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.6);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: linear-gradient(#1e1f2a, #040714);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: 0.4s;
     cursor: pointer;
 }
-
 .category-card:hover {
-    transform: scale(1.08);
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 25px 40px rgba(0,0,0,0.9);
+    transform: scale(1.05);
+    border-color: #00e5ff;
 }
 
-/* --- CARROSSEL DE FILMES (AQUI ESTÁ A CORREÇÃO DAS SETAS) --- */
-.movie-row { padding: 20px 60px; position: relative; }
-.movie-row h3 { margin-bottom: 15px; font-weight: 400; color: #a0a0a0; }
+/* --- FILEIRAS E CARROSSEL --- */
+.row { padding: 20px 50px; position: relative; }
+.row h3 { margin-bottom: 10px; font-weight: 600; color: #f9f9f9; }
 
 .carousel-container {
-    position: relative;
     display: flex;
     align-items: center;
+    position: relative;
 }
 
 .movie-list {
     display: flex;
-    gap: 18px;
+    gap: 15px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 20px 0;
+    padding: 10px 0;
 }
+.movie-list::-webkit-scrollbar { display: none; }
 
-.movie-list::-webkit-scrollbar { display: none; } /* Esconde a barra feia */
-
-.movie-card img {
-    width: 210px;
-    border-radius: 8px;
-    border: 3px solid transparent;
-    transition: 0.4s;
+/* Cards Individuais (Injetados pelo JS) */
+.card {
+    min-width: 200px;
+    transition: 0.3s;
     cursor: pointer;
 }
-
-.movie-card img:hover {
-    transform: scale(1.1);
-    border-color: rgba(249, 249, 249, 0.8);
-    box-shadow: 0 20px 30px rgba(0,0,0,0.8);
+.card img {
+    width: 100%;
+    border-radius: 10px;
+    border: 3px solid transparent;
 }
+.card:hover { transform: scale(1.1); z-index: 10; }
+.card:hover img { border-color: #00e5ff; }
 
-/* SETAS DO CARROSSEL */
+/* Setas */
 .handle {
     position: absolute;
-    height: 80%;
-    width: 50px;
-    background: rgba(0, 0, 0, 0.7);
+    height: 100%;
+    width: 40px;
+    background: rgba(0,0,0,0.7);
     border: none;
     color: white;
-    font-size: 2.5rem;
+    font-size: 24px;
     cursor: pointer;
-    z-index: 10;
-    transition: 0.3s;
+    z-index: 20;
     opacity: 0;
-    display: flex;
-    align-items: center;
+    transition: 0.3s;
+}
+.carousel-container:hover .handle { opacity: 1; }
+.handle.left { left: -20px; }
+.handle.right { right: -20px; }
+
+/* --- PLAYER OVERLAY --- */
+.player-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    z-index: 2000;
     justify-content: center;
+    align-items: center;
+}
+.player-overlay.active { display: flex; }
+.player-content { width: 80%; max-width: 900px; position: relative; }
+#playerFrame { width: 100%; aspect-ratio: 16/9; border-radius: 10px; }
+.close-btn {
+    position: absolute;
+    top: -50px; right: 0;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
 }
 
-.carousel-container:hover .handle { opacity: 1; }
-.handle:hover { background: rgba(0, 229, 255, 0.4); color: #00e5ff; }
-
-.handle-left { left: -30px; border-radius: 0 8px 8px 0; }
-.handle-right { right: -30px; border-radius: 8px 0 0 8px; }
+/* Skeletons (Carregamento) */
+.skeleton {
+    min-width: 200px;
+    height: 300px;
+    background: #1e1f2a;
+    border-radius: 10px;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
