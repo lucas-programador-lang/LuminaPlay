@@ -127,7 +127,6 @@
         function renderMovies(container, list) {
             container.innerHTML = "";
             list.forEach(item => {
-                // Filtra para mostrar apenas Filmes ou Séries que tenham poster
                 if (!item.poster_path || (item.media_type && item.media_type === 'person')) return;
                 
                 const card = document.createElement('div');
@@ -135,7 +134,6 @@
                 card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}" loading="lazy">`;
                 
                 card.onclick = () => {
-                    // Salvamos o objeto completo para usar no filme.html
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
                     window.location.href = 'filme.html';
                 };
@@ -164,15 +162,15 @@
 
             // Hero Dinâmico
             if (pops && pops.length > 0) {
-                // Pega um filme aleatório entre os 8 primeiros populares
                 const movie = pops[Math.floor(Math.random() * 8)];
-                
                 const heroElement = document.getElementById('hero');
                 const backdrop = movie.backdrop_path || movie.poster_path;
                 
                 heroElement.style.backgroundImage = `linear-gradient(to top, #040714 15%, transparent 70%), url(${IMG_URL}${backdrop})`;
                 document.getElementById('heroTitle').innerText = movie.title || movie.name;
-                document.getElementById('heroOverview').innerText = movie.overview || "Uma história incrível aguarda por você no Lumina Play.";
+                
+                const overview = movie.overview || "Uma história incrível aguarda por você no Lumina Play.";
+                document.getElementById('heroOverview').innerText = overview.length > 200 ? overview.substring(0, 200) + "..." : overview;
 
                 document.getElementById('heroWatch').onclick = () => {
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
@@ -189,6 +187,13 @@
                         alert("ℹ️ Já está na sua lista!");
                     }
                 };
+            }
+
+            // --- REGISTRO DO SERVICE WORKER (PWA) ---
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log("Lumina Play: Service Worker Ativo!"))
+                .catch(err => console.log("Erro no SW:", err));
             }
         }
 
