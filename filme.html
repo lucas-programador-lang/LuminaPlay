@@ -36,7 +36,7 @@
                     <p id="filmInfo" style="color: #00e5ff; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,229,255,0.4);"></p>
                     <p id="filmOverview" class="hero-overview">Aguarde enquanto buscamos os detalhes.</p>
                     
-                    <div class="buttons">
+                    <div class="hero-buttons">
                         <button class="btn-play" id="filmWatch">▶ ASSISTIR AGORA</button>
                         <button class="btn-info" id="addToList" title="Adicionar à Lista">
                             <i class="fa-solid fa-plus"></i>
@@ -52,7 +52,7 @@
                 Filmes semelhantes
             </h3>
             
-            <div class="carousel-container">
+            <div class="carousel-container" style="position: relative;">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
                 <div class="movie-list row-cards" id="similarRow"></div>
                 <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
@@ -86,22 +86,18 @@
             document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível em português.";
             
             const bgPath = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : `https://image.tmdb.org/t/p/original${movie.poster_path}`;
-            document.getElementById('filmHero').style.backgroundImage = `url(${bgPath})`;
+            document.getElementById('filmHero').style.backgroundImage = `linear-gradient(to top, #040714 10%, transparent 60%), url(${bgPath})`;
             
             const year = (movie.release_date || movie.first_air_date || "---").split('-')[0];
             const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
             document.getElementById('filmInfo').textContent = `${year} • ★ ${rating}`;
 
-            // Verifica se já está na lista para mudar o ícone do botão
-            const btnAdd = document.getElementById('addToList');
             updateListButton(movie.id);
-
             fetchSimilar(movie.id, movie.title ? 'movie' : 'tv');
 
             // Player de Vídeo
             document.getElementById('filmWatch').onclick = () => {
                 document.getElementById('playerOverlay').classList.add('active');
-                // Link de exemplo (RickRoll). No futuro, você pode buscar o trailer real via API
                 document.getElementById('playerFrame').src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
             };
 
@@ -110,18 +106,17 @@
                 document.getElementById('playerFrame').src = "";
             };
 
-            // Lógica de Adicionar/Remover da Lista
-            btnAdd.onclick = () => {
+            // Lógica de Adicionar/Remover
+            document.getElementById('addToList').onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                 const index = favs.findIndex(item => item.id === movie.id);
 
                 if (index === -1) {
                     favs.push(movie);
-                    localStorage.setItem("luminaLista", JSON.stringify(favs));
                 } else {
                     favs.splice(index, 1);
-                    localStorage.setItem("luminaLista", JSON.stringify(favs));
                 }
+                localStorage.setItem("luminaLista", JSON.stringify(favs));
                 updateListButton(movie.id);
             };
         });
@@ -135,12 +130,10 @@
                 btnAdd.innerHTML = '<i class="fa-solid fa-check"></i>';
                 btnAdd.style.borderColor = "#00e5ff";
                 btnAdd.style.color = "#00e5ff";
-                btnAdd.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
             } else {
                 btnAdd.innerHTML = '<i class="fa-solid fa-plus"></i>';
                 btnAdd.style.borderColor = "white";
                 btnAdd.style.color = "white";
-                btnAdd.style.boxShadow = "none";
             }
         }
 
@@ -160,7 +153,8 @@
                         card.onclick = () => {
                             localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
                             window.scrollTo({ top: 0, behavior: 'smooth' });
-                            setTimeout(() => window.location.reload(), 300);
+                            // Pequeno delay para a animação do scroll antes de recarregar
+                            setTimeout(() => window.location.reload(), 400);
                         };
                         container.appendChild(card);
                     });
@@ -170,7 +164,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // Handles de Scroll
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
