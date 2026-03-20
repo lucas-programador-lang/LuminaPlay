@@ -28,10 +28,12 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
-    // Verifica em qual página estamos
-    const path = window.location.pathname;
+    // Melhorado: Verifica se é a página inicial independente do caminho do arquivo
+    const isHomePage = window.location.pathname.endsWith("index.html") || 
+                       window.location.pathname.endsWith("/") || 
+                       window.location.pathname === "";
 
-    if (path.includes("index.html") || path === "/") {
+    if (isHomePage) {
         setupHomePage();
     }
     
@@ -39,30 +41,46 @@ async function init() {
 }
 
 async function setupHomePage() {
+    // 1. Mostrar Skeletons
     Object.keys(DOM.rows).forEach(key => showSkeleton(key));
 
+    // 2. Buscar Dados
     const populares = await getMovies("/movie/popular");
     const emAlta = await getMovies("/trending/movie/week");
     const lancamentos = await getMovies("/movie/now_playing");
 
+    // 3. Renderizar
     if (populares.length > 0) renderHero(populares[0]);
 
     renderRow("populares", populares);
     renderRow("emalta", emAlta);
     renderRow("lancamentos", lancamentos);
 
+    // 4. Configurar eventos da Home
     setupArrows();
     setupSearch();
 }
 
 /* =========================
-   LÓGICA DE NAVEGAÇÃO (A Mágica)
+   LÓGICA DE NAVEGAÇÃO E FAVORITOS
 ========================= */
 function goToDetails(movie) {
-    // Salva o filme clicado no "pendrive" do navegador (localStorage)
     localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
-    // Redireciona para a página de detalhes
     window.location.href = 'filme.html';
+}
+
+function saveToList(movie) {
+    if (!movie) return;
+    // Padronizado para "luminaLista" como no seu arquivo minha-lista.html
+    let list = JSON.parse(localStorage.getItem("luminaLista") || "[]");
+    
+    if (!list.find(m => m.id === movie.id)) {
+        list.push(movie);
+        alert(`"${movie.title || movie.name}" adicionado à sua lista!`);
+    } else {
+        alert("Este item já está na sua lista.");
+    }
+    localStorage.setItem("luminaLista", JSON.stringify(list));
 }
 
 /* =========================
@@ -79,7 +97,6 @@ function renderRow(type, movies) {
         card.className = "card";
         card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">`;
         
-        // AO CLICAR NO CARD:
         card.onclick = () => goToDetails(movie);
         container.appendChild(card);
     });
@@ -87,14 +104,18 @@ function renderRow(type, movies) {
 
 function renderHero(movie) {
     if (!DOM.hero || !movie) return;
+    
     DOM.hero.style.backgroundImage = `url(${IMG}${movie.backdrop_path})`;
     if (DOM.heroTitle) DOM.heroTitle.textContent = movie.title || movie.name;
+    
     if (DOM.heroOverview) {
         const text = movie.overview || "Sinopse indisponível.";
         DOM.heroOverview.textContent = text.length > 180 ? text.substring(0, 180) + "..." : text;
     }
-    // Botão assistir do Hero também leva para detalhes ou abre player
-    DOM.heroWatch.onclick = () => goToDetails(movie);
+    
+    // Configura botões do Hero
+    if (DOM.heroWatch) DOM.heroWatch.onclick = () => goToDetails(movie);
+    if (DOM.heroFav) DOM.heroFav.onclick = () => saveToList(movie);
 }
 
 /* =========================
@@ -105,14 +126,19 @@ async function getMovies(endpoint) {
         const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&language=pt-BR`);
         const data = await res.json();
         return data.results || [];
-    } catch (e) { return []; }
+    } catch (e) { 
+        console.error("Erro na API:", e);
+        return []; 
+    }
 }
 
 function setupGlobalEvents() {
-    if (DOM.playerClose) DOM.playerClose.onclick = () => {
-        DOM.playerOverlay.classList.remove("active");
-        DOM.playerFrame.src = "";
-    };
+    if (DOM.playerClose) {
+        DOM.playerClose.onclick = () => {
+            DOM.playerOverlay.classList.remove("active");
+            DOM.playerFrame.src = "";
+        };
+    }
 }
 
 function showSkeleton(type) {
@@ -128,7 +154,8 @@ function showSkeleton(type) {
 
 function setupArrows() {
     document.querySelectorAll('.handle').forEach(btn => {
-        btn.onclick = () => {
+        btn.onclick = (e) => {
+            e.preventDefault();
             const list = btn.parentElement.querySelector('.movie-list');
             const direction = btn.classList.contains('left') ? -450 : 450;
             list.scrollBy({ left: direction, behavior: 'smooth' });
@@ -143,6 +170,9 @@ function setupSearch() {
         if (query.length < 3) return;
         const results = await getMovies(`/search/movie?query=${encodeURIComponent(query)}`);
         renderRow("populares", results);
+        
+        const sectionTitle = DOM.rows.populares.parentElement.querySelector('h3');
+        if (sectionTitle) sectionTitle.textContent = `Resultados para: ${query}`;
     }, 500));
 }
 
