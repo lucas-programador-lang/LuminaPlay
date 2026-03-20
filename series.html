@@ -5,24 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Play | Séries</title>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo-container" onclick="location.href='index.html'" style="cursor: pointer;">
-            <img src="logo.png" alt="Lumina Play Logo" class="logo-horizontal">
+        <div class="logo-container" onclick="window.location.href='/'" style="cursor: pointer;">
+            <img src="/logo.png" alt="Lumina Play Logo" class="logo-horizontal">
         </div>
 
         <ul class="nav-links">
-            <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
-            <li title="Pesquisar" onclick="location.href='index.html'"><i class="fa-solid fa-magnifying-glass"></i></li>
-            <li onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
-            <li onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
-            <li class="active" onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
+            <li onclick="window.location.href='/'" title="Início"><i class="fa-solid fa-house"></i></li>
+            <li title="Pesquisar" onclick="window.location.href='/'"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li onclick="window.location.href='/minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
+            <li onclick="window.location.href='/filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
+            <li class="active" onclick="window.location.href='/series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
         </ul>
         <div class="user-profile">
             <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
@@ -100,7 +100,7 @@
                 card.onclick = () => {
                     s.media_type = 'tv'; 
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(s));
-                    window.location.href = 'filme.html';
+                    window.location.href = '/filme.html';
                 };
                 container.appendChild(card);
             });
@@ -113,7 +113,6 @@
                 fetchSeries("/tv/top_rated")
             ]);
 
-            // Setup do Hero Aleatório
             if(populares.length) {
                 const heroS = populares[Math.floor(Math.random() * Math.min(populares.length, 10))];
                 const bg = heroS.backdrop_path ? `${IMG}${heroS.backdrop_path}` : `${IMG}${heroS.poster_path}`;
@@ -131,7 +130,7 @@
                 document.getElementById('heroWatch').onclick = () => {
                     heroS.media_type = 'tv';
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(heroS));
-                    window.location.href = 'filme.html';
+                    window.location.href = '/filme.html';
                 };
             }
 
@@ -140,7 +139,6 @@
             renderRow("row-top", top);
         }
 
-        // Sistema de Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
