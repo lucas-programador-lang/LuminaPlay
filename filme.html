@@ -64,7 +64,7 @@
     <div id="playerOverlay" class="player-overlay">
         <div class="player-content">
             <span id="playerClose" class="close-btn">&times;</span>
-            <iframe id="playerFrame" src="" frameborder="0" allowfullscreen></iframe>
+            <iframe id="playerFrame" src="" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -96,18 +96,25 @@
             updateListButton(movie.id);
             fetchSimilar(movie.id, movie.title ? 'movie' : 'tv');
 
-            // Player de Vídeo
+            // --- LÓGICA DO PLAYER REDECANAIS ---
             document.getElementById('filmWatch').onclick = () => {
-                document.getElementById('playerOverlay').classList.add('active');
-                document.getElementById('playerFrame').src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
+                const overlay = document.getElementById('playerOverlay');
+                const frame = document.getElementById('playerFrame');
+
+                overlay.classList.add('active');
+
+                // Tenta carregar usando o ID da TMDB. 
+                // Nota: Alguns servidores de embed podem exigir o ID do IMDB (tt000000).
+                const videoID = movie.id; 
+                frame.src = `https://redecanais.ooo/player3/server.php?server=RCFServer2&subfolder=ondemand&vid=${videoID}`;
             };
 
             document.getElementById('playerClose').onclick = () => {
                 document.getElementById('playerOverlay').classList.remove('active');
-                document.getElementById('playerFrame').src = "";
+                document.getElementById('playerFrame').src = ""; // Para o vídeo ao fechar
             };
 
-            // Lógica de Adicionar/Remover
+            // Lógica de Adicionar/Remover da Lista
             document.getElementById('addToList').onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                 const index = favs.findIndex(item => item.id === movie.id);
@@ -154,7 +161,6 @@
                         card.onclick = () => {
                             localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
                             window.scrollTo({ top: 0, behavior: 'smooth' });
-                            // Pequeno delay para a animação do scroll antes de recarregar
                             setTimeout(() => window.location.reload(), 400);
                         };
                         container.appendChild(card);
