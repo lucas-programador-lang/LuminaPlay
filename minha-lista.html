@@ -11,19 +11,19 @@
 
     <style>
         /* Estilos específicos para a Grade de Favoritos */
-        .content { padding-bottom: 100px; } 
+        .content { padding-bottom: 100px; min-height: 100vh; } 
 
         .fav-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 25px;
-            padding: 20px 50px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 30px;
+            padding: 20px 60px;
             width: 100%;
         }
 
         .card {
             position: relative;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: pointer;
         }
 
@@ -32,33 +32,39 @@
             border-radius: 10px;
             border: 2px solid transparent;
             transition: 0.3s;
+            display: block;
+        }
+
+        .card:hover {
+            transform: scale(1.1);
+            z-index: 10;
         }
 
         .card:hover img {
             border-color: #00e5ff;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
         }
 
-        /* Botão Remover Estilizado */
+        /* Botão Remover com Design Lumina */
         .remove-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 38px;
-            height: 38px;
-            background: rgba(255, 0, 0, 0.9);
-            border: 2px solid white;
+            top: -10px;
+            right: -10px;
+            width: 35px;
+            height: 35px;
+            background: #ff4b2b;
+            border: none;
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 10;
+            z-index: 15;
             opacity: 0; 
-            transform: scale(0.8);
+            transform: scale(0.5);
             transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 0 15px rgba(255, 75, 43, 0.5);
         }
 
         .card:hover .remove-btn {
@@ -68,26 +74,49 @@
 
         .remove-btn:hover {
             background: #ff0000;
-            transform: scale(1.1) !important;
+            transform: scale(1.2) !important;
         }
 
-        /* Animação de remoção */
+        /* Animação ao apagar */
         .removing {
-            transform: scale(0.5);
+            transform: scale(0);
             opacity: 0;
+            transition: 0.4s;
+        }
+
+        .empty-list-container {
+            text-align: center;
+            padding: 100px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-back {
+            margin-top: 25px;
+            padding: 12px 30px;
+            border-radius: 30px;
+            border: 2px solid #00e5ff;
+            background: transparent;
+            color: #00e5ff;
+            cursor: pointer;
+            font-weight: 800;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-back:hover {
+            background: #00e5ff;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
         }
 
         @media (max-width: 768px) {
             .fav-grid {
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 padding: 20px;
-                gap: 15px;
+                gap: 20px;
             }
-            .remove-btn {
-                opacity: 1; 
-                transform: scale(1);
-            }
-            header { padding: 30px 20px 10px !important; }
+            .remove-btn { opacity: 1; transform: scale(1); }
+            header { padding: 40px 20px 10px !important; }
         }
     </style>
 </head>
@@ -111,9 +140,12 @@
     </nav>
 
     <main class="content">
-        <header style="padding: 40px 50px 10px; margin-top: 60px;">
-            <h2 style="font-size: 2.2rem; border-left: 5px solid #00e5ff; padding-left: 15px; font-weight: 800;">Minha Lista</h2>
-            <p style="opacity: 0.6; margin-top: 5px; font-size: 1rem;">Filmes e séries que você salvou para assistir.</p>
+        <header style="padding: 60px 60px 20px; margin-top: 40px;">
+            <h2 style="font-size: 2.5rem; font-weight: 800; display: flex; align-items: center;">
+                <i class="fa-solid fa-bookmark" style="color: #00e5ff; margin-right: 15px; filter: drop-shadow(0 0 8px #00e5ff);"></i>
+                Minha Lista
+            </h2>
+            <p style="opacity: 0.6; margin-top: 5px; font-size: 1.1rem;">Seus filmes e séries favoritos salvos para assistir depois.</p>
         </header>
 
         <div id="lista" class="fav-grid">
@@ -124,6 +156,7 @@
         const listaContainer = document.getElementById("lista");
 
         function getFav() {
+            // Pega a lista do localStorage (a mesma que você alimenta na página de detalhes)
             return JSON.parse(localStorage.getItem("luminaLista") || "[]");
         }
 
@@ -134,10 +167,10 @@
             if (favs.length === 0) {
                 listaContainer.style.display = "block";
                 listaContainer.innerHTML = `
-                    <div style="text-align: center; padding: 100px 20px; opacity: 0.4;">
-                        <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 4rem; margin-bottom: 20px; display: block;"></i>
-                        <p style="font-size: 1.2rem;">Sua lista está vazia.<br>Explore o catálogo e adicione favoritos!</p>
-                        <button onclick="location.href='index.html'" style="margin-top:20px; padding: 12px 25px; border-radius: 25px; border: 1px solid #00e5ff; background: transparent; color: #00e5ff; cursor: pointer; font-weight: bold; transition: 0.3s;">Voltar ao Início</button>
+                    <div class="empty-list-container">
+                        <i class="fa-solid fa-clapperboard" style="font-size: 5rem; margin-bottom: 20px; display: block; opacity: 0.2;"></i>
+                        <p style="font-size: 1.3rem;">Você ainda não guardou nada na sua lista.</p>
+                        <button class="btn-back" onclick="location.href='index.html'">Explorar Catálogo</button>
                     </div>`;
                 return;
             }
@@ -152,15 +185,14 @@
 
                 const imgPath = item.poster_path ? 'https://image.tmdb.org/t/p/w500' + item.poster_path : 'https://via.placeholder.com/500x750?text=Sem+Imagem';
                 
-                // Usando uma string segura para o objeto para evitar erros de sintaxe no onclick
                 card.innerHTML = `
                     <img src="${imgPath}" alt="${item.title || item.name}" class="movie-img">
-                    <button class="remove-btn" title="Remover" onclick="removeMovie(event, ${item.id})">
-                        <i class="fa-solid fa-trash-can"></i>
+                    <button class="remove-btn" title="Remover da lista" onclick="removeMovie(event, ${item.id})">
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
                 `;
 
-                // Clique para ir para detalhes
+                // Clique na imagem leva para os detalhes
                 card.querySelector('.movie-img').onclick = () => {
                     localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
                     window.location.href = 'filme.html';
@@ -171,6 +203,7 @@
         }
 
         function removeMovie(event, id) {
+            // Evita que o clique no botão de remover abra os detalhes do filme
             event.stopPropagation(); 
             
             const card = document.getElementById(`card-${id}`);
@@ -181,11 +214,11 @@
                     let favs = getFav().filter(m => m.id !== id);
                     localStorage.setItem("luminaLista", JSON.stringify(favs));
                     render();
-                }, 300);
+                }, 400); // Tempo para a animação de sumir
             }
         }
 
-        // Inicializa a renderização ao carregar
+        // Executa a função ao carregar a página
         render();
     </script>
 </body>
