@@ -20,8 +20,8 @@
             <li class="active" title="Início" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i></li>
             <li title="Pesquisar" onclick="document.getElementById('searchInput').focus(); window.scrollTo({top: 0, behavior: 'smooth'});"><i class="fa-solid fa-magnifying-glass"></i></li>
             <li title="Minha Lista" onclick="window.location.href='minha-lista.html'"><i class="fa-solid fa-plus"></i></li>
-            <li title="Filmes" onclick="window.location.href='filme.html'"><i class="fa-solid fa-clapperboard"></i></li>
-            <li title="Séries" onclick="window.location.href='series.html'"><i class="fa-solid fa-tv"></i></li>
+            <li title="Filmes" onclick="window.location.href='index.html'"><i class="fa-solid fa-clapperboard"></i></li>
+            <li title="Séries" onclick="window.location.href='index.html'"><i class="fa-solid fa-tv"></i></li>
         </ul>
 
         <div class="user-profile">
@@ -58,11 +58,11 @@
             </section>
 
             <section class="categories">
-                <div class="category-card">LUMINA</div>
-                <div class="category-card">PIXAR</div>
-                <div class="category-card">MARVEL</div>
-                <div class="category-card">WARS</div>
-                <div class="category-card">NATGEO</div>
+                <div class="category-card" onclick="alert('Filtrando por Lumina Original...')">LUMINA</div>
+                <div class="category-card" onclick="alert('Filtrando por Pixar...')">PIXAR</div>
+                <div class="category-card" onclick="alert('Filtrando por Marvel...')">MARVEL</div>
+                <div class="category-card" onclick="alert('Filtrando por Star Wars...')">WARS</div>
+                <div class="category-card" onclick="alert('Filtrando por NatGeo...')">NATGEO</div>
             </section>
 
             <div class="row">
@@ -104,19 +104,34 @@
         const mainContentArea = document.getElementById('main-content-area');
         const searchTermSpan = document.getElementById('searchTerm');
 
-        // --- BUSCA EM TEMPO REAL ---
-        searchInput.addEventListener('input', async (e) => {
-            const query = e.target.value.trim();
-            if (query.length > 2) {
-                mainContentArea.style.display = 'none';
-                searchRow.style.display = 'block';
-                searchTermSpan.innerText = query;
+        // --- FUNÇÃO DE REDIRECIONAMENTO (Garante dados salvos) ---
+        function openPlayer(item) {
+            // Se não tiver media_type (comum em algumas buscas), identificamos manualmente
+            if (!item.media_type) {
+                item.media_type = item.title ? 'movie' : 'tv';
+            }
+            localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
+            window.location.href = 'filme.html';
+        }
 
-                try {
-                    const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=pt-BR&query=${query}`);
-                    const data = await res.json();
-                    renderMovies(searchResults, data.results);
-                } catch (err) { console.error("Erro na busca:", err); }
+        // --- BUSCA EM TEMPO REAL ---
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+
+            if (query.length > 2) {
+                searchTimeout = setTimeout(async () => {
+                    mainContentArea.style.display = 'none';
+                    searchRow.style.display = 'block';
+                    searchTermSpan.innerText = query;
+
+                    try {
+                        const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=pt-BR&query=${encodeURIComponent(query)}`);
+                        const data = await res.json();
+                        renderMovies(searchResults, data.results);
+                    } catch (err) { console.error("Erro na busca:", err); }
+                }, 500);
             } else {
                 searchRow.style.display = 'none';
                 mainContentArea.style.display = 'block';
@@ -133,10 +148,7 @@
                 card.className = 'card';
                 card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}" loading="lazy">`;
                 
-                card.onclick = () => {
-                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
-                    window.location.href = 'filme.html';
-                };
+                card.onclick = () => openPlayer(item);
                 container.appendChild(card);
             });
         }
@@ -155,12 +167,14 @@
         }
 
         async function init() {
-            // Carrega as fileiras principais
-            const pops = await fetchMovies('/movie/popular', 'row-populares');
-            fetchMovies('/trending/all/week', 'row-emalta');
-            fetchMovies('/movie/now_playing', 'row-lancamentos');
+            // Carrega as fileiras principais simultaneamente
+            const [pops, emAlta, lancamentos] = await Promise.all([
+                fetchMovies('/movie/popular', 'row-populares'),
+                fetchMovies('/trending/all/week', 'row-emalta'),
+                fetchMovies('/movie/now_playing', 'row-lancamentos')
+            ]);
 
-            // Hero Dinâmico
+            // Configuração do Hero Dinâmico
             if (pops && pops.length > 0) {
                 const movie = pops[Math.floor(Math.random() * 8)];
                 const heroElement = document.getElementById('hero');
@@ -172,14 +186,12 @@
                 const overview = movie.overview || "Uma história incrível aguarda por você no Lumina Play.";
                 document.getElementById('heroOverview').innerText = overview.length > 200 ? overview.substring(0, 200) + "..." : overview;
 
-                document.getElementById('heroWatch').onclick = () => {
-                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(movie));
-                    window.location.href = 'filme.html';
-                };
+                document.getElementById('heroWatch').onclick = () => openPlayer(movie);
 
                 document.getElementById('heroFav').onclick = () => {
                     let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                     if (!favs.find(f => f.id === movie.id)) {
+                        if (!movie.media_type) movie.media_type = 'movie'; // Hero sempre traz popular movies
                         favs.push(movie);
                         localStorage.setItem("luminaLista", JSON.stringify(favs));
                         alert("✅ Adicionado à sua lista!");
@@ -189,15 +201,13 @@
                 };
             }
 
-            // --- REGISTRO DO SERVICE WORKER (PWA) ---
+            // PWA
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
-                .then(() => console.log("Lumina Play: Service Worker Ativo!"))
-                .catch(err => console.log("Erro no SW:", err));
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             }
         }
 
-        // Controles de Scroll (Carrossel)
+        // Controles de Scroll
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
@@ -206,7 +216,7 @@
             };
         });
 
-        init();
+        window.onload = init;
     </script>
 </body>
 </html>
