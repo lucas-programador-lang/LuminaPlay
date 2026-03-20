@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Play | Onde a luz encontra a história</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo-container" onclick="window.location.href='index.html'" style="cursor: pointer;">
-            <img src="logo.png" alt="Lumina Play Logo" class="logo-horizontal">
+        <div class="logo-container" onclick="window.location.href='/'" style="cursor: pointer;">
+            <img src="/logo.png" alt="Lumina Play Logo" class="logo-horizontal">
         </div>
 
         <ul class="nav-links">
-            <li class="active" title="Início" onclick="window.location.href='index.html'"><i class="fa-solid fa-house"></i></li>
+            <li class="active" title="Início" onclick="window.location.href='/'"><i class="fa-solid fa-house"></i></li>
             <li title="Pesquisar" onclick="document.getElementById('searchInput').focus(); window.scrollTo({top: 0, behavior: 'smooth'});"><i class="fa-solid fa-magnifying-glass"></i></li>
-            <li title="Minha Lista" onclick="window.location.href='minha-lista.html'"><i class="fa-solid fa-plus"></i></li>
-            <li title="Filmes" onclick="window.location.href='index.html'"><i class="fa-solid fa-clapperboard"></i></li>
-            <li title="Séries" onclick="window.location.href='index.html'"><i class="fa-solid fa-tv"></i></li>
+            <li title="Minha Lista" onclick="window.location.href='/minha-lista.html'"><i class="fa-solid fa-plus"></i></li>
+            <li title="Filmes" onclick="window.location.href='/filme.html'"><i class="fa-solid fa-clapperboard"></i></li>
+            <li title="Séries" onclick="window.location.href='/series.html'"><i class="fa-solid fa-tv"></i></li>
         </ul>
 
         <div class="user-profile">
@@ -104,17 +104,15 @@
         const mainContentArea = document.getElementById('main-content-area');
         const searchTermSpan = document.getElementById('searchTerm');
 
-        // --- FUNÇÃO DE REDIRECIONAMENTO (Garante dados salvos) ---
         function openPlayer(item) {
-            // Se não tiver media_type (comum em algumas buscas), identificamos manualmente
             if (!item.media_type) {
                 item.media_type = item.title ? 'movie' : 'tv';
             }
             localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
-            window.location.href = 'filme.html';
+            // Corrigido para garantir que vá para a página correta a partir da raiz
+            window.location.href = '/filme.html';
         }
 
-        // --- BUSCA EM TEMPO REAL ---
         let searchTimeout;
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
@@ -138,7 +136,6 @@
             }
         });
 
-        // --- RENDERIZAÇÃO DE CARDS ---
         function renderMovies(container, list) {
             container.innerHTML = "";
             list.forEach(item => {
@@ -153,7 +150,6 @@
             });
         }
 
-        // --- BUSCAR DADOS DAS FILEIRAS ---
         async function fetchMovies(endpoint, rowId) {
             try {
                 const res = await fetch(`https://api.themoviedb.org/3${endpoint}?api_key=${API_KEY}&language=pt-BR`);
@@ -167,14 +163,12 @@
         }
 
         async function init() {
-            // Carrega as fileiras principais simultaneamente
             const [pops, emAlta, lancamentos] = await Promise.all([
                 fetchMovies('/movie/popular', 'row-populares'),
                 fetchMovies('/trending/all/week', 'row-emalta'),
                 fetchMovies('/movie/now_playing', 'row-lancamentos')
             ]);
 
-            // Configuração do Hero Dinâmico
             if (pops && pops.length > 0) {
                 const movie = pops[Math.floor(Math.random() * 8)];
                 const heroElement = document.getElementById('hero');
@@ -191,7 +185,7 @@
                 document.getElementById('heroFav').onclick = () => {
                     let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                     if (!favs.find(f => f.id === movie.id)) {
-                        if (!movie.media_type) movie.media_type = 'movie'; // Hero sempre traz popular movies
+                        if (!movie.media_type) movie.media_type = 'movie';
                         favs.push(movie);
                         localStorage.setItem("luminaLista", JSON.stringify(favs));
                         alert("✅ Adicionado à sua lista!");
@@ -201,13 +195,12 @@
                 };
             }
 
-            // PWA
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js').catch(() => {});
+                // Registro do SW agora aponta para a raiz absoluta
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
             }
         }
 
-        // Controles de Scroll
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
