@@ -30,12 +30,28 @@ body {
     transition: 0.3s;
 }
 
+/* --- AJUSTE DA NOVA LOGO (IMAGEM) --- */
 .logo {
-    font-size: 24px;
-    font-weight: 800;
-    color: #00e5ff;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
 }
-.logo span { color: white; }
+
+.logo img {
+    width: 100%;
+    max-width: 65px; /* Tamanho perfeito para a sidebar */
+    height: auto;
+    /* Efeito de brilho neon azul que combina com sua logo */
+    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.7));
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
 
 .nav-links { 
     list-style: none; 
@@ -79,7 +95,7 @@ body {
 
 /* --- CONTEÚDO PRINCIPAL --- */
 .content {
-    margin-left: 80px; /* Espaço da sidebar no PC */
+    margin-left: 80px;
     width: calc(100% - 80px);
     transition: 0.3s;
 }
@@ -159,7 +175,7 @@ body {
     display: flex;
     gap: 15px;
     padding: 20px 50px;
-    overflow-x: auto; /* Permite deslizar no celular */
+    overflow-x: auto;
 }
 .categories::-webkit-scrollbar { display: none; }
 
@@ -175,6 +191,12 @@ body {
     background: linear-gradient(#1e1f2a, #040714);
     cursor: pointer;
     flex-shrink: 0;
+    transition: 0.3s;
+}
+
+.category-card:hover {
+    border-color: #00e5ff;
+    transform: translateY(-5px);
 }
 
 /* --- FILEIRAS --- */
@@ -189,7 +211,7 @@ body {
 .movie-list::-webkit-scrollbar { display: none; }
 
 .card {
-    min-width: 160px; /* Ajustado para caber mais no celular */
+    min-width: 160px;
     transition: 0.3s;
     cursor: pointer;
 }
@@ -225,13 +247,12 @@ body {
 .close-btn { position: absolute; top: -50px; right: 0; font-size: 40px; color: white; cursor: pointer; }
 
 /* =========================================
-   MEDIA QUERIES (A MÁGICA DO RESPONSIVO)
+   MEDIA QUERIES (RESPONSIVIDADE)
    ========================================= */
 
 @media (max-width: 768px) {
     body { flex-direction: column; }
 
-    /* Sidebar vira Nav Inferior */
     .sidebar {
         width: 100%;
         height: 60px;
@@ -243,7 +264,8 @@ body {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .logo, .user-profile { display: none; } /* Esconde logo e perfil na barra de baixo */
+    /* Escondemos a logo na nav inferior para não poluir o visual mobile */
+    .logo, .user-profile { display: none; } 
 
     .nav-links {
         flex-direction: row;
@@ -252,25 +274,21 @@ body {
 
     .nav-links li { margin: 0; }
 
-    /* Ajuste do conteúdo principal */
     .content {
         margin-left: 0;
         width: 100%;
-        padding-bottom: 70px; /* Espaço para não cobrir pela nav inferior */
+        padding-bottom: 70px; 
     }
 
-    /* Ajuste do Hero para telas menores */
     .hero { height: 60vh; }
     .hero-overlay { padding: 0 20px; }
     .hero-content h1 { font-size: 2.2rem; }
     .hero-content p { font-size: 0.9rem; }
 
-    /* Ajuste das fileiras */
     .row { padding: 15px 20px; }
     .search-section { padding: 10px 20px; }
     .categories { padding: 10px 20px; }
 
-    /* Esconde as setas no celular (usa o dedo) */
     .handle { display: none; }
 }
 
