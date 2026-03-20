@@ -1,195 +1,128 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>LuminaPlay | Minha Lista</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Play | Minha Lista</title>
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-
 <body>
 
-<!-- HEADER PADRÃO IGUAL TODAS -->
-<header class="site-header" id="siteHeader">
-  <div class="header-inner container">
-
-    <div class="logo">
-      <span class="logoL">Lumina</span><span class="logoPlay">Play</span>
-    </div>
-
-    <nav class="main-nav">
-      <a class="nav-link" href="index.html">Início</a>
-      <a class="nav-link" href="filme.html">Filmes</a>
-      <a class="nav-link" href="series.html">Séries</a>
-      <a class="nav-link active" href="minha-lista.html">
-        <i class="fa-solid fa-bookmark"></i> Minha Lista
-      </a>
+    <nav class="sidebar">
+        <div class="logo">L<span>P</span></div>
+        <ul class="nav-links">
+            <li onclick="location.href='index.html'" title="Início"><i class="fa-solid fa-house"></i></li>
+            <li title="Pesquisar"><i class="fa-solid fa-magnifying-glass"></i></li>
+            <li class="active" onclick="location.href='minha-lista.html'" title="Minha Lista"><i class="fa-solid fa-plus"></i></li>
+            <li onclick="location.href='filme.html'" title="Filmes"><i class="fa-solid fa-clapperboard"></i></li>
+            <li onclick="location.href='series.html'" title="Séries"><i class="fa-solid fa-tv"></i></li>
+        </ul>
+        <div class="user-profile">
+            <img src="https://i.pravatar.cc/150?img=32" alt="Perfil">
+        </div>
     </nav>
 
-    <div class="search-box">
-      <input type="text" placeholder="Buscar...">
-    </div>
+    <main class="content">
+        <header style="padding: 40px 50px 10px;">
+            <h2 style="font-size: 2rem; border-left: 4px solid #00e5ff; padding-left: 15px;">📌 Minha Lista</h2>
+            <p style="opacity: 0.6; margin-top: 10px;">Seus filmes e séries favoritos guardados aqui.</p>
+        </header>
 
-  </div>
-</header>
+        <div class="row">
+            <div class="carousel-container">
+                <div class="movie-list row-cards" id="lista" style="flex-wrap: wrap; gap: 20px;">
+                    </div>
+            </div>
+        </div>
+    </main>
 
-<!-- CONTEÚDO -->
-<main class="container" style="margin-top:90px">
+    <script>
+        const listaContainer = document.getElementById("lista");
 
-  <h2 style="margin-bottom:20px">📌 Minha Lista</h2>
+        function getFav() {
+            // Buscamos a lista que o script.js salva (luminaLista)
+            return JSON.parse(localStorage.getItem("luminaLista") || "[]");
+        }
 
-  <div class="row">
-    <button class="row-arrow left"><i class="fa-solid fa-chevron-left"></i></button>
-    <div class="row-cards" id="lista"></div>
-    <button class="row-arrow right"><i class="fa-solid fa-chevron-right"></i></button>
-  </div>
+        function render() {
+            if (!listaContainer) return;
+            listaContainer.innerHTML = "";
+            const favs = getFav();
 
-</main>
+            if (favs.length === 0) {
+                listaContainer.innerHTML = `
+                    <div style="text-align: center; width: 100%; padding: 50px; opacity: 0.5;">
+                        <i class="fa-solid fa-ghost" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <p>Sua lista está vazia. Adicione algo no Início!</p>
+                    </div>`;
+                return;
+            }
 
-<!-- PLAYER (PADRÃO IGUAL OUTROS) -->
-<div id="playerOverlay" class="player-overlay">
-  <div class="player-inner">
+            favs.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.style.position = "relative";
 
-    <button id="playerClose" class="player-close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
+                // Imagem do Filme/Série
+                const imgPath = item.poster_path ? 'https://image.tmdb.org/t/p/w500' + item.poster_path : 'https://via.placeholder.com/500x750?text=Sem+Imagem';
+                
+                card.innerHTML = `
+                    <img src="${imgPath}" alt="${item.title || item.name}">
+                    <button class="remove-btn" title="Remover da lista">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
 
-    <iframe id="playerFrame"
-      class="player-iframe"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
+                // Clique para ver detalhes
+                card.onclick = () => {
+                    localStorage.setItem('lumina_selectedMovie', JSON.stringify(item));
+                    window.location.href = 'filme.html';
+                };
 
-  </div>
-</div>
+                // Botão de remover (estilizado via JS rápido)
+                const btn = card.querySelector(".remove-btn");
+                btn.style.cssText = `
+                    position: absolute; top: 10px; right: 10px; 
+                    background: rgba(255,0,0,0.8); border: none; 
+                    color: white; border-radius: 50%; width: 30px; 
+                    height: 30px; cursor: pointer; z-index: 5;
+                    display: flex; align-items: center; justify-content: center;
+                    transition: 0.3s;
+                `;
+                
+                btn.onclick = (e) => {
+                    e.stopPropagation(); // Não abre os detalhes ao clicar no X
+                    remove(item.id);
+                };
 
-<footer class="site-footer">
-  <div class="container footer-inner">
-    <div>© 2026 LuminaPlay</div>
-  </div>
-</footer>
+                listaContainer.appendChild(card);
+            });
+        }
 
-<script>
-const lista = document.getElementById("lista");
-const overlay = document.getElementById("playerOverlay");
-const frame = document.getElementById("playerFrame");
-const closeBtn = document.getElementById("playerClose");
+        function remove(id) {
+            let favs = getFav().filter(m => m.id !== id);
+            localStorage.setItem("luminaLista", JSON.stringify(favs));
+            render();
+        }
 
-/* ===== PEGAR LISTA ===== */
-function getFav(){
-  return JSON.parse(localStorage.getItem("minhaLista") || "[]");
-}
+        // Inicializa a página
+        render();
+    </script>
 
-/* ===== RENDER ===== */
-function render(){
-
-  if(!lista) return;
-
-  lista.innerHTML = "";
-
-  const favs = getFav();
-
-  if(!favs.length){
-    lista.innerHTML = "<p style='opacity:.7'>Sua lista está vazia 😢</p>";
-    return;
-  }
-
-  favs.forEach(movie => {
-
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <img src="${movie.poster_path ? 'https://image.tmdb.org/t/p/w500' + movie.poster_path : ''}" alt="${movie.title}">
-    `;
-
-    card.onclick = () => openPlayer();
-
-    const btn = document.createElement("button");
-    btn.innerHTML = "❌";
-    btn.style.position = "absolute";
-    btn.style.top = "5px";
-    btn.style.right = "5px";
-    btn.style.background = "#000";
-    btn.style.border = "none";
-    btn.style.color = "#fff";
-    btn.style.cursor = "pointer";
-
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      remove(movie.id);
-    };
-
-    card.style.position = "relative";
-    card.appendChild(btn);
-
-    lista.appendChild(card);
-  });
-}
-
-/* ===== REMOVER ===== */
-function remove(id){
-  let favs = getFav().filter(m => m.id !== id);
-  localStorage.setItem("minhaLista", JSON.stringify(favs));
-  render();
-}
-
-/* ===== PLAYER ===== */
-function openPlayer(){
-  if(!overlay || !frame) return;
-
-  overlay.classList.add("active");
-  frame.src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
-}
-
-function close(){
-  if(!overlay || !frame) return;
-
-  overlay.classList.remove("active");
-  frame.src = "";
-}
-
-if(closeBtn) closeBtn.onclick = close;
-
-if(overlay){
-  overlay.onclick = (e)=>{
-    if(e.target === overlay) close();
-  };
-}
-
-document.addEventListener("keydown", e=>{
-  if(e.key === "Escape") close();
-});
-
-/* ===== SETAS ===== */
-document.querySelectorAll('.row').forEach(row => {
-  const left = row.querySelector('.left');
-  const right = row.querySelector('.right');
-  const container = row.querySelector('.row-cards');
-
-  if(left) left.onclick = () => container.scrollBy({ left: -300, behavior: 'smooth' });
-  if(right) right.onclick = () => container.scrollBy({ left: 300, behavior: 'smooth' });
-});
-
-/* ===== INIT ===== */
-render();
-</script>
-
-<!-- SCROLL HEADER -->
-<script>
-window.addEventListener("scroll", () => {
-  const header = document.getElementById("siteHeader");
-  if(window.scrollY > 20){
-    header.classList.add("scrolled");
-  } else {
-    header.classList.remove("scrolled");
-  }
-});
-</script>
-
+    <style>
+        /* Ajuste extra para a grade da Minha Lista */
+        .movie-list {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            width: 100%;
+        }
+        .remove-btn:hover {
+            transform: scale(1.2);
+            background: red !important;
+        }
+    </style>
 </body>
 </html>
