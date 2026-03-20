@@ -134,6 +134,13 @@ body {
     line-height: 1.6;
 }
 
+/* Contêiner dos botões para facilitar o alinhamento */
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 .btn-play {
     padding: 16px 45px;
     font-weight: 800;
@@ -159,10 +166,12 @@ body {
     border: 2px solid white;
     background: rgba(0,0,0,0.6);
     color: white;
-    margin-left: 15px;
     font-size: 26px;
     cursor: pointer;
     transition: 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-info:hover { border-color: #00e5ff; color: #00e5ff; }
@@ -220,9 +229,9 @@ body {
     letter-spacing: 1px;
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-/* Ajuste para os ícones que adicionamos no HTML */
 .row h3 i {
     font-size: 1.3rem;
     filter: drop-shadow(0 0 5px rgba(0, 229, 255, 0.5));
@@ -233,11 +242,11 @@ body {
     gap: 18px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 20px 0; /* Espaço para o zoom não cortar o card */
+    padding: 20px 0;
 }
 .movie-list::-webkit-scrollbar { display: none; }
 
-/* --- EFEITO ZOOM E BRILHO NOS CARDS --- */
+/* --- CARDS --- */
 .card {
     min-width: 180px;
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
@@ -256,8 +265,8 @@ body {
 }
 
 .card:hover { 
-    transform: scale(1.1); /* Zoom elegante */
-    z-index: 100; /* Fica na frente de tudo */
+    transform: scale(1.1);
+    z-index: 100;
 }
 
 .card:hover img { 
@@ -268,7 +277,7 @@ body {
 /* --- CONTROLES DO CARROSSEL --- */
 .handle {
     position: absolute;
-    height: 260px; /* Altura aproximada do card */
+    height: 260px;
     top: 75px;
     width: 45px;
     background: rgba(0,0,0,0.7);
@@ -300,9 +309,10 @@ body {
 .close-btn { position: absolute; top: -50px; right: 0; font-size: 45px; color: white; cursor: pointer; transition: 0.3s; }
 .close-btn:hover { color: #00e5ff; transform: rotate(90deg); }
 
-/* --- RESPONSIVIDADE --- */
+/* --- RESPONSIVIDADE CORRIGIDA --- */
 @media (max-width: 768px) {
     body { flex-direction: column; }
+    
     .sidebar {
         width: 100%;
         height: 70px;
@@ -313,12 +323,63 @@ body {
         border-right: none;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
+    
     .logo-container { display: none; }
-    .nav-links { flex-direction: row; justify-content: space-around; margin-top: 0; }
+    
+    .nav-links { 
+        flex-direction: row; 
+        justify-content: space-around; 
+        margin-top: 0; 
+    }
+    
     .nav-links li { margin: 0; width: auto; }
-    .content { margin-left: 0; width: 100%; padding-bottom: 80px; }
-    .hero { height: 50vh; }
-    .hero-content h1 { font-size: 2rem; }
-    .row { padding: 20px 25px; }
+    
+    .content { 
+        margin-left: 0; 
+        width: 100%; 
+        padding-bottom: 80px; 
+    }
+    
+    .hero { 
+        height: 60vh; /* Aumentei um pouco para dar mais fôlego ao conteúdo */
+    }
+
+    .hero-overlay {
+        padding: 0 25px;
+        background: linear-gradient(to top, #040714 30%, transparent 90%);
+        align-items: flex-end; /* Alinha o texto na parte de baixo no mobile */
+        padding-bottom: 40px;
+    }
+
+    .hero-content h1 { 
+        font-size: 1.8rem; 
+        margin-bottom: 10px;
+    }
+
+    .hero-content p { 
+        font-size: 0.95rem; 
+        margin-bottom: 20px;
+        /* CORREÇÃO DA SINOPSE: Limita a 3 linhas e adiciona reticências (...) */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .btn-play {
+        padding: 12px 30px;
+        font-size: 0.9rem;
+    }
+
+    .btn-info {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+
+    .row { padding: 20px 15px; }
+    .row h3 { font-size: 1.2rem; }
     .handle { display: none; }
 }
