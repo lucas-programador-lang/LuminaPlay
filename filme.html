@@ -33,12 +33,14 @@
             <div class="hero-overlay">
                 <div class="hero-content">
                     <h1 id="filmTitle">Carregando...</h1>
-                    <p id="filmInfo" style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;"></p>
+                    <p id="filmInfo" style="color: #00e5ff; font-weight: bold; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0,229,255,0.4);"></p>
                     <p id="filmOverview" class="hero-overview">Aguarde enquanto buscamos os detalhes.</p>
                     
                     <div class="buttons">
                         <button class="btn-play" id="filmWatch">▶ ASSISTIR AGORA</button>
-                        <button class="btn-info" id="addToList" title="Adicionar à Lista">+</button>
+                        <button class="btn-info" id="addToList" title="Adicionar à Lista">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -78,21 +80,28 @@
 
             const movie = JSON.parse(movieData);
 
+            // Atualiza Dados da Página
             document.title = `Lumina Play | ${movie.title || movie.name}`;
             document.getElementById('filmTitle').textContent = movie.title || movie.name;
-            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível.";
+            document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível em português.";
             
             const bgPath = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : `https://image.tmdb.org/t/p/original${movie.poster_path}`;
             document.getElementById('filmHero').style.backgroundImage = `url(${bgPath})`;
             
-            const year = (movie.release_date || movie.first_air_date || "2026").split('-')[0];
+            const year = (movie.release_date || movie.first_air_date || "---").split('-')[0];
             const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
             document.getElementById('filmInfo').textContent = `${year} • ★ ${rating}`;
 
+            // Verifica se já está na lista para mudar o ícone do botão
+            const btnAdd = document.getElementById('addToList');
+            updateListButton(movie.id);
+
             fetchSimilar(movie.id, movie.title ? 'movie' : 'tv');
 
+            // Player de Vídeo
             document.getElementById('filmWatch').onclick = () => {
                 document.getElementById('playerOverlay').classList.add('active');
+                // Link de exemplo (RickRoll). No futuro, você pode buscar o trailer real via API
                 document.getElementById('playerFrame').src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
             };
 
@@ -101,23 +110,46 @@
                 document.getElementById('playerFrame').src = "";
             };
 
-            document.getElementById('addToList').onclick = () => {
+            // Lógica de Adicionar/Remover da Lista
+            btnAdd.onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
-                if (!favs.find(item => item.id === movie.id)) {
+                const index = favs.findIndex(item => item.id === movie.id);
+
+                if (index === -1) {
                     favs.push(movie);
                     localStorage.setItem("luminaLista", JSON.stringify(favs));
-                    alert("✅ Adicionado à sua lista!");
                 } else {
-                    alert("ℹ️ Já está na sua lista.");
+                    favs.splice(index, 1);
+                    localStorage.setItem("luminaLista", JSON.stringify(favs));
                 }
+                updateListButton(movie.id);
             };
         });
+
+        function updateListButton(movieId) {
+            const btnAdd = document.getElementById('addToList');
+            let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
+            const isFav = favs.find(item => item.id === movieId);
+
+            if (isFav) {
+                btnAdd.innerHTML = '<i class="fa-solid fa-check"></i>';
+                btnAdd.style.borderColor = "#00e5ff";
+                btnAdd.style.color = "#00e5ff";
+                btnAdd.style.boxShadow = "0 0 15px rgba(0, 229, 255, 0.4)";
+            } else {
+                btnAdd.innerHTML = '<i class="fa-solid fa-plus"></i>';
+                btnAdd.style.borderColor = "white";
+                btnAdd.style.color = "white";
+                btnAdd.style.boxShadow = "none";
+            }
+        }
 
         async function fetchSimilar(id, type) {
             try {
                 const res = await fetch(`https://api.themoviedb.org/3/${type}/${id}/recommendations?api_key=${API_KEY}&language=pt-BR`);
                 const data = await res.json();
                 const container = document.getElementById('similarRow');
+                container.innerHTML = "";
                 
                 if(data.results && data.results.length > 0) {
                     data.results.forEach(m => {
@@ -127,8 +159,8 @@
                         card.innerHTML = `<img src="https://image.tmdb.org/t/p/w500${m.poster_path}" alt="${m.title || m.name}">`;
                         card.onclick = () => {
                             localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
-                            window.location.reload();
-                            window.scrollTo(0,0);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            setTimeout(() => window.location.reload(), 300);
                         };
                         container.appendChild(card);
                     });
@@ -138,6 +170,7 @@
             } catch (err) { console.error(err); }
         }
 
+        // Handles de Scroll
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
