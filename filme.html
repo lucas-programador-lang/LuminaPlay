@@ -45,11 +45,14 @@
         </section>
 
         <div class="row">
-            <h3>🎬 Filmes semelhantes</h3>
+            <h3>
+                <i class="fa-solid fa-clapperboard" style="color: #00e5ff; text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); margin-right: 12px;"></i>
+                Filmes semelhantes
+            </h3>
+            
             <div class="carousel-container">
                 <button class="handle left"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="movie-list row-cards" id="similarRow">
-                    </div>
+                <div class="movie-list row-cards" id="similarRow"></div>
                 <button class="handle right"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
         </div>
@@ -75,7 +78,6 @@
 
             const movie = JSON.parse(movieData);
 
-            // Preenchimento dos dados básicos
             document.title = `Lumina Play | ${movie.title || movie.name}`;
             document.getElementById('filmTitle').textContent = movie.title || movie.name;
             document.getElementById('filmOverview').textContent = movie.overview || "Sinopse não disponível.";
@@ -87,10 +89,8 @@
             const rating = movie.vote_average ? movie.vote_average.toFixed(1) : "N/A";
             document.getElementById('filmInfo').textContent = `${year} • ★ ${rating}`;
 
-            // --- BUSCAR SEMELHANTES ---
             fetchSimilar(movie.id, movie.title ? 'movie' : 'tv');
 
-            // --- PLAYER ---
             document.getElementById('filmWatch').onclick = () => {
                 document.getElementById('playerOverlay').classList.add('active');
                 document.getElementById('playerFrame').src = "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
@@ -101,7 +101,6 @@
                 document.getElementById('playerFrame').src = "";
             };
 
-            // --- MINHA LISTA ---
             document.getElementById('addToList').onclick = () => {
                 let favs = JSON.parse(localStorage.getItem("luminaLista") || "[]");
                 if (!favs.find(item => item.id === movie.id)) {
@@ -129,6 +128,7 @@
                         card.onclick = () => {
                             localStorage.setItem('lumina_selectedMovie', JSON.stringify(m));
                             window.location.reload();
+                            window.scrollTo(0,0);
                         };
                         container.appendChild(card);
                     });
@@ -138,7 +138,6 @@
             } catch (err) { console.error(err); }
         }
 
-        // Scroll Carrossel
         document.querySelectorAll('.handle').forEach(btn => {
             btn.onclick = () => {
                 const list = btn.parentElement.querySelector('.movie-list');
